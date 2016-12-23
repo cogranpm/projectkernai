@@ -34,7 +34,7 @@ public class NavViewPresenter {
 	
 	public void loadProjects()
 	{
-		this.test();
+		//this.test();
 		List<String> dummy = new ArrayList<String>();
 		List<Attribute> attributes = attributeRespository.getAll("attributes", Attribute.class);
 		for(Attribute attribute : attributes)

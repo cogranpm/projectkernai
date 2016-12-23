@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,8 +17,7 @@ import org.eclipse.swt.widgets.Table;
 
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.ListDetail;
-import com.glenwood.kernai.ui.view.grid.AttributeCellModifier;
-import com.glenwood.kernai.ui.view.grid.ComboBoxCellEditorExample;
+import com.glenwood.kernai.ui.view.grid.ComboBoxCellViewerEditorExample;
 import com.glenwood.kernai.ui.view.grid.NameEditor;
 import com.glenwood.kernai.ui.viewmodel.AttributeViewModel;
 
@@ -127,7 +123,8 @@ public class AttributeView extends Composite {
 		mainGrid.setColumnProperties(props);
 		*/
 		
-		dataTypeColumn.setEditingSupport(new ComboBoxCellEditorExample(mainGrid, dataTypeLookup));
+		//dataTypeColumn.setEditingSupport(new ComboBoxCellEditorExample(mainGrid, dataTypeLookup));
+		dataTypeColumn.setEditingSupport(new ComboBoxCellViewerEditorExample(mainGrid, dataTypeLookup));
 		
 		mainGrid.addSelectionChangedListener(new ISelectionChangedListener() {
 			
