@@ -1,0 +1,66 @@
+/* main shell of the application, has regions for all the composites to use */
+package com.glensoft.ui.view;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+public class MainShell extends Composite {
+	
+	Composite topRegion;
+	Composite mainRegion;
+	Composite leftRegion;
+	Composite editRegion;
+
+	public MainShell(Composite parent, int style) {
+		super(parent, style);
+		setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		SashForm sashTop = new SashForm(this, SWT.BORDER | SWT.VERTICAL);
+		
+		topRegion = new Composite(sashTop, SWT.NONE);
+		topRegion.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		topRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		mainRegion = new Composite(sashTop, SWT.NONE);
+		mainRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		SashForm sashMain = new SashForm(mainRegion, SWT.BORDER);
+		
+		leftRegion = new Composite(sashMain, SWT.BORDER);
+		leftRegion.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_CYAN));
+		leftRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		editRegion = new Composite(sashMain, SWT.BORDER);
+		editRegion.setBackground(SWTResourceManager.getColor(SWT.COLOR_CYAN));
+		editRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
+		sashMain.setWeights(new int[] {126, 317});
+		sashTop.setWeights(new int[] {31, 264});
+
+	}
+	
+	public void createContents()
+	{
+		
+	}
+	
+	public Composite getLeftRegion()
+	{
+		return this.leftRegion; 
+	}
+	
+	public Composite getEditRegion()
+	{
+		return this.editRegion;
+	}
+	
+	public void clearEditRegion()
+	{
+		for (Control control : this.getEditRegion().getChildren()) {
+	        control.dispose();
+	    }		
+	}
+}
