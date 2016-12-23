@@ -40,7 +40,10 @@ public class ComboBoxCellEditorExample extends EditingSupport{
 	
 	@Override
 	protected CellEditor getCellEditor(Object element) {
-		ComboBoxCellEditor editor = new ComboBoxCellEditor(this.viewer.getTable(), new String[]{"string", "bool"}, SWT.READ_ONLY);
+		String[] dataTypes = new String[2];
+		dataTypes[0] = "String";
+		dataTypes[1] = "Boolean";
+		ComboBoxCellEditor editor = new ComboBoxCellEditor(this.viewer.getTable(), dataTypes, SWT.READ_ONLY);
 		return editor;
 		/*
 		ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(viewer.getTable(), SWT.BORDER);
@@ -55,7 +58,11 @@ public class ComboBoxCellEditorExample extends EditingSupport{
 	@Override
 	protected Object getValue(Object element) {
 		Attribute attribute = (Attribute)element;
-		return attribute.getDataType();
+		if("string".equalsIgnoreCase(attribute.getDataType()))
+		{
+			return 0;
+		}
+		return 1;
 		/*
 
 		String dataType = attribute.getDataType();
@@ -81,8 +88,15 @@ public class ComboBoxCellEditorExample extends EditingSupport{
 			return;
 		}
 		Attribute attribute = (Attribute)element;
-		System.out.println("Value = " + value.toString());
-		attribute.setDataType("string");
+		if((Integer)value == 0)
+		{
+			attribute.setDataType("string");
+		}
+		else
+		{
+			attribute.setDataType("bool");
+		}
+		viewer.update(element, null);
 		//this.viewer.refresh();
 		/*
 		ListDetail listDetail = (ListDetail)value;
