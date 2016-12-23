@@ -27,13 +27,6 @@ import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.util.Log;
-import com.glensoft.data.abstractions.IPersistenceManager;
-import com.glensoft.data.entity.Attribute;
-import com.glensoft.data.entity.Entity;
-import com.glensoft.data.mapping.AttributeMapper;
-import com.glensoft.data.persistence.CouchbaseManager;
-import com.glensoft.data.persistence.CustomContext;
-import com.glensoft.data.persistence.EntityRepository;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,9 +36,18 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.FillLayout;
-import com.glensoft.ui.view.MainShell;
-import com.glensoft.ui.view.ModelView;
-import com.glensoft.ui.view.NavView;
+
+import com.glenwood.kernai.data.abstractions.IPersistenceManager;
+import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.mapping.AttributeMapper;
+import com.glenwood.kernai.data.persistence.CouchbaseManager;
+import com.glenwood.kernai.data.persistence.CustomContext;
+import com.glenwood.kernai.data.persistence.EntityRepository;
+import com.glenwood.kernai.ui.view.MainShell;
+import com.glenwood.kernai.ui.view.ModelView;
+import com.glenwood.kernai.ui.view.NavView;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;

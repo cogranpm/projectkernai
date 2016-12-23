@@ -15,10 +15,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.glensoft.data.abstractions.IPersistenceManager;
-import com.glensoft.data.persistence.CouchbaseManager;
-import com.glensoft.ui.view.MainShell;
-import com.glensoft.ui.view.NavView;
+import com.glenwood.kernai.data.abstractions.IPersistenceManager;
+import com.glenwood.kernai.data.persistence.CouchbaseManager;
+import com.glenwood.kernai.ui.view.MainShell;
+import com.glenwood.kernai.ui.view.NavView;
 
 public class MainWindowBackup extends ApplicationWindow {
 	private DataBindingContext m_bindingContext;
