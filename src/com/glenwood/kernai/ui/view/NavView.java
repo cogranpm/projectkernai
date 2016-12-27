@@ -1,28 +1,24 @@
 package com.glenwood.kernai.ui.view;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Tree;
 
-import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.presenter.NavViewPresenter;
-
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 
 public class NavView extends Composite implements INavView{
 	
 	NavViewPresenter presenter;
 	List lstTest;
+	Tree menuTree;
+	TreeViewer menuTreeViewer;
 	
 	public NavView(Composite parent, int style) {
 		super(parent, style);
@@ -61,6 +57,13 @@ public class NavView extends Composite implements INavView{
 			}
 		});
 		lstTest.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		
+		menuTree = new Tree(parent, SWT.BORDER);
+		menuTree.setHeaderVisible(false);
+		menuTreeViewer = new TreeViewer(menuTree);
+		
+		
 		presenter.loadProjects();
 	}
 	

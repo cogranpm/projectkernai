@@ -1,60 +1,24 @@
 package com.glenwood.kernai.ui;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.Document;
-import com.couchbase.lite.JavaContext;
-import com.couchbase.lite.Manager;
-import com.couchbase.lite.Query;
-import com.couchbase.lite.QueryEnumerator;
-import com.couchbase.lite.QueryRow;
-import com.couchbase.lite.util.Log;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.FillLayout;
-
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
-import com.glenwood.kernai.data.entity.Attribute;
-import com.glenwood.kernai.data.entity.Entity;
-import com.glenwood.kernai.data.mapping.AttributeMapper;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
-import com.glenwood.kernai.data.persistence.CustomContext;
-import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.ui.view.MainShell;
-import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.view.NavView;
-
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.core.databinding.beans.PojoProperties;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
@@ -63,13 +27,17 @@ public class MainWindow extends ApplicationWindow {
 	Composite container;
 	
 	public final static IPersistenceManager persistenceManager = new CouchbaseManager();
+	public final static String IMAGES_PATH = "resources/images/";
 	public static MainShell mainShell = null;
+	private Image[] cachedIcons;
+	private Image[] applicationImages;
 
 	/**
 	 * Create the application window.
 	 */
 	public MainWindow() {
 		super(null);
+		
 		persistenceManager.init("aquabuild");
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -178,7 +146,17 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Glensoft");
+		newShell.setText("Kernai");
+		loadApplicationImages(newShell);
+		newShell.setImages(applicationImages);
+		
+	}
+	
+	private void loadApplicationImages(Shell shell)
+	{
+		final Image small = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Activity_16xSM.png"));
+		final Image large = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Activity_32x.png"));
+		applicationImages= new Image[] { small, large };
 	}
 
 	/**
@@ -193,6 +171,10 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public boolean close() {
 		persistenceManager.close();
+		for (Image image : this.applicationImages)
+		{
+			image.dispose();
+		}
 		return super.close();
 	}
 	
