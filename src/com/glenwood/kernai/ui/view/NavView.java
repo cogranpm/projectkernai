@@ -68,7 +68,7 @@ public class NavView extends Composite implements INavView{
 		menuTreeViewer.setContentProvider(new NavigationMenuContentProvider());
 		menuTreeViewer.setLabelProvider(new NavigationMenuLabelProvider());
 
-		lstTest.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		menuTreeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		
 		presenter.loadProjects();
@@ -80,9 +80,9 @@ public class NavView extends Composite implements INavView{
 
 	}
 	
-	public void renderMenus(java.util.List<NavigationMenu> menus)
+	public void renderMenus(NavigationMenu menu)
 	{
-		menuTreeViewer.setInput(menus.get(0));		
+		menuTreeViewer.setInput(menu);
 	}
 	
 	public void renderProjects(java.util.List<String> results)

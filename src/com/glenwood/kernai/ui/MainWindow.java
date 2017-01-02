@@ -1,9 +1,9 @@
 package com.glenwood.kernai.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -18,8 +18,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.glenwood.kernai.data.abstractions.IPersistenceManager;
-import com.glenwood.kernai.data.persistence.CouchbaseManager;
+import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.persistence.BaseRepository;
+import com.glenwood.kernai.data.persistence.EntityRepository;
+import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
+import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.view.MainShell;
 import com.glenwood.kernai.ui.view.NavView;
 
@@ -29,8 +33,8 @@ public class MainWindow extends ApplicationWindow {
 	
 	Composite container;
 	
-//	public final static IPersistenceManager persistenceManager = new CouchbaseManager();
-	public final static String IMAGES_PATH = "resources/images/";
+
+
 	public static MainShell mainShell = null;
 	private Image[] applicationImages;
 
@@ -85,6 +89,29 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	private void createActions() {
 		// Create the actions
+		 IAction testAction = new Action() {
+		        @Override
+		        public void run() {
+		        	EntityRepository entityRepository;
+		        	BaseRepository attributeRespository;
+		        	entityRepository = new EntityRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
+		    		attributeRespository = new BaseRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
+		        	Entity customersEntity = new Entity();
+		    		customersEntity.setName("customers");
+		    		Attribute companyName = new Attribute();
+		    		companyName.setName("CompanyName");
+		    		companyName.setLength(40L);
+		    		companyName.setAllowNull(false);
+		    		companyName.setDataType("String");
+		    		companyName.setEntity(customersEntity);
+		    		entityRepository.save(customersEntity);
+		    		attributeRespository.save(companyName);
+		        }
+		    };
+		    testAction.setText("Test");
+		    testAction.setToolTipText("Run a test.");
+		    testAction.setEnabled(true);	
+		    ApplicationData.instance().addAction("Test", testAction);
 	}
 
 	/**
@@ -104,6 +131,15 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected ToolBarManager createToolBarManager(int style) {
 		ToolBarManager toolBarManager = new ToolBarManager(style);
+		
+		ApplicationData.instance().getActionsMap().forEach((key, value) -> {
+			ActionContributionItem item = new ActionContributionItem(value);
+			item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+			toolBarManager.add(item);
+		
+		});
+		
+		toolBarManager.update(true);
 		return toolBarManager;
 	}
 
@@ -154,15 +190,17 @@ public class MainWindow extends ApplicationWindow {
 	
 	private void loadApplicationImages(Shell shell)
 	{
-		final Image small = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Activity_16xSM.png"));
-		final Image large = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Activity_32x.png"));
+		final Image small = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_16xSM.png"));
+		final Image large = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_32x.png"));
 		applicationImages= new Image[] { small, large };
 	}
 
 	private void loadCachedIcons(Shell shell)
 	{
-		final Image diagram = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Diagram_16x.png"));
-		ApplicationData.smallIcons.put(ApplicationData.IMAGE_DIAGRAM, diagram);
+		Image image = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Diagram_16x.png"));
+		ApplicationData.smallIcons.put(ApplicationData.IMAGE_DIAGRAM, image);
+		image = new Image(shell.getDisplay(), String.format("%s%s",  ApplicationData.IMAGES_PATH, "MasterPage_16x.png"));
+		ApplicationData.smallIcons.put(ApplicationData.IMAGE_MASTERPAGE, image);
 	}
 	
 	/**

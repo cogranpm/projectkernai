@@ -7,6 +7,6 @@ import com.glenwood.kernai.ui.viewmodel.NavigationMenu;
 public interface INavView {
 	
 	public void renderProjects(List<String> results);
-	public void renderMenus(List<NavigationMenu> menus);
+	public void renderMenus(NavigationMenu menu);
 
 }

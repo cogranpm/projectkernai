@@ -12,9 +12,9 @@ public class NavigationMenuLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		NavigationMenuItem item = (NavigationMenuItem)element;
-		if (item != null)
+		if (item != null && item.getImageKey() != null)
 		{
-			return ApplicationData.smallIcons.get(ApplicationData.IMAGE_DIAGRAM);
+			return ApplicationData.smallIcons.get(item.getImageKey());
 		}
 		return super.getImage(element);
 	}

@@ -9,6 +9,7 @@ import com.glenwood.kernai.data.persistence.BaseRepository;
 import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.abstraction.INavigator;
@@ -24,26 +25,41 @@ public class NavViewPresenter {
 	private NavViewModel model;
 	private EntityRepository entityRepository;
 	private BaseRepository attributeRespository;
-	private List<NavigationMenu> menus;
+	private NavigationMenu leftMenu;
 	
 	public NavViewPresenter(INavView view )
 	{
 		navigator = new Navigator();
 		this.model = new NavViewModel();
 		this.view = view;
-		this.entityRepository = new EntityRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
-		this.attributeRespository = new BaseRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
-		this.menus = new ArrayList<NavigationMenu>();
+		this.entityRepository = new EntityRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
+		this.attributeRespository = new BaseRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
 	public void loadMenus()
 	{
-		NavigationMenu menu = new NavigationMenu("Projects");
-		NavigationMenuItem test = new NavigationMenuItem();
-		test.setLabel("Testing");
-		menu.getRoot().getChildren().add(test);
-		this.menus.add(menu);
-		this.view.renderMenus(menus);
+		leftMenu = new NavigationMenu("Left Menu");
+		NavigationMenuItem item = this.addRootMenuItem("Projects", ApplicationData.IMAGE_DIAGRAM);
+		NavigationMenuItem childItem = new NavigationMenuItem("One", ApplicationData.IMAGE_MASTERPAGE, item);
+
+		item = this.addRootMenuItem("Lists", ApplicationData.IMAGE_MASTERPAGE);
+		item = this.addRootMenuItem("Master Properties", ApplicationData.IMAGE_DIAGRAM);
+		childItem = new NavigationMenuItem("Property", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Group", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Category", ApplicationData.IMAGE_MASTERPAGE, item);
+		item = this.addRootMenuItem("Scripting", ApplicationData.IMAGE_DIAGRAM);
+		item = this.addRootMenuItem("Imports", ApplicationData.IMAGE_MASTERPAGE);
+		childItem = new NavigationMenuItem("Template", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Script", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Controller", ApplicationData.IMAGE_MASTERPAGE, item);
+		this.view.renderMenus(this.leftMenu);
+	}
+	
+	private NavigationMenuItem addRootMenuItem(String label, String imageKey)
+	{
+		NavigationMenuItem item = new NavigationMenuItem(label, imageKey);
+		this.leftMenu.getRoot().getChildren().add(item);
+		return item;
 	}
 	
 	public void loadProjects()
