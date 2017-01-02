@@ -14,14 +14,17 @@ import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.abstraction.INavigator;
 import com.glenwood.kernai.ui.navigation.Navigator;
 import com.glenwood.kernai.ui.viewmodel.NavViewModel;
+import com.glenwood.kernai.ui.viewmodel.NavigationMenu;
+import com.glenwood.kernai.ui.viewmodel.NavigationMenuItem;
 
 public class NavViewPresenter {
 	
-	INavigator navigator;
-	INavView view;
-	NavViewModel model;
-	EntityRepository entityRepository;
-	BaseRepository attributeRespository;
+	private INavigator navigator;
+	private INavView view;
+	private NavViewModel model;
+	private EntityRepository entityRepository;
+	private BaseRepository attributeRespository;
+	private List<NavigationMenu> menus;
 	
 	public NavViewPresenter(INavView view )
 	{
@@ -30,6 +33,17 @@ public class NavViewPresenter {
 		this.view = view;
 		this.entityRepository = new EntityRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
 		this.attributeRespository = new BaseRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
+		this.menus = new ArrayList<NavigationMenu>();
+	}
+	
+	public void loadMenus()
+	{
+		NavigationMenu menu = new NavigationMenu("Projects");
+		NavigationMenuItem test = new NavigationMenuItem();
+		test.setLabel("Testing");
+		menu.getRoot().getChildren().add(test);
+		this.menus.add(menu);
+		this.view.renderMenus(menus);
 	}
 	
 	public void loadProjects()

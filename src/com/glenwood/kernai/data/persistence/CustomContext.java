@@ -6,14 +6,16 @@ package com.glenwood.kernai.data.persistence;
 import java.io.File;
 
 import com.couchbase.lite.JavaContext;
+import com.glenwood.kernai.ui.ApplicationData;
 
 public class CustomContext extends JavaContext  {
 	
-	private final String COMPANYNAME = "glenwood";
-	
+		
 	@Override
 	public File getFilesDir() {
-		return new File(System.getProperty("user.home") + System.getProperty("file.separator") + COMPANYNAME);
+		String homedir =System.getProperty("user.home") + System.getProperty("file.separator") + ApplicationData.COMPANY_NAME; 
+		//System.out.println(homedir);
+		return new File(homedir);
 	}
 
 }

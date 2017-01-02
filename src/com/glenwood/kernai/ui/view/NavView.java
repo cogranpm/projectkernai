@@ -12,6 +12,9 @@ import org.eclipse.swt.widgets.Tree;
 
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.presenter.NavViewPresenter;
+import com.glenwood.kernai.ui.view.navigation.NavigationMenuContentProvider;
+import com.glenwood.kernai.ui.view.navigation.NavigationMenuLabelProvider;
+import com.glenwood.kernai.ui.viewmodel.NavigationMenu;
 
 public class NavView extends Composite implements INavView{
 	
@@ -59,17 +62,27 @@ public class NavView extends Composite implements INavView{
 		lstTest.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		
-		menuTree = new Tree(parent, SWT.BORDER);
-		menuTree.setHeaderVisible(false);
-		menuTreeViewer = new TreeViewer(menuTree);
+		//menuTree = new Tree(parent, SWT.BORDER);
+		//menuTree.setHeaderVisible(false);
+		menuTreeViewer = new TreeViewer(this, SWT.H_SCROLL | SWT.V_SCROLL);
+		menuTreeViewer.setContentProvider(new NavigationMenuContentProvider());
+		menuTreeViewer.setLabelProvider(new NavigationMenuLabelProvider());
+
+		lstTest.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		
 		presenter.loadProjects();
+		presenter.loadMenus();
 	}
 	
 	public void createContents()
 	{
 
+	}
+	
+	public void renderMenus(java.util.List<NavigationMenu> menus)
+	{
+		menuTreeViewer.setInput(menus.get(0));		
 	}
 	
 	public void renderProjects(java.util.List<String> results)

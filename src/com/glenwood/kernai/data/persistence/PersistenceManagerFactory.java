@@ -1,6 +1,7 @@
 package com.glenwood.kernai.data.persistence;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.MainWindow;
 
 public class PersistenceManagerFactory {
@@ -9,7 +10,7 @@ public class PersistenceManagerFactory {
 	{
 		if ("couchbase".equalsIgnoreCase(type))
 		{
-			return MainWindow.persistenceManager;
+			return ApplicationData.instance().getPersistenceManager();
 		}
 		else
 		{

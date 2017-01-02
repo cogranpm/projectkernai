@@ -1,5 +1,8 @@
 package com.glenwood.kernai.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
@@ -26,10 +29,9 @@ public class MainWindow extends ApplicationWindow {
 	
 	Composite container;
 	
-	public final static IPersistenceManager persistenceManager = new CouchbaseManager();
+//	public final static IPersistenceManager persistenceManager = new CouchbaseManager();
 	public final static String IMAGES_PATH = "resources/images/";
 	public static MainShell mainShell = null;
-	private Image[] cachedIcons;
 	private Image[] applicationImages;
 
 	/**
@@ -37,8 +39,6 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	public MainWindow() {
 		super(null);
-		
-		persistenceManager.init("aquabuild");
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
@@ -149,7 +149,7 @@ public class MainWindow extends ApplicationWindow {
 		newShell.setText("Kernai");
 		loadApplicationImages(newShell);
 		newShell.setImages(applicationImages);
-		
+		loadCachedIcons(newShell);
 	}
 	
 	private void loadApplicationImages(Shell shell)
@@ -159,6 +159,12 @@ public class MainWindow extends ApplicationWindow {
 		applicationImages= new Image[] { small, large };
 	}
 
+	private void loadCachedIcons(Shell shell)
+	{
+		final Image diagram = new Image(shell.getDisplay(), String.format("%s%s", IMAGES_PATH, "Diagram_16x.png"));
+		ApplicationData.smallIcons.put(ApplicationData.IMAGE_DIAGRAM, diagram);
+	}
+	
 	/**
 	 * Return the initial size of the window.
 	 */
@@ -170,11 +176,12 @@ public class MainWindow extends ApplicationWindow {
 
 	@Override
 	public boolean close() {
-		persistenceManager.close();
+		ApplicationData.instance().getPersistenceManager().close();
 		for (Image image : this.applicationImages)
 		{
 			image.dispose();
 		}
+		ApplicationData.smallIcons.forEach((key, value) -> value.dispose());
 		return super.close();
 	}
 	
