@@ -2,23 +2,26 @@ package com.glenwood.kernai.ui.view;
 
 
 
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-//import org.eclipse.jface.bindings.Binding;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -48,6 +51,8 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	private TableViewer listViewer;
 	private Table listTable;
 	//private Binding editBinding;
+	private WritableList input;
+	private WritableValue value;
 	
 	public MasterCategoryView(Composite parent, int style) {
 		super(parent, style);
@@ -55,6 +60,8 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		presenter = new MasterCategoryViewPresenter(this, model);
 		/* data binding */
 		ctx = new DataBindingContext();
+		value = new WritableValue();
+		
 		this.setLayout(new FillLayout());
 		
 		/* firstly a list and then an edit view */
@@ -121,6 +128,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 					{
 						System.out.println(category.getId() + ": " + category.getName());
 					}
+					value.setValue(model.getCurrentItem());
 					//editBinding.updateTargetToModel();
 
 				}				
@@ -139,6 +147,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		
 		/* load the data */
 		presenter.loadModels();
+		initDataBindings();
 		//bindValues();
 
 	}
@@ -168,6 +177,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	@Override
 	public void add() {
 		this.presenter.addModel();
+		value.setValue(this.model.getCurrentItem());
 		//bindValues();
 	}
 
@@ -179,12 +189,46 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	
 	public void refreshList()
 	{
-		this.listViewer.setInput(model.getItems());
+		//this.listViewer.setInput(model.getItems());
 		
 	}
 	
 	public void updateList()
 	{
-		this.listViewer.refresh();
+		//this.listViewer.refresh();
+	}
+	
+	protected void initDataBindings() {
+		
+		/* works 
+		input = new WritableList(model.getItems(), MasterCategory.class);
+        ViewerSupport.bind(listViewer, input, BeanProperties.values(new String[] { "name" }));
+		*/
+		
+        ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+        listViewer.setContentProvider(contentProvider);
+
+        // create the label provider including monitoring
+        // of label changes
+        IObservableSet knownElements = contentProvider.getKnownElements();
+        final IObservableMap name = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
+        IObservableMap[] labelMaps = {name};
+        ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
+                public String getText(Object element) {
+                        return name.get(element) + "";
+                }
+        };
+
+        listViewer.setLabelProvider(labelProvider);
+
+        // create sample data
+        input = new WritableList(model.getItems(), MasterCategory.class);
+        // set the writeableList as input for the viewer
+        listViewer.setInput(input);
+        
+        IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
+        IObservableValue dbmodel = BeanProperties.value("name").observeDetail(value);
+        ctx.bindValue(target, dbmodel);
+        
 	}
 }
