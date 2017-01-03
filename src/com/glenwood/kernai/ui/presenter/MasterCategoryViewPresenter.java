@@ -22,20 +22,21 @@ public class MasterCategoryViewPresenter {
 	}
 
 	
+	
 	public void loadModels()
 	{
 		this.model.setItems(this.repository.getAll(MasterCategory.TYPE_NAME, MasterCategory.class));
-		for(MasterCategory cat : this.model.getItems())
+		if (this.model.getItems() != null && this.model.getItems().size() > 0)
 		{
-			System.out.println(cat.getName());
+			this.model.setCurrentItem(this.model.getItems().get(0));
 		}
+		this.view.refreshList();
 	}
 	
 	public void addModel()
 	{
 		model.setCurrentItem(new MasterCategory());
-		/* testing */
-		model.getCurrentItem().setName("Entity");
+		this.view.updateList();
 	}
 	
 	public void saveModel()
@@ -46,5 +47,6 @@ public class MasterCategoryViewPresenter {
 	public void deleteModel()
 	{
 		this.repository.delete(model.getCurrentItem());
+		this.view.updateList();
 	}
 }

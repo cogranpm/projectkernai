@@ -1,11 +1,12 @@
 package com.glenwood.kernai.data.abstractions;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BaseEntity {
+public class BaseEntity  {
 	
 	@JsonProperty(value = "_id")
 	protected String id;
@@ -17,7 +18,9 @@ public class BaseEntity {
 		return id;
 	}
 	public void setId(String id) {
+		String oldId = this.id;
 		this.id = id;
+		firePropertyChange("id", oldId, this.id);
 	}
 	
 	public String getType() {
@@ -28,19 +31,29 @@ public class BaseEntity {
 	
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 	
-	protected void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+	
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
 	{
 		changeSupport.addPropertyChangeListener(listener);
 	}
 	
-	protected void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
 	{
 		changeSupport.removePropertyChangeListener(listener);
 	}
 	
-	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue)
+	public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
 	{
 		changeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
+	
+	
 	
 }
