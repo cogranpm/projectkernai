@@ -30,13 +30,13 @@ public class MasterCategoryViewPresenter {
 		{
 			this.model.setCurrentItem(this.model.getItems().get(0));
 		}
-		this.view.refreshList();
+		//this.view.refreshList();
 	}
 	
 	public void addModel()
 	{
 		model.setCurrentItem(new MasterCategory());
-		this.view.updateList();
+		//this.view.updateList();
 	}
 	
 	public void saveModel()

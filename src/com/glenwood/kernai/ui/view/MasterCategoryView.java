@@ -170,7 +170,9 @@ public class MasterCategoryView extends Composite implements IEntityView {
 
 	@Override
 	public void delete() {
+		input.remove(model.getCurrentItem());
 		this.presenter.deleteModel();
+		
 		
 	}
 
@@ -178,6 +180,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	public void add() {
 		this.presenter.addModel();
 		value.setValue(this.model.getCurrentItem());
+		input.add(this.model.getCurrentItem());
 		//bindValues();
 	}
 
