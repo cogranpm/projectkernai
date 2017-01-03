@@ -3,10 +3,13 @@ package com.glenwood.kernai.ui.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.glenwood.kernai.ui.abstraction.INavigationMenuAction;
+
 public class NavigationMenuItem {
 	
 	private String label;
 	private String imageKey;
+	private INavigationMenuAction menuAction;
 	private NavigationMenuItem parent;
 	private List<NavigationMenuItem> children;
 	
@@ -41,26 +44,41 @@ public class NavigationMenuItem {
 		this.children = children;
 	}
 	
+	
+	
+	public INavigationMenuAction getMenuAction() {
+		return menuAction;
+	}
+	public void setMenuAction(INavigationMenuAction menuAction) {
+		this.menuAction = menuAction;
+	}
+	
 	public NavigationMenuItem()
 	{
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 	
 	public NavigationMenuItem(String label)
 	{
-		this(label, null, null);
+		this(label, null, null, null);
 	}
 	
 	public NavigationMenuItem(String label, String imageKey)
 	{
-		this(label, imageKey, null);
+		this(label, imageKey, null, null);
 	}
 	
-	public NavigationMenuItem(String label, String imageKey, NavigationMenuItem parent)
+	public NavigationMenuItem(String label, String imageKey, INavigationMenuAction menuAction)
+	{
+		this(label, imageKey, menuAction, null);
+	}
+	
+	public NavigationMenuItem(String label, String imageKey, INavigationMenuAction menuAction, NavigationMenuItem parent)
 	{
 		this.parent = parent;
 		this.label = label;
 		this.imageKey = imageKey;
+		this.menuAction = menuAction;
 		if (parent != null)
 		{
 			parent.getChildren().add(this);

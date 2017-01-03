@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
+import com.glenwood.kernai.ui.abstraction.IEntityView;
 
 public class ApplicationData {
 	
@@ -43,6 +44,16 @@ public class ApplicationData {
 		this.persistenceType = value;
 	}
 	
+	private IEntityView currentEntityView;
+	
+	
+	public IEntityView getCurrentEntityView() {
+		return currentEntityView;
+	}
+	public void setCurrentEntityView(IEntityView currentEntityView) {
+		this.currentEntityView = currentEntityView;
+	}
+
 	private static ApplicationData instance_;
 	public static final String COMPANY_NAME = "Glenwood";
 	public static final String APPLICATION_NAME = "Kernai";
@@ -58,6 +69,7 @@ public class ApplicationData {
 		this.persistenceType = PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE;
 		persistenceManager  = new CouchbaseManager();
 		persistenceManager.init(APPLICATION_NAME);
+		this.currentEntityView = null;
 	}
 	
 	public static ApplicationData instance()

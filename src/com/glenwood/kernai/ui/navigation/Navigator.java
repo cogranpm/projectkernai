@@ -1,6 +1,5 @@
-/* this class needs to hold the current view and presenter
- * so that calls from the generic save and delete can be forwarded
- * therefore presenters need to implement standard interface and so do views
+/* 
+ * redundant class, switch to classes implementing INavigationMenuAction
  */
 
 package com.glenwood.kernai.ui.navigation;
@@ -10,6 +9,7 @@ import org.eclipse.swt.SWT;
 import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavigator;
 import com.glenwood.kernai.ui.view.AttributeView;
+import com.glenwood.kernai.ui.view.MasterCategoryView;
 
 public class Navigator implements INavigator {
 	
@@ -27,6 +27,7 @@ public class Navigator implements INavigator {
 		*/
 		MainWindow.mainShell.getEditRegion().layout();
 	}
+
 
 
 }

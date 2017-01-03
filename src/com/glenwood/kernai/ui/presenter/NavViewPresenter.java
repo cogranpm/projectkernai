@@ -13,6 +13,7 @@ import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.abstraction.INavigator;
+import com.glenwood.kernai.ui.navigation.MasterCategoryNavigationAction;
 import com.glenwood.kernai.ui.navigation.Navigator;
 import com.glenwood.kernai.ui.viewmodel.NavViewModel;
 import com.glenwood.kernai.ui.viewmodel.NavigationMenu;
@@ -40,19 +41,31 @@ public class NavViewPresenter {
 	{
 		leftMenu = new NavigationMenu("Left Menu");
 		NavigationMenuItem item = this.addRootMenuItem("Projects", ApplicationData.IMAGE_DIAGRAM);
-		NavigationMenuItem childItem = new NavigationMenuItem("One", ApplicationData.IMAGE_MASTERPAGE, item);
-
+		NavigationMenuItem childItem;
+		//NavigationMenuItem childItem = new NavigationMenuItem("One", ApplicationData.IMAGE_MASTERPAGE, item);
+		
+		
 		item = this.addRootMenuItem("Lists", ApplicationData.IMAGE_MASTERPAGE);
 		item = this.addRootMenuItem("Master Properties", ApplicationData.IMAGE_DIAGRAM);
-		childItem = new NavigationMenuItem("Property", ApplicationData.IMAGE_MASTERPAGE, item);
-		childItem = new NavigationMenuItem("Group", ApplicationData.IMAGE_MASTERPAGE, item);
-		childItem = new NavigationMenuItem("Category", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Property", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(),  item);
+		childItem = new NavigationMenuItem("Type", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
+		childItem = new NavigationMenuItem("Category", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
+		childItem = new NavigationMenuItem("Group", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
+		
 		item = this.addRootMenuItem("Scripting", ApplicationData.IMAGE_DIAGRAM);
 		item = this.addRootMenuItem("Imports", ApplicationData.IMAGE_MASTERPAGE);
-		childItem = new NavigationMenuItem("Template", ApplicationData.IMAGE_MASTERPAGE, item);
-		childItem = new NavigationMenuItem("Script", ApplicationData.IMAGE_MASTERPAGE, item);
-		childItem = new NavigationMenuItem("Controller", ApplicationData.IMAGE_MASTERPAGE, item);
+		childItem = new NavigationMenuItem("Template", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
+		childItem = new NavigationMenuItem("Script", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
+		childItem = new NavigationMenuItem("Controller", ApplicationData.IMAGE_MASTERPAGE, new MasterCategoryNavigationAction(), item);
 		this.view.renderMenus(this.leftMenu);
+	}
+	
+	public void onMenuSelected(NavigationMenuItem item)
+	{
+		if(item.getMenuAction() != null)
+		{
+			item.getMenuAction().go();
+		}
 	}
 	
 	private NavigationMenuItem addRootMenuItem(String label, String imageKey)

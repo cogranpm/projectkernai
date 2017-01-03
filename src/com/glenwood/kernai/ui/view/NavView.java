@@ -1,5 +1,8 @@
 package com.glenwood.kernai.ui.view;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,13 +18,15 @@ import com.glenwood.kernai.ui.presenter.NavViewPresenter;
 import com.glenwood.kernai.ui.view.navigation.NavigationMenuContentProvider;
 import com.glenwood.kernai.ui.view.navigation.NavigationMenuLabelProvider;
 import com.glenwood.kernai.ui.viewmodel.NavigationMenu;
+import com.glenwood.kernai.ui.viewmodel.NavigationMenuItem;
 
 public class NavView extends Composite implements INavView{
 	
-	NavViewPresenter presenter;
-	List lstTest;
-	Tree menuTree;
-	TreeViewer menuTreeViewer;
+	private NavViewPresenter presenter;
+	private TreeViewer menuTreeViewer;
+	
+	
+	private List lstTest;
 	
 	public NavView(Composite parent, int style) {
 		super(parent, style);
@@ -67,10 +72,22 @@ public class NavView extends Composite implements INavView{
 		menuTreeViewer = new TreeViewer(this, SWT.H_SCROLL | SWT.V_SCROLL);
 		menuTreeViewer.setContentProvider(new NavigationMenuContentProvider());
 		menuTreeViewer.setLabelProvider(new NavigationMenuLabelProvider());
-
+		menuTreeViewer.addSelectionChangedListener(new ISelectionChangedListener(){
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+				if(event.getSelection().isEmpty())
+				{
+					return;
+				}
+				if(event.getSelection() instanceof IStructuredSelection)
+				{
+					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+					NavigationMenuItem item = (NavigationMenuItem)selection.getFirstElement();
+					presenter.onMenuSelected(item);
+				}
+			}
+		});
 		menuTreeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		
-		
 		presenter.loadProjects();
 		presenter.loadMenus();
 	}

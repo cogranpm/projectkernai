@@ -24,6 +24,7 @@ import com.glenwood.kernai.data.persistence.BaseRepository;
 import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
+import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.MainShell;
 import com.glenwood.kernai.ui.view.NavView;
 
@@ -112,6 +113,51 @@ public class MainWindow extends ApplicationWindow {
 		    testAction.setToolTipText("Run a test.");
 		    testAction.setEnabled(true);	
 		    ApplicationData.instance().addAction("Test", testAction);
+		    
+		 IAction saveAction = new Action() {
+			@Override 
+			public void run() {
+				/* get the active view and call save */
+				IEntityView currentEntityView = ApplicationData.instance().getCurrentEntityView();
+				if(currentEntityView != null)
+				{
+					currentEntityView.save();
+				}				
+			}
+		 };
+		 saveAction.setText("Save");
+		 ApplicationData.instance().addAction("Save", saveAction);
+
+		 IAction deleteAction = new Action() {
+			@Override 
+			public void run() {
+				/* get the active view and call delete */
+				IEntityView currentEntityView = ApplicationData.instance().getCurrentEntityView();
+				if(currentEntityView != null)
+				{
+					currentEntityView.delete();
+				}				
+			}
+		 };
+		 deleteAction.setText("Delete");
+		 ApplicationData.instance().addAction("Delete", deleteAction);
+
+		 IAction newAction = new Action() {
+			@Override 
+			public void run() {
+				/* get the active view and call new */
+				IEntityView currentEntityView = ApplicationData.instance().getCurrentEntityView();
+				if(currentEntityView != null)
+				{
+					currentEntityView.add();
+				}
+			}
+		 };
+		 newAction.setText("New");
+		 newAction.setEnabled(true);
+		 ApplicationData.instance().addAction("New", newAction);
+
+		 
 	}
 
 	/**

@@ -24,6 +24,7 @@ import com.couchbase.lite.View;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.data.mapping.EntityMapper;
 
 public class CouchbaseManager implements IPersistenceManager {
@@ -196,6 +197,18 @@ public class CouchbaseManager implements IPersistenceManager {
 		}
 		, "3");
 	
+		
+		View masterCategoryView = this.database.getView(MasterCategory.TYPE_NAME);
+		masterCategoryView.setMap(new Mapper() {
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if (document.containsKey("type") && MasterCategory.TYPE_NAME.equals(document.get("type")))
+				{
+					emitter.emit(document.get("_id"), document);
+				}	
+			}
+		}, "1");
 	}
 
 }
