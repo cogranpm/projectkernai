@@ -2,19 +2,25 @@ package com.glenwood.kernai.ui.view;
 
 
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -48,9 +54,10 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	/* controls */
 	private Label lblName;
 	private Text txtName;
+	private Label errorLabel;
 	private TableViewer listViewer;
 	private Table listTable;
-	//private Binding editBinding;
+	private Binding editBinding;
 	private WritableList input;
 	private WritableValue value;
 	
@@ -86,6 +93,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		/*
 		nameColumn.setLabelProvider(new ColumnLabelProvider()
 		{
 			 @Override
@@ -102,6 +110,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 				 }
 			 }
 		});
+		*/
 		
 		/*
 		CellEditor[] cellEditors = new CellEditor[1];
@@ -121,15 +130,8 @@ public class MasterCategoryView extends Composite implements IEntityView {
 				{
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					MasterCategory item = (MasterCategory)selection.getFirstElement();
-					//System.out.println(item.getId() + ": " + item.getName());
 					model.setCurrentItem(item);
-				//	bindValues();
-					for(MasterCategory category : model.getItems())
-					{
-						System.out.println(category.getId() + ": " + category.getName());
-					}
 					value.setValue(model.getCurrentItem());
-					//editBinding.updateTargetToModel();
 
 				}				
 				
@@ -145,35 +147,30 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 		
+		Label descAllLabel = new Label(editContainer, SWT.NONE);
+        descAllLabel.setText("All Validation Problems:");
+        descAllLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, true, false, 1, 1 ));
+        
+        errorLabel = new Label(editContainer, SWT.NONE);
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = SWT.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.horizontalSpan = 1;
+        gridData.verticalSpan = 1;
+        errorLabel.setLayoutData(gridData);		
+		
 		/* load the data */
 		presenter.loadModels();
+		
 		initDataBindings();
-		//bindValues();
 
 	}
 	
-	/*
-	private void bindValues()
-	{
-		if (editBinding != null)
-		{
-			ctx.removeBinding(editBinding);
-		}
-		IObservableValue<?> target = WidgetProperties.text(SWT.Modify).observe(txtName);
-		MasterCategory masterCategory = model.getCurrentItem();
-		IObservableValue<MasterCategory> modelObservable = BeanProperties.value("name", MasterCategory.class).observe(masterCategory);
-		//IObservableValue<?> entity= BeanProperties.value(MasterCategory.class,"name").observe(masterCategory);
-		editBinding = ctx.bindValue(target, modelObservable, null, null);
-		
-	}
-	*/
-
 	@Override
 	public void delete() {
 		input.remove(model.getCurrentItem());
 		this.presenter.deleteModel();
-		
-		
 	}
 
 	@Override
@@ -181,18 +178,17 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		this.presenter.addModel();
 		value.setValue(this.model.getCurrentItem());
 		input.add(this.model.getCurrentItem());
-		//bindValues();
 	}
 
 	@Override
 	public void save() {
 		this.presenter.saveModel();
-		
 	}
 	
 	public void refreshList()
 	{
 		//this.listViewer.setInput(model.getItems());
+		this.listViewer.refresh();
 		
 	}
 	
@@ -213,25 +209,42 @@ public class MasterCategoryView extends Composite implements IEntityView {
 
         // create the label provider including monitoring
         // of label changes
-        IObservableSet knownElements = contentProvider.getKnownElements();
-        final IObservableMap name = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
-        IObservableMap[] labelMaps = {name};
-        ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
+        IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
+        final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
+        IObservableMap labelMap = names;
+        ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMap) {
                 public String getText(Object element) {
-                        return name.get(element) + "";
+                        return names.get(element).toString();
                 }
         };
 
         listViewer.setLabelProvider(labelProvider);
-
-        // create sample data
         input = new WritableList(model.getItems(), MasterCategory.class);
-        // set the writeableList as input for the viewer
         listViewer.setInput(input);
         
+        /* binding for the edit screen on name field */
         IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
         IObservableValue dbmodel = BeanProperties.value("name").observeDetail(value);
-        ctx.bindValue(target, dbmodel);
+        
+        /* just the validators and decorators in the name field */
+        IValidator validator = new IValidator() {
+            @Override
+            public IStatus validate(Object value) {
+                String s = String.valueOf(value);
+                if (s.length() > 0){
+                  return ValidationStatus.ok();
+                }
+                return ValidationStatus.error("Name must be entered");
+            }
+          };
+        UpdateValueStrategy strategy = new UpdateValueStrategy();
+        strategy.setAfterConvertValidator(validator);
+        editBinding = ctx.bindValue(target, dbmodel, strategy, null);
+        ControlDecorationSupport.create(editBinding, SWT.TOP | SWT.LEFT);
+        
+        final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
+        // this one listenes to all changes
+        ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         
 	}
 }
