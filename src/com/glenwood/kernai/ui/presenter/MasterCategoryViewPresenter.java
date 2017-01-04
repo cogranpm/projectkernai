@@ -35,16 +35,18 @@ public class MasterCategoryViewPresenter {
 	
 	public void addModel()
 	{
-		model.setCurrentItem(new MasterCategory());
+		MasterCategory newMasterCategory = new MasterCategory();
+		model.setCurrentItem(newMasterCategory);
 		//model.getCurrentItem().setName("fred");
 		//this.view.updateList();
-		this.view.refreshList();
+		//this.view.refreshList();
 	}
 	
 	public void saveModel()
 	{
 		//model.getCurrentItem().setName("Falcone");
 		this.repository.save(model.getCurrentItem());
+		this.view.refreshList();
 	}
 	
 	public void deleteModel()

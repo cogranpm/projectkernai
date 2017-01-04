@@ -2,16 +2,21 @@ package com.glenwood.kernai.ui.view;
 
 
 
+import java.util.List;
+
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -20,7 +25,6 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -84,9 +88,9 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		listTable = listViewer.getTable();
 		listTable.setHeaderVisible(true);
 		listTable.setLinesVisible(true);
-		listViewer.setContentProvider(ArrayContentProvider.getInstance());
+		//listViewer.setContentProvider(ArrayContentProvider.getInstance());
+		
 		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-		nameColumn.getColumn().setWidth(200);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
 		nameColumn.getColumn().setMoveable(false);
@@ -175,6 +179,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 
 	@Override
 	public void add() {
+		this.txtName.setFocus();
 		this.presenter.addModel();
 		value.setValue(this.model.getCurrentItem());
 		input.add(this.model.getCurrentItem());
@@ -191,13 +196,9 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		this.listViewer.refresh();
 		
 	}
-	
-	public void updateList()
-	{
-		//this.listViewer.refresh();
-	}
-	
+
 	protected void initDataBindings() {
+		//ctx.dispose();
 		
 		/* works 
 		input = new WritableList(model.getItems(), MasterCategory.class);
@@ -206,20 +207,24 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		
         ObservableListContentProvider contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
-
-        // create the label provider including monitoring
-        // of label changes
         IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
+        
+        //IObservableMap[] result = Properties.observeEach(contentProvider.getKnownElements(), new IBeanValueProperty[] { propName });
+
+        
         IObservableMap labelMap = names;
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMap) {
                 public String getText(Object element) {
-                        return names.get(element).toString();
+                	return String.valueOf(names.get(element));
                 }
         };
 
         listViewer.setLabelProvider(labelProvider);
-        input = new WritableList(model.getItems(), MasterCategory.class);
+        
+        List<MasterCategory> el = model.getItems();
+        input = new WritableList(el, MasterCategory.class);
+      
         listViewer.setInput(input);
         
         /* binding for the edit screen on name field */
@@ -230,8 +235,9 @@ public class MasterCategoryView extends Composite implements IEntityView {
         IValidator validator = new IValidator() {
             @Override
             public IStatus validate(Object value) {
-                String s = String.valueOf(value);
-                if (s.length() > 0){
+                String nameValue = String.valueOf(value).replaceAll("\\s", "");
+               // String namveValue = String.valueOf(value).trim();
+                if (nameValue.length() > 0){
                   return ValidationStatus.ok();
                 }
                 return ValidationStatus.error("Name must be entered");
@@ -246,5 +252,8 @@ public class MasterCategoryView extends Composite implements IEntityView {
         // this one listenes to all changes
         ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         
+        /* listening to all changes */
+
+
 	}
 }
