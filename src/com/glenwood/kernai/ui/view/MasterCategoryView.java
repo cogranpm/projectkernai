@@ -25,6 +25,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -97,6 +98,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		
 		/*
 		nameColumn.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -115,6 +117,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 			 }
 		});
 		*/
+		
 		
 		/*
 		CellEditor[] cellEditors = new CellEditor[1];
@@ -209,19 +212,26 @@ public class MasterCategoryView extends Composite implements IEntityView {
         listViewer.setContentProvider(contentProvider);
         IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
-        
-        //IObservableMap[] result = Properties.observeEach(contentProvider.getKnownElements(), new IBeanValueProperty[] { propName });
+        //IObservableMap labelMap = names;
 
-        
-        IObservableMap labelMap = names;
-        ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMap) {
-                public String getText(Object element) {
+        ILabelProvider labelProvider = new ObservableMapLabelProvider(names) {
+                @Override
+        		public String getText(Object element) {
                 	return String.valueOf(names.get(element));
                 }
+                
+                
+                @Override
+                public String getColumnText(Object element, int columnIndex) {
+//                	return super.getColumnText(element, columnIndex);
+                	MasterCategory mc = (MasterCategory)element;
+                	return mc.getName();
+                	//return String.valueOf(names.get(element));
+                }
         };
-
         listViewer.setLabelProvider(labelProvider);
-        
+
+
         List<MasterCategory> el = model.getItems();
         input = new WritableList(el, MasterCategory.class);
       
