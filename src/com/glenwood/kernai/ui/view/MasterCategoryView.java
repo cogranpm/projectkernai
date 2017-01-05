@@ -7,6 +7,9 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -40,7 +43,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.presenter.MasterCategoryViewPresenter;
@@ -51,6 +53,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	private MasterCategoryViewModel model;
 	private MasterCategoryViewPresenter presenter;
 	private DataBindingContext ctx;
+	private IChangeListener stateListener; 
 	
 	/* controls */
 	private Label lblName;
@@ -61,9 +64,16 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	private Binding editBinding;
 	private WritableList input;
 	private WritableValue value;
+	private Boolean dirty;
+	
+	public Boolean getDirty()
+	{
+		return dirty;
+	}
 	
 	public MasterCategoryView(Composite parent, int style) {
 		super(parent, style);
+		dirty = false;
 		model = new MasterCategoryViewModel();
 		presenter = new MasterCategoryViewPresenter(this, model);
 		/* data binding */
@@ -169,7 +179,13 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	}
 
 	protected void initDataBindings() {
-		//ctx.dispose();
+		
+		 IObservableList providers = ctx.getValidationStatusProviders();
+         for (Object o : providers) {
+                 Binding b = (Binding) o;
+                 b.getTarget().removeChangeListener(stateListener);
+         }
+		ctx.dispose();
 		
 		/* works 
 		input = new WritableList(model.getItems(), MasterCategory.class);
@@ -222,7 +238,32 @@ public class MasterCategoryView extends Composite implements IEntityView {
         ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         
         /* listening to all changes */
+        stateListener = new IChangeListener() {
+            @Override
+            public void handleChange(ChangeEvent event) {
+            	System.out.println("something changed");
+            	dirty = true;
+                    // Ensure dirty is not null
+                   /* if (dirty!=null){
+                            dirty.setDirty(true);
+                    }
+                   */
+            }
+        };
+        
+     // get the validation status provides
+        IObservableList bindings = ctx.getValidationStatusProviders();
 
+        // mot all validation status providers
+        // are bindings, e.g. MultiValidator
+        // otherwise you could use
+        // context.getBindings()
+
+        // register the listener to all bindings
+        for (Object o : bindings) {
+                Binding b = (Binding) o;
+                b.getTarget().addChangeListener(stateListener);
+        }
 
 	}
 	
