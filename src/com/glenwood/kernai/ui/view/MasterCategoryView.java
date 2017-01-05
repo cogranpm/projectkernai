@@ -1,7 +1,5 @@
 package com.glenwood.kernai.ui.view;
 
-
-
 import java.util.List;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
@@ -9,14 +7,11 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -25,14 +20,16 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,12 +40,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
+import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.presenter.MasterCategoryViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.MasterCategoryViewModel;
-
-
 
 public class MasterCategoryView extends Composite implements IEntityView {
 
@@ -98,33 +94,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
-		
-		/*
-		nameColumn.setLabelProvider(new ColumnLabelProvider()
-		{
-			 @Override
-			 public String getText(Object element)
-			 {
-				 if (element != null)
-				 {
-					 MasterCategory item = (MasterCategory)element;
-					 return item.getName();
-				 }
-				 else
-				 {
-					 return null;
-				 }
-			 }
-		});
-		*/
-		
-		
-		/*
-		CellEditor[] cellEditors = new CellEditor[1];
-		cellEditors[0] = new TextCellEditor(listTable);
-		listViewer.setCellEditors(cellEditors);
-		*/
-		
+		nameColumn.setEditingSupport(new NameEditor(listViewer));
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
 			@Override
@@ -139,9 +109,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 					MasterCategory item = (MasterCategory)selection.getFirstElement();
 					model.setCurrentItem(item);
 					value.setValue(model.getCurrentItem());
-
 				}				
-				
 			}
 		});
 		
@@ -212,21 +180,12 @@ public class MasterCategoryView extends Composite implements IEntityView {
         listViewer.setContentProvider(contentProvider);
         IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
-        //IObservableMap labelMap = names;
-
-        ILabelProvider labelProvider = new ObservableMapLabelProvider(names) {
-                @Override
-        		public String getText(Object element) {
-                	return String.valueOf(names.get(element));
-                }
-                
-                
+        IObservableMap[] labelMaps = {names};
+        ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
-//                	return super.getColumnText(element, columnIndex);
                 	MasterCategory mc = (MasterCategory)element;
                 	return mc.getName();
-                	//return String.valueOf(names.get(element));
                 }
         };
         listViewer.setLabelProvider(labelProvider);
@@ -265,5 +224,40 @@ public class MasterCategoryView extends Composite implements IEntityView {
         /* listening to all changes */
 
 
+	}
+	
+	private class NameEditor extends EditingSupport {
+		
+		private final TableViewer viewer;
+		private final CellEditor editor;
+		
+		public NameEditor(TableViewer viewer)
+		{
+			super(viewer);
+			this.viewer = viewer;
+			this.editor = new TextCellEditor(viewer.getTable());
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return new TextCellEditor(viewer.getTable());
+		}
+		
+		@Override
+		protected boolean canEdit(Object element) {
+			return true;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			return ((MasterCategory)element).getName();
+
+		}
+		
+		@Override
+		protected void setValue(Object element, Object userInputValue) {
+			((MasterCategory)element).setName(String.valueOf(userInputValue));
+			viewer.update(element, null);
+		}
 	}
 }
