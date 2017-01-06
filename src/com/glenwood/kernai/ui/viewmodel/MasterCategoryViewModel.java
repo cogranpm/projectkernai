@@ -10,6 +10,7 @@ public class MasterCategoryViewModel {
 
 	private MasterCategory currentItem;
 	private List<MasterCategory> items;
+	private Boolean dirty;
 	
 	public MasterCategory getCurrentItem() {
 		return currentItem;
@@ -25,6 +26,18 @@ public class MasterCategoryViewModel {
 	public void setItems(List<MasterCategory> items) {
 		this.items = items;
 		firePropertyChange("items", null, null);
+	}
+	
+	public Boolean getDirty()
+	{
+		return this.dirty;
+	}
+	
+	public void setDirty(Boolean dirty)
+	{
+		Boolean oldValue = this.dirty;
+		this.dirty = dirty;
+		firePropertyChange("dirty", oldValue, this.dirty);
 	}
 	
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);

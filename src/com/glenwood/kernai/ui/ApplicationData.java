@@ -3,8 +3,10 @@ package com.glenwood.kernai.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
@@ -32,6 +34,16 @@ public class ApplicationData {
 	public void addAction(String key, IAction action)
 	{
 		actionsMap.put(key, action);
+	}
+	
+	private Map<String, ToolItem> toolItemsMap;
+	public ToolItem getToolItem(String key)
+	{
+		return toolItemsMap.get(key);
+	}
+	public void addToolItem(String key, ToolItem toolItem)
+	{
+		this.toolItemsMap.put(key, toolItem);
 	}
 	
 	private String persistenceType;
@@ -66,6 +78,7 @@ public class ApplicationData {
 	protected ApplicationData()
 	{
 		actionsMap = new HashMap<String, IAction>();
+		toolItemsMap = new HashMap<String, ToolItem>();
 		this.persistenceType = PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE;
 		persistenceManager  = new CouchbaseManager();
 		persistenceManager.init(APPLICATION_NAME);

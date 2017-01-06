@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
@@ -82,6 +84,18 @@ public class MainWindow extends ApplicationWindow {
 		*/
 	//	m_bindingContext = initDataBindings();
 
+		ToolBar toolbar = this.getToolBarManager().getControl();
+		if (toolbar != null )
+		{
+			for(ToolItem toolItem : toolbar.getItems())
+			{
+				ApplicationData.instance().addToolItem(toolItem.getText(), toolItem);
+			}
+		}
+		if (ApplicationData.instance().getToolItem("Save") != null)
+		{
+			ApplicationData.instance().getToolItem("Save").setEnabled(false);
+		}
 		return container;
 	}
 
@@ -126,6 +140,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 saveAction.setText("Save");
+		 saveAction.setEnabled(true);
 		 ApplicationData.instance().addAction("Save", saveAction);
 
 		 IAction deleteAction = new Action() {
@@ -182,9 +197,7 @@ public class MainWindow extends ApplicationWindow {
 			ActionContributionItem item = new ActionContributionItem(value);
 			item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 			toolBarManager.add(item);
-		
 		});
-		
 		toolBarManager.update(true);
 		return toolBarManager;
 	}
