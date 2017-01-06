@@ -46,7 +46,7 @@ public class MasterCategoryViewPresenter {
 	{
 		//model.getCurrentItem().setName("Falcone");
 		this.repository.save(model.getCurrentItem());
-		this.view.refreshList();
+		//this.view.refreshList();
 	}
 	
 	public void deleteModel()

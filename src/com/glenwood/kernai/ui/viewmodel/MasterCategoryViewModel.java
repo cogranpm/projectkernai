@@ -5,6 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 import com.glenwood.kernai.data.entity.MasterCategory;
+import com.glenwood.kernai.ui.ApplicationData;
 
 public class MasterCategoryViewModel {
 
@@ -38,6 +39,7 @@ public class MasterCategoryViewModel {
 		Boolean oldValue = this.dirty;
 		this.dirty = dirty;
 		firePropertyChange("dirty", oldValue, this.dirty);
+		//ApplicationData.instance().getAction("Save").setEnabled(!this.dirty);
 	}
 	
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);

@@ -116,6 +116,10 @@ public class MasterCategoryView extends Composite implements IEntityView {
 				}
 				if(event.getSelection() instanceof IStructuredSelection)
 				{
+					if (model.getCurrentItem() != null)
+					{
+						presenter.saveModel();
+					}
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					MasterCategory item = (MasterCategory)selection.getFirstElement();
 					model.setCurrentItem(item);
@@ -135,7 +139,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 		
 		Label descAllLabel = new Label(editContainer, SWT.NONE);
-        descAllLabel.setText("All Validation Problems:");
+        descAllLabel.setText("MOVE THIS TO HEADER, All Validation Problems:");
         descAllLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, true, false, 1, 1 ));
         
         errorLabel = new Label(editContainer, SWT.NONE);
@@ -152,6 +156,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		
 		initDataBindings();
 
+		ApplicationData.instance().getAction("New").setEnabled(true);
 	}
 	
 	@Override
@@ -242,6 +247,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
                 }
                 return ValidationStatus.error("Name must be entered");
             }
+            
           };
         UpdateValueStrategy strategy = new UpdateValueStrategy();
         strategy.setAfterConvertValidator(validator);
@@ -266,12 +272,13 @@ public class MasterCategoryView extends Composite implements IEntityView {
         stateListener = new IChangeListener() {
             @Override
             public void handleChange(ChangeEvent event) {
+            	/*
             	System.out.println("something changed:  " + event.getSource().toString());
             	if(event.getSource() instanceof SWTVetoableValueDecorator)
             	{
             		SWTVetoableValueDecorator source = (SWTVetoableValueDecorator) event.getSource();
-            		System.out.println(source.getValue().toString());
             	}
+            	*/
             	model.setDirty(true);
             }
         };
@@ -292,6 +299,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
         }
         */
         editBinding.getTarget().addChangeListener(stateListener);
+
 	}
 	
 	private class NameEditor extends EditingSupport {

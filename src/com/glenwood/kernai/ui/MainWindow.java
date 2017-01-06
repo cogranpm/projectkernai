@@ -168,8 +168,9 @@ public class MainWindow extends ApplicationWindow {
 				}
 			}
 		 };
-		 newAction.setText("New");
-		 newAction.setEnabled(true);
+		 newAction.setText("&New");
+		 newAction.setEnabled(false);
+		 newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction("New", newAction);
 
 		 
