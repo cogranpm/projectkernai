@@ -3,6 +3,8 @@ package com.glenwood.kernai.ui.view;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -10,24 +12,40 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 public class MainShell extends Composite {
 	
-	Composite topRegion;
-	Composite mainRegion;
-	Composite leftRegion;
-	Composite editRegion;
+	//Composite topRegion;
+	//Composite mainRegion;
+	//Composite leftRegion;
+	//Composite editRegion;
+	
+	private CTabFolder mainTabFolder;
+	public CTabFolder getMainTabFolder()
+	{
+		return this.mainTabFolder;
+	}
+	
+	private CTabItem masterPropertiesTabItem;
+	
+
+	public CTabItem getMasterPropertiesTabItem() {
+		return masterPropertiesTabItem;
+	}
 
 	public MainShell(Composite parent, int style) {
 		super(parent, style);
-		setLayout(new FillLayout(SWT.HORIZONTAL));
+		//setLayout(new FillLayout(SWT.HORIZONTAL));
 		
+		
+		/*
 		SashForm sashTop = new SashForm(this, SWT.BORDER | SWT.VERTICAL);
 		
 		topRegion = new Composite(sashTop, SWT.NONE);
 		topRegion.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		topRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
+		*/
+	//	mainRegion = new Composite(parent, SWT.NONE);
+	// mainRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		mainRegion = new Composite(sashTop, SWT.NONE);
-		mainRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
+		/*
 		SashForm sashMain = new SashForm(mainRegion, SWT.BORDER);
 		
 		leftRegion = new Composite(sashMain, SWT.BORDER);
@@ -38,7 +56,18 @@ public class MainShell extends Composite {
 		editRegion.setBackground(SWTResourceManager.getColor(SWT.COLOR_CYAN));
 		editRegion.setLayout(new FillLayout(SWT.HORIZONTAL));
 		sashMain.setWeights(new int[] {126, 317});
-		sashTop.setWeights(new int[] {31, 264});
+		sashTop.setWeights(new int[] {1, 10});
+		*/
+		mainTabFolder = new CTabFolder(parent, SWT.TOP);
+		CTabItem item = new CTabItem(mainTabFolder, SWT.NONE);
+		item.setText("Getting Started");
+		item = new CTabItem(mainTabFolder, SWT.NONE);
+		item.setText("Master Properties");
+		this.masterPropertiesTabItem = item;
+		item  = new CTabItem(mainTabFolder, SWT.NONE);
+		item.setText("Models");
+		item = new CTabItem(mainTabFolder, SWT.NONE);
+		item.setText("Scripting");
 
 	}
 	
@@ -47,6 +76,7 @@ public class MainShell extends Composite {
 		
 	}
 	
+	/*
 	public Composite getLeftRegion()
 	{
 		return this.leftRegion; 
@@ -63,4 +93,5 @@ public class MainShell extends Composite {
 	        control.dispose();
 	    }		
 	}
+	*/
 }

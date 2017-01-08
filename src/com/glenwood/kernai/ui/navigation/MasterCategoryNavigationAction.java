@@ -23,10 +23,14 @@ public class MasterCategoryNavigationAction implements INavigationMenuAction {
 	
 	private void loadMasterCategoryView()
 	{
-		MainWindow.mainShell.clearEditRegion();
+		
+		/*MainWindow.mainShell.clearEditRegion();
 		IEntityView view = new MasterCategoryView(MainWindow.mainShell.getEditRegion(), SWT.NONE);
-		/* don't forget to set the current view for the toolbars etc */
+		*/
+		
+		/* don't forget to set the current view for the toolbars etc 
 		ApplicationData.instance().setCurrentEntityView(view);
 		MainWindow.mainShell.getEditRegion().layout();
+		*/
 	}
 }

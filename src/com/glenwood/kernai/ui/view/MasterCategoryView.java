@@ -37,6 +37,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -70,6 +72,9 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	private WritableValue<MasterCategory> value;
 	//private WritableValue dirtyValue;
 	private Binding dirtyBinding;
+	
+
+
 	
 	public MasterCategoryView(Composite parent, int style) {
 		super(parent, style);
@@ -179,12 +184,14 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		model.setDirty(false);
 	}
 	
+	/*
 	public void refreshList()
 	{
 		//this.listViewer.setInput(model.getItems());
 		this.listViewer.refresh();
 		
 	}
+	*/
 
 	protected void initDataBindings() {
 		
@@ -261,9 +268,12 @@ public class MasterCategoryView extends Composite implements IEntityView {
         
         //ToolItems
         ToolItem saveToolitem = ApplicationData.instance().getToolItem("Save");
-        IObservableValue save = WidgetProperties.enabled().observe(saveToolitem);
-        IObservableValue mdirty= BeanProperties.value(MasterCategoryViewModel.class, "dirty").observe(this.model);
-        dirtyBinding = ctx.bindValue(save, mdirty);
+        if (saveToolitem != null)
+        {
+        	IObservableValue save = WidgetProperties.enabled().observe(saveToolitem);
+        	IObservableValue mdirty= BeanProperties.value(MasterCategoryViewModel.class, "dirty").observe(this.model);
+        	dirtyBinding = ctx.bindValue(save, mdirty);
+        }
         
         // this one listenes to all changes
         ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);

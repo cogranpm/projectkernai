@@ -10,6 +10,10 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -28,19 +32,15 @@ import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.MainShell;
+import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.NavView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
 	//private DataBindingContext m_bindingContext;
 	
-	Composite container;
+	private Composite container;
 	
-
-
-	public static MainShell mainShell = null;
-	private Image[] applicationImages;
-
 	/**
 	 * Create the application window.
 	 */
@@ -50,6 +50,7 @@ public class MainWindow extends ApplicationWindow {
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
+		ApplicationData.instance().addImagesToRegistry();
 	}
 	
 	
@@ -62,28 +63,28 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected Control createContents(Composite parent) {
 		container = new Composite(parent, SWT.NONE);
-		container.setLayout(new FillLayout(SWT.VERTICAL));
+		container.setLayout(new FillLayout());
 		
-		mainShell = new MainShell(container, SWT.NONE);
 		
+		CTabFolder folder = new CTabFolder(container, SWT.TOP);
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText("&Getting Started");
+		CTabItem masterPropertyTabItem = new CTabItem(folder, SWT.NONE);
+		masterPropertyTabItem.setText("Master &Properties");
+		item  = new CTabItem(folder, SWT.NONE);
+		item.setText("&Models");
+		item = new CTabItem(folder, SWT.NONE);
+		item.setText("&Scripting");
+		
+
+		//Composite test = new Composite(container, SWT.NONE);
+		//test.setLayout(new FillLayout());
+		//ApplicationData.instance().setMainShell(new MainShell(container, SWT.NONE));
+		
+		/*
 		NavView nav = new NavView(mainShell.getLeftRegion(), SWT.NONE);
 		mainShell.getLeftRegion().layout();
-
-		/*
-		Button btnDynamic = new Button(container, SWT.NONE);
-		btnDynamic.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				mainShell.clearEditRegion();
-				ModelView dynamic = new ModelView(mainShell.getEditRegion(), SWT.NONE);
-				mainShell.getEditRegion().layout();
-			}
-		});
-		btnDynamic.setText("Dynamic");
 		*/
-	//	m_bindingContext = initDataBindings();
-
 		ToolBar toolbar = this.getToolBarManager().getControl();
 		if (toolbar != null )
 		{
@@ -96,6 +97,47 @@ public class MainWindow extends ApplicationWindow {
 		{
 			ApplicationData.instance().getToolItem("Save").setEnabled(false);
 		}
+		
+		/* This is not actually right, should be a row of tabs */
+		CTabFolder masterPropertyFolder = new CTabFolder(folder, SWT.NONE);
+		
+		CTabItem masterCategoryItem = new CTabItem(masterPropertyFolder, SWT.NONE);
+		masterCategoryItem.setText("Master &Category");
+		
+		CTabItem propertyGroupItem = new CTabItem(masterPropertyFolder, SWT.NONE);
+		propertyGroupItem.setText("Property Group");
+
+		CTabItem propertyTypeItem = new CTabItem(masterPropertyFolder, SWT.NONE);
+		propertyTypeItem.setText("Property Type");
+		 
+		CTabItem masterPropertyItem = new CTabItem(masterPropertyFolder, SWT.NONE);
+		masterPropertyItem.setText("Master Property");
+		
+		masterPropertyFolder.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				CTabItem item = (CTabItem)e.item;
+				//lazily load the control
+				if (item.equals(masterCategoryItem))
+				{
+					if (item.getControl() == null)
+					{
+						masterCategoryItem.setControl(new MasterCategoryView(masterPropertyFolder, SWT.NONE));
+					}
+					ApplicationData.instance().setCurrentEntityView((IEntityView)item.getControl());
+				}
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+		});
+		
+		masterPropertyTabItem.setControl(masterPropertyFolder);
+		
 		return container;
 	}
 
@@ -192,7 +234,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected ToolBarManager createToolBarManager(int style) {
-		ToolBarManager toolBarManager = new ToolBarManager(style);
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.BORDER);
 		
 		ApplicationData.instance().getActionsMap().forEach((key, value) -> {
 			ActionContributionItem item = new ActionContributionItem(value);
@@ -243,24 +285,18 @@ public class MainWindow extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Kernai");
+		newShell.setImages(new Image[]{ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL), 
+				ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL)});
+		/*
 		loadApplicationImages(newShell);
 		newShell.setImages(applicationImages);
 		loadCachedIcons(newShell);
+		*/
 	}
 	
-	private void loadApplicationImages(Shell shell)
-	{
-		final Image small = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_16xSM.png"));
-		final Image large = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_32x.png"));
-		applicationImages= new Image[] { small, large };
-	}
-
 	private void loadCachedIcons(Shell shell)
 	{
-		Image image = new Image(shell.getDisplay(), String.format("%s%s", ApplicationData.IMAGES_PATH, "Diagram_16x.png"));
-		ApplicationData.smallIcons.put(ApplicationData.IMAGE_DIAGRAM, image);
-		image = new Image(shell.getDisplay(), String.format("%s%s",  ApplicationData.IMAGES_PATH, "MasterPage_16x.png"));
-		ApplicationData.smallIcons.put(ApplicationData.IMAGE_MASTERPAGE, image);
+	
 	}
 	
 	/**
@@ -275,11 +311,14 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public boolean close() {
 		ApplicationData.instance().getPersistenceManager().close();
+		
+		/* todo, change to use the image registry of jface 
 		for (Image image : this.applicationImages)
 		{
 			image.dispose();
 		}
 		ApplicationData.smallIcons.forEach((key, value) -> value.dispose());
+		*/
 		return super.close();
 	}
 	

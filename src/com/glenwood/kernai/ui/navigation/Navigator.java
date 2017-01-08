@@ -15,9 +15,10 @@ public class Navigator implements INavigator {
 	
 	public void loadProjectView(String projectId)
 	{
+		/*
 		MainWindow.mainShell.clearEditRegion();
 		AttributeView view = new AttributeView(MainWindow.mainShell.getEditRegion(), SWT.NONE);
-		
+		*/
 		
 		//ProjectView view = new ProjectView(MainWindow.mainShell.getEditRegion(), SWT.NONE);
 		//view.getPresenter().loadProjects();
@@ -25,7 +26,9 @@ public class Navigator implements INavigator {
 		ModelView view = new ModelView(MainWindow.mainShell.getEditRegion(), SWT.NONE);
 		view.getPresenter().loadModels(projectId);
 		*/
-		MainWindow.mainShell.getEditRegion().layout();
+		
+		
+		//MainWindow.mainShell.getEditRegion().layout();
 	}
 
 

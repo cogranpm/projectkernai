@@ -14,7 +14,7 @@ public class NavigationMenuLabelProvider extends LabelProvider {
 		NavigationMenuItem item = (NavigationMenuItem)element;
 		if (item != null && item.getImageKey() != null)
 		{
-			return ApplicationData.smallIcons.get(item.getImageKey());
+			return ApplicationData.instance().getImageRegistry().get(item.getImageKey());
 		}
 		return super.getImage(element);
 	}

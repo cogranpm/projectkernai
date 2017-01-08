@@ -3,15 +3,16 @@ package com.glenwood.kernai.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.MainShell;
 
 public class ApplicationData {
 	
@@ -65,15 +66,32 @@ public class ApplicationData {
 	public void setCurrentEntityView(IEntityView currentEntityView) {
 		this.currentEntityView = currentEntityView;
 	}
+	
+	private ImageRegistry imageRegistry;
+	public ImageRegistry getImageRegistry()
+	{
+		return this.imageRegistry;
+	}
+	
+	/*
+	private MainShell mainShell;
+
+	public MainShell getMainShell() {
+		return mainShell;
+	}
+	public void setMainShell(MainShell mainShell) {
+		this.mainShell = mainShell;
+	}
+	*/
 
 	private static ApplicationData instance_;
 	public static final String COMPANY_NAME = "Glenwood";
 	public static final String APPLICATION_NAME = "Kernai";
-	public final static String IMAGES_PATH = "resources/images/";
-	public final static Map<String, Image> smallIcons = new HashMap<String, Image>();
-	public final static Map<String, Image> largeIcons = new HashMap<String, Image>();
+	public final static String IMAGES_PATH = "/images/";
 	public static final String IMAGE_DIAGRAM = "diagram";
 	public static final String IMAGE_MASTERPAGE = "masterpage";
+	public static final String IMAGE_ACTIVITY_SMALL = "activitysmall";
+	public static final String IMAGE_ACTIVITY_LARGE = "activitylarge";
 	
 	protected ApplicationData()
 	{
@@ -83,6 +101,15 @@ public class ApplicationData {
 		persistenceManager  = new CouchbaseManager();
 		persistenceManager.init(APPLICATION_NAME);
 		this.currentEntityView = null;
+		this.imageRegistry = new ImageRegistry();
+	}
+	
+	public void addImagesToRegistry()
+	{
+		this.imageRegistry.put(IMAGE_ACTIVITY_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_16xSM.png")));
+		this.imageRegistry.put(IMAGE_ACTIVITY_LARGE, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Activity_32x.png")));
+		this.imageRegistry.put(IMAGE_DIAGRAM, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Diagram_16x.png")));
+		this.imageRegistry.put(IMAGE_MASTERPAGE, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "MasterPage_16x.png")));
 	}
 	
 	public static ApplicationData instance()
