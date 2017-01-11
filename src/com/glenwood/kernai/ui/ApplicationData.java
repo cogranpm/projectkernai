@@ -6,13 +6,13 @@ import java.util.Map;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
-import com.glenwood.kernai.ui.view.MainShell;
 
 public class ApplicationData {
 	
@@ -97,6 +97,10 @@ public class ApplicationData {
 	public static final String NEW_ACTION_KEY = "new";
 	public static final String SAVE_ACTION_KEY = "save";
 	public static final String GOTO_MASTERPROPERTY_LISTS = "GoToMasterPropertyLists";
+	public static final String GOTO_MASTERPROPERTY_CATEGORY = "GoToMasterPropertyCategory";
+	public static final String GOTO_MASTERPROPERTY_GROUP = "GoToMasterPropertyGroup";
+	public static final String GOTO_MASTERPROPERTY_PROPERTY = "GoToMasterPropertyProperty";
+	public static final String GOTO_MASTERPROPERTY_TYPE = "GoToMasterPropertyType";
 	
 	protected ApplicationData()
 	{

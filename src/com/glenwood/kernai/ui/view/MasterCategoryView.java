@@ -161,7 +161,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		
 		initDataBindings();
 
-		ApplicationData.instance().getAction("New").setEnabled(true);
+		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
 	}
 	
 	@Override

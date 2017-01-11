@@ -1,9 +1,5 @@
 package com.glenwood.kernai.ui;
 
-
-
-
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -16,11 +12,13 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -35,12 +33,17 @@ import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.MasterCategoryView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
 	//private DataBindingContext m_bindingContext;
 	
 	private Composite container;
+	private Composite masterPropertyPane;
+
+
+
 	
 	/**
 	 * Create the application window.
@@ -65,23 +68,48 @@ public class MainWindow extends ApplicationWindow {
 	protected Control createContents(Composite parent) {
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(new FillLayout());
-		
-		
+
+		/* top level tabs */
 		CTabFolder folder = new CTabFolder(container, SWT.TOP);
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText("&Getting Started");
 		CTabItem masterPropertyTabItem = new CTabItem(folder, SWT.NONE);
 		masterPropertyTabItem.setText("Master &Properties");
 		
-		Composite masterPropertyPane = new Composite(folder, SWT.NONE);
-		ToolBar masterPropertyToolBar = this.addNavigationToolbar(masterPropertyPane, masterPropertyTabItem);
+		Composite masterPropertyContainingPane = new Composite(folder, SWT.NONE);
+		ToolBar masterPropertyToolBar = this.addNavigationToolbar(masterPropertyContainingPane, masterPropertyTabItem);
 		ToolBarManager toolBarManager = new ToolBarManager(masterPropertyToolBar);
-		
+		masterPropertyPane = new Composite(masterPropertyContainingPane, SWT.NONE);
+		GridData tabControlPaneData = new GridData();
+		tabControlPaneData.grabExcessHorizontalSpace = true;
+		tabControlPaneData.grabExcessVerticalSpace = true;
+		tabControlPaneData.horizontalAlignment = SWT.FILL;
+		tabControlPaneData.verticalAlignment = SWT.FILL;
+		masterPropertyPane.setLayoutData(tabControlPaneData);
+		masterPropertyPane.setLayout(new FillLayout());
+		//Color listBackground = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN);
+		//masterPropertyPane.setBackground(listBackground);
 
-		//toolBarManager.add(actionCut);
-		ActionContributionItem ai = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS));
-		ai.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-		toolBarManager.add(ai);
+		ActionContributionItem tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_CATEGORY));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_GROUP));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(tabItemAction);
+
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_TYPE));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(tabItemAction);
+
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_PROPERTY));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(tabItemAction);
+
 		toolBarManager.update(true);
 		/*
 		ToolItem listToolItem = this.addNavigationToolItem("Lists", masterPropertyToolBar);
@@ -97,14 +125,7 @@ public class MainWindow extends ApplicationWindow {
 		item.setText("&Scripting");
 		
 
-		//Composite test = new Composite(container, SWT.NONE);
-		//test.setLayout(new FillLayout());
-		//ApplicationData.instance().setMainShell(new MainShell(container, SWT.NONE));
-		
-		/*
-		NavView nav = new NavView(mainShell.getLeftRegion(), SWT.NONE);
-		mainShell.getLeftRegion().layout();
-		*/
+
 		ToolBar toolbar = this.getToolBarManager().getControl();
 		if (toolbar != null )
 		{
@@ -118,55 +139,7 @@ public class MainWindow extends ApplicationWindow {
 			ApplicationData.instance().getToolItem("Save").setEnabled(false);
 		}
 		
-		/* a row of  buttons for the master property tab */
-	
 		
-		
-		
-		//masterPropertyPane.setLayout(new GridLayout(2, 1));
-		//ToolBar masterPropertyToolbar = new ToolBar(masterPropertyTabItem.GET, SWT.None);
-		
-		/* This is not actually right, should be a row buttons 
-		CTabFolder masterPropertyFolder = new CTabFolder(folder, SWT.NONE);
-		
-		
-		CTabItem masterCategoryItem = new CTabItem(masterPropertyFolder, SWT.NONE);
-		masterCategoryItem.setText("Master &Category");
-		
-		CTabItem propertyGroupItem = new CTabItem(masterPropertyFolder, SWT.NONE);
-		propertyGroupItem.setText("Property Group");
-
-		CTabItem propertyTypeItem = new CTabItem(masterPropertyFolder, SWT.NONE);
-		propertyTypeItem.setText("Property Type");
-		 
-		CTabItem masterPropertyItem = new CTabItem(masterPropertyFolder, SWT.NONE);
-		masterPropertyItem.setText("Master Property");
-		
-		masterPropertyFolder.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CTabItem item = (CTabItem)e.item;
-				//lazily load the control
-				if (item.equals(masterCategoryItem))
-				{
-					if (item.getControl() == null)
-					{
-						masterCategoryItem.setControl(new MasterCategoryView(masterPropertyFolder, SWT.NONE));
-					}
-					ApplicationData.instance().setCurrentEntityView((IEntityView)item.getControl());
-				}
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				
-			}
-		});
-		
-		masterPropertyTabItem.setControl(masterPropertyFolder);
-		*/
 		return container;
 	}
 
@@ -249,14 +222,6 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				System.out.println("hello");
-				/* get the active view and call new
-				
-				IEntityView currentEntityView = ApplicationData.instance().getCurrentEntityView();
-				if(currentEntityView != null)
-				{
-					currentEntityView.add();
-				}
-				 */
 			}
 		 };
 		 goToMasterPropertyList.setText("&Lists");
@@ -264,7 +229,68 @@ public class MainWindow extends ApplicationWindow {
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
+		 IAction goToMasterPropertyCategory = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+				//IEntityView view = new MasterCategoryView(masterPropertyPane, SWT.NONE);
+				for (Control control : masterPropertyPane.getChildren()) {
+			        control.dispose();
+			    }	
+				ApplicationData.instance().setCurrentEntityView(new MasterCategoryView(masterPropertyPane, SWT.NONE));
+				masterPropertyPane.layout();
+			}
+		 };
+		 goToMasterPropertyCategory.setText("Master &Category");
+		 goToMasterPropertyCategory.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_CATEGORY, goToMasterPropertyCategory);
+
+		 /*
+		 IAction goToMasterPropertyCategory = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+			}
+		 };
+		 goToMasterPropertyCategory.setText("Master &Category");
+		 goToMasterPropertyCategory.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_CATEGORY, goToMasterPropertyCategory);
+		 */
 		 
+		 IAction goToMasterPropertyProperty = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+			}
+		 };
+		 goToMasterPropertyProperty.setText("Master &Property");
+		 goToMasterPropertyProperty.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_PROPERTY, goToMasterPropertyProperty);
+		 
+		 IAction goToMasterPropertyGroup = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+			}
+		 };
+		 goToMasterPropertyGroup.setText("Property &Group");
+		 goToMasterPropertyGroup.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_GROUP, goToMasterPropertyGroup);
+		 
+		 IAction goToMasterPropertyType = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+			}
+		 };
+		 goToMasterPropertyType.setText("Property &Type");
+		 goToMasterPropertyType.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_TYPE, goToMasterPropertyType);
 	}
 
 	/**
@@ -384,7 +410,7 @@ public class MainWindow extends ApplicationWindow {
 	
 	private ToolBar addNavigationToolbar(Composite parent, CTabItem parentTabItem)
 	{
-		GridLayout layout = new GridLayout(1, false);
+		GridLayout layout = new GridLayout(1, true);
 		parent.setLayout(layout);
 		parentTabItem.setControl(parent);
 		ToolBar t = new ToolBar(parent, SWT.WRAP);
@@ -395,12 +421,7 @@ public class MainWindow extends ApplicationWindow {
 		return t;
 	}
 	
-	private ToolItem addNavigationToolItem(String label, ToolBar toolbar)
-	{
-		ToolItem titem = new ToolItem(toolbar, SWT.PUSH);
-		titem.setText(label);
-		return titem;
-	}
+
 	
 	/*
 	protected DataBindingContext initDataBindings() {
