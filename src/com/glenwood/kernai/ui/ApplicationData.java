@@ -93,6 +93,11 @@ public class ApplicationData {
 	public static final String IMAGE_ACTIVITY_SMALL = "activitysmall";
 	public static final String IMAGE_ACTIVITY_LARGE = "activitylarge";
 	
+	public static final String DELETE_ACTION_KEY = "delete";
+	public static final String NEW_ACTION_KEY = "new";
+	public static final String SAVE_ACTION_KEY = "save";
+	public static final String GOTO_MASTERPROPERTY_LISTS = "GoToMasterPropertyLists";
+	
 	protected ApplicationData()
 	{
 		actionsMap = new HashMap<String, IAction>();

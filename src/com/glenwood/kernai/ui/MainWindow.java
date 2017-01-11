@@ -1,5 +1,9 @@
 package com.glenwood.kernai.ui;
 
+
+
+
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -12,11 +16,11 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -31,9 +35,6 @@ import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
-import com.glenwood.kernai.ui.view.MainShell;
-import com.glenwood.kernai.ui.view.MasterCategoryView;
-import com.glenwood.kernai.ui.view.NavView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
@@ -71,6 +72,25 @@ public class MainWindow extends ApplicationWindow {
 		item.setText("&Getting Started");
 		CTabItem masterPropertyTabItem = new CTabItem(folder, SWT.NONE);
 		masterPropertyTabItem.setText("Master &Properties");
+		
+		Composite masterPropertyPane = new Composite(folder, SWT.NONE);
+		ToolBar masterPropertyToolBar = this.addNavigationToolbar(masterPropertyPane, masterPropertyTabItem);
+		ToolBarManager toolBarManager = new ToolBarManager(masterPropertyToolBar);
+		
+
+		//toolBarManager.add(actionCut);
+		ActionContributionItem ai = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS));
+		ai.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(ai);
+		toolBarManager.update(true);
+		/*
+		ToolItem listToolItem = this.addNavigationToolItem("Lists", masterPropertyToolBar);
+		ToolItem masterCategoryToolItem = this.addNavigationToolItem("Master Category", masterPropertyToolBar);
+		ToolItem propertyTypeToolItem = this.addNavigationToolItem("Property Type", masterPropertyToolBar);
+		ToolItem propertyGroupToolItem = this.addNavigationToolItem("Property Group", masterPropertyToolBar);
+		ToolItem masterPropertyToolItem = this.addNavigationToolItem("Master Property", masterPropertyToolBar);
+		*/
+		
 		item  = new CTabItem(folder, SWT.NONE);
 		item.setText("&Models");
 		item = new CTabItem(folder, SWT.NONE);
@@ -98,8 +118,17 @@ public class MainWindow extends ApplicationWindow {
 			ApplicationData.instance().getToolItem("Save").setEnabled(false);
 		}
 		
-		/* This is not actually right, should be a row of tabs */
+		/* a row of  buttons for the master property tab */
+	
+		
+		
+		
+		//masterPropertyPane.setLayout(new GridLayout(2, 1));
+		//ToolBar masterPropertyToolbar = new ToolBar(masterPropertyTabItem.GET, SWT.None);
+		
+		/* This is not actually right, should be a row buttons 
 		CTabFolder masterPropertyFolder = new CTabFolder(folder, SWT.NONE);
+		
 		
 		CTabItem masterCategoryItem = new CTabItem(masterPropertyFolder, SWT.NONE);
 		masterCategoryItem.setText("Master &Category");
@@ -137,7 +166,7 @@ public class MainWindow extends ApplicationWindow {
 		});
 		
 		masterPropertyTabItem.setControl(masterPropertyFolder);
-		
+		*/
 		return container;
 	}
 
@@ -183,7 +212,7 @@ public class MainWindow extends ApplicationWindow {
 		 };
 		 saveAction.setText("Save");
 		 saveAction.setEnabled(true);
-		 ApplicationData.instance().addAction("Save", saveAction);
+		 ApplicationData.instance().addAction(ApplicationData.SAVE_ACTION_KEY, saveAction);
 
 		 IAction deleteAction = new Action() {
 			@Override 
@@ -197,7 +226,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 deleteAction.setText("Delete");
-		 ApplicationData.instance().addAction("Delete", deleteAction);
+		 ApplicationData.instance().addAction(ApplicationData.DELETE_ACTION_KEY, deleteAction);
 
 		 IAction newAction = new Action() {
 			@Override 
@@ -213,7 +242,27 @@ public class MainWindow extends ApplicationWindow {
 		 newAction.setText("&New");
 		 newAction.setEnabled(false);
 		 newAction.setAccelerator(SWT.CTRL | 'N');
-		 ApplicationData.instance().addAction("New", newAction);
+		 ApplicationData.instance().addAction(ApplicationData.NEW_ACTION_KEY, newAction);
+		 
+		 
+		 IAction goToMasterPropertyList = new Action() {
+			@Override 
+			public void run() {
+				System.out.println("hello");
+				/* get the active view and call new
+				
+				IEntityView currentEntityView = ApplicationData.instance().getCurrentEntityView();
+				if(currentEntityView != null)
+				{
+					currentEntityView.add();
+				}
+				 */
+			}
+		 };
+		 goToMasterPropertyList.setText("&Lists");
+		 goToMasterPropertyList.setEnabled(true);
+		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
 		 
 	}
@@ -234,13 +283,24 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected ToolBarManager createToolBarManager(int style) {
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.BORDER);
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.NONE);
+
+		ActionContributionItem item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
+		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(item);
 		
-		ApplicationData.instance().getActionsMap().forEach((key, value) -> {
-			ActionContributionItem item = new ActionContributionItem(value);
-			item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-			toolBarManager.add(item);
-		});
+		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY));
+		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(item);
+		
+		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.SAVE_ACTION_KEY));
+		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(item);
+		
+		item = new ActionContributionItem(ApplicationData.instance().getAction("Test"));
+		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(item);
+
 		toolBarManager.update(true);
 		return toolBarManager;
 	}
@@ -320,6 +380,26 @@ public class MainWindow extends ApplicationWindow {
 		ApplicationData.smallIcons.forEach((key, value) -> value.dispose());
 		*/
 		return super.close();
+	}
+	
+	private ToolBar addNavigationToolbar(Composite parent, CTabItem parentTabItem)
+	{
+		GridLayout layout = new GridLayout(1, false);
+		parent.setLayout(layout);
+		parentTabItem.setControl(parent);
+		ToolBar t = new ToolBar(parent, SWT.WRAP);
+		GridData gd = new GridData();
+		gd.grabExcessHorizontalSpace=false;
+		gd.grabExcessVerticalSpace = false;
+		t.setLayoutData(gd);
+		return t;
+	}
+	
+	private ToolItem addNavigationToolItem(String label, ToolBar toolbar)
+	{
+		ToolItem titem = new ToolItem(toolbar, SWT.PUSH);
+		titem.setText(label);
+		return titem;
 	}
 	
 	/*
