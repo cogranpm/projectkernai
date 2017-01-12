@@ -225,6 +225,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 goToMasterPropertyList.setText("&Lists");
+		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_MASTERPAGE));
 		 goToMasterPropertyList.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);

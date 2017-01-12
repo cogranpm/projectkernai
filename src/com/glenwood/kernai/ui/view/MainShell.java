@@ -10,6 +10,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+/**
+ * @deprecated  moved to a tab based navigation instead of tree
+ * didn't need this anymore using the MainWindow instead
+ */
+@Deprecated
 public class MainShell extends Composite {
 	
 	//Composite topRegion;

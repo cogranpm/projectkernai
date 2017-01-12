@@ -1,7 +1,12 @@
 package com.glenwood.kernai.data.entity;
 
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ListHeader extends BaseEntity {
 	
 	public static final String TYPE_NAME = "LISTHEADER";
@@ -9,7 +14,7 @@ public class ListHeader extends BaseEntity {
 	private String name;
 	
 	
-	
+	@JsonProperty
 	public String getName() {
 		return name;
 	}
@@ -23,11 +28,39 @@ public class ListHeader extends BaseEntity {
 	}
 
 
-
 	public ListHeader()
 	{
 		this.type = TYPE_NAME;
 	}
 	
+
+	@Override
+	public String toString() {
+		return String.format("ListHeader[ id=%d,Name=%s", this.id, this.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(this.name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ListHeader other = (ListHeader) obj;
+                
+		if (this.id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!(this.id == other.id))
+			return false;
+
+		return true;
+	}
 
 }
