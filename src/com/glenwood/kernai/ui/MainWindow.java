@@ -33,6 +33,7 @@ import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
@@ -221,24 +222,20 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToMasterPropertyList = new Action() {
 			@Override 
 			public void run() {
-				System.out.println("hello");
+				ApplicationData.instance().setCurrentEntityView(new ListHeaderView(clearComposite(masterPropertyPane), SWT.NONE));
+				masterPropertyPane.layout();
 			}
 		 };
 		 goToMasterPropertyList.setText("&Lists");
 		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_MASTERPAGE));
 		 goToMasterPropertyList.setEnabled(true);
-		 //newAction.setAccelerator(SWT.CTRL | 'N');
+		 goToMasterPropertyList.setAccelerator(SWT.CTRL | 'L');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
 		 IAction goToMasterPropertyCategory = new Action() {
 			@Override 
 			public void run() {
-				System.out.println("hello");
-				//IEntityView view = new MasterCategoryView(masterPropertyPane, SWT.NONE);
-				for (Control control : masterPropertyPane.getChildren()) {
-			        control.dispose();
-			    }	
-				ApplicationData.instance().setCurrentEntityView(new MasterCategoryView(masterPropertyPane, SWT.NONE));
+				ApplicationData.instance().setCurrentEntityView(new MasterCategoryView(clearComposite(masterPropertyPane), SWT.NONE));
 				masterPropertyPane.layout();
 			}
 		 };
@@ -374,17 +371,8 @@ public class MainWindow extends ApplicationWindow {
 		newShell.setText("Kernai");
 		newShell.setImages(new Image[]{ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL), 
 				ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL)});
-		/*
-		loadApplicationImages(newShell);
-		newShell.setImages(applicationImages);
-		loadCachedIcons(newShell);
-		*/
-	}
+		}
 	
-	private void loadCachedIcons(Shell shell)
-	{
-	
-	}
 	
 	/**
 	 * Return the initial size of the window.
@@ -422,7 +410,14 @@ public class MainWindow extends ApplicationWindow {
 		return t;
 	}
 	
-
+	private Composite clearComposite(Composite composite)
+	{
+		for(Control control : composite.getChildren())
+		{
+			control.dispose();
+		}
+		return composite;
+	}
 	
 	/*
 	protected DataBindingContext initDataBindings() {
