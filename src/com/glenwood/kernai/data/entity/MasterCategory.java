@@ -34,7 +34,7 @@ public class MasterCategory extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return String.format("MasterCategory[ id=%d,Name=%s", this.id, this.name);
+		return String.format("MasterCategory[ id=%s,Name=%s", this.id, this.name);
 	}
 
 	@Override

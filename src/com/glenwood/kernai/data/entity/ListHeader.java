@@ -24,7 +24,7 @@ public class ListHeader extends BaseEntity {
 	public void setName(String name) {
 		String oldName = this.name;
 		this.name = name;
-		this.firePropertyChange("Name", oldName, this.name);
+		this.firePropertyChange("name", oldName, this.name);
 	}
 
 
@@ -36,7 +36,7 @@ public class ListHeader extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return String.format("ListHeader[ id=%d,Name=%s", this.id, this.name);
+		return String.format("ListHeader[id=%s,Name=%s]", this.id, this.name);
 	}
 
 	@Override
