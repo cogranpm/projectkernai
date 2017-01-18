@@ -121,24 +121,11 @@ public class ListHeaderView extends Composite implements IEntityView {
 					{
 						presenter.saveModel();
 					}
+
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					ListHeader item = (ListHeader)selection.getFirstElement();
-					model.setCurrentItem(item);
-					value.setValue(model.getCurrentItem());
-					model.setDirty(false);
-					
-					/*
-					ListDetail testing = new ListDetail(model.getCurrentItem());
-					testing.setKey("Combo");
-					testing.setLabel("Combo Box");
-					presenter.saveChildItem(testing);
-					*/
-					
+					presenter.loadModel(item);
 					presenter.loadChildItems();
-					for(ListDetail daItem : model.getChildItems())
-					{
-						System.out.println(daItem.getKey());
-					}
 				}				
 			}
 		});
@@ -294,10 +281,19 @@ public class ListHeaderView extends Composite implements IEntityView {
                 }
         };
         detailViewer.setLabelProvider(detailLabelProvider);
-        List<ListDetail> detailList = model.getChildItems();
-        detailInput = new WritableList(detailList, ListDetail.class);
-        listViewer.setInput(detailInput);
+      
 
+	}
+	
+	public void refreshView()
+	{
+		value.setValue(model.getCurrentItem());
+	}
+	
+	public void refreshChildView()
+	{
+		detailInput = new WritableList(model.getChildItems(), ListDetail.class);
+		detailViewer.setInput(detailInput);	
 	}
 	
 

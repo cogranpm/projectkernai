@@ -26,6 +26,13 @@ public class ListHeaderPresenter {
 		this.childRepository = new ListDetailRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
+	public void loadModel(ListHeader item)
+	{
+		model.setCurrentItem(item);
+		model.setDirty(false);
+		this.view.refreshView();
+	}
+	
 	public void loadModels()
 	{
 		this.model.setItems(this.repository.getAll(ListHeader.TYPE_NAME, ListHeader.class));
@@ -39,6 +46,7 @@ public class ListHeaderPresenter {
 	public void loadChildItems()
 	{
 		this.model.setChildItems(this.childRepository.getAllByListHeader(this.model.getCurrentItem().getId()));
+		this.view.refreshChildView();
 	}
 	
 	/* quick and dirty test here */
