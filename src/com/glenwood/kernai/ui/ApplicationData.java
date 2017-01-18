@@ -73,6 +73,23 @@ public class ApplicationData {
 		return this.imageRegistry;
 	}
 	
+	public void uncheckActions(String[] actionKeys, String currentKey)
+	{
+		for(String key : actionKeys)
+		{
+			IAction action =  this.getAction(key);
+			if(action != null && !currentKey.equalsIgnoreCase(key) && action.isChecked())
+			{
+				action.setChecked(false);
+			}
+		}
+		IAction action = this.getAction(currentKey);
+		if (action != null && !action.isChecked())
+		{
+			action.setChecked(true);
+		}
+	}
+	
 	/*
 	private MainShell mainShell;
 

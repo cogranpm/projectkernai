@@ -51,11 +51,12 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	public MainWindow() {
 		super(null);
+		ApplicationData.instance().addImagesToRegistry();
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
-		ApplicationData.instance().addImagesToRegistry();
+		
 	}
 	
 	
@@ -218,74 +219,72 @@ public class MainWindow extends ApplicationWindow {
 		 newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.NEW_ACTION_KEY, newAction);
 		 
+
+		 String[] masterpropertyActionKeys = new String[]{ApplicationData.GOTO_MASTERPROPERTY_CATEGORY, ApplicationData.GOTO_MASTERPROPERTY_GROUP,
+				 ApplicationData.GOTO_MASTERPROPERTY_LISTS, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY, ApplicationData.GOTO_MASTERPROPERTY_TYPE};
 		 
-		 IAction goToMasterPropertyList = new Action() {
+		 /* master properties */
+		 IAction goToMasterPropertyList = new Action("Lists", SWT.TOGGLE) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_LISTS);
 				ApplicationData.instance().setCurrentEntityView(new ListHeaderView(clearComposite(masterPropertyPane), SWT.NONE));
 				masterPropertyPane.layout();
 			}
 		 };
-		 goToMasterPropertyList.setText("&Lists");
-		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_MASTERPAGE));
+		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
 		 goToMasterPropertyList.setEnabled(true);
 		 goToMasterPropertyList.setAccelerator(SWT.CTRL | 'L');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
-		 IAction goToMasterPropertyCategory = new Action() {
+		 
+		 IAction goToMasterPropertyCategory = new Action("&Master Category", SWT.TOGGLE) {
 			@Override 
 			public void run() {
+				//ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS).get
+				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_CATEGORY);
 				ApplicationData.instance().setCurrentEntityView(new MasterCategoryView(clearComposite(masterPropertyPane), SWT.NONE));
 				masterPropertyPane.layout();
 			}
 		 };
-		 goToMasterPropertyCategory.setText("Master &Category");
 		 goToMasterPropertyCategory.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_CATEGORY, goToMasterPropertyCategory);
 
-		 /*
-		 IAction goToMasterPropertyCategory = new Action() {
-			@Override 
-			public void run() {
-				System.out.println("hello");
-			}
-		 };
-		 goToMasterPropertyCategory.setText("Master &Category");
-		 goToMasterPropertyCategory.setEnabled(true);
-		 //newAction.setAccelerator(SWT.CTRL | 'N');
-		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_CATEGORY, goToMasterPropertyCategory);
-		 */
+
 		 
-		 IAction goToMasterPropertyProperty = new Action() {
+		 IAction goToMasterPropertyProperty = new Action("Master Property", SWT.TOGGLE) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY);
 				System.out.println("hello");
 			}
 		 };
-		 goToMasterPropertyProperty.setText("Master &Property");
+		 //goToMasterPropertyProperty.setText("Master &Property");
 		 goToMasterPropertyProperty.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_PROPERTY, goToMasterPropertyProperty);
 		 
-		 IAction goToMasterPropertyGroup = new Action() {
+		 IAction goToMasterPropertyGroup = new Action("Property Group", SWT.TOGGLE) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_GROUP);
 				System.out.println("hello");
 			}
 		 };
-		 goToMasterPropertyGroup.setText("Property &Group");
+		 //goToMasterPropertyGroup.setText("Property &Group");
 		 goToMasterPropertyGroup.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_GROUP, goToMasterPropertyGroup);
 		 
-		 IAction goToMasterPropertyType = new Action() {
+		 IAction goToMasterPropertyType = new Action("Property &Type", SWT.TOGGLE) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_TYPE);
 				System.out.println("hello");
 			}
 		 };
-		 goToMasterPropertyType.setText("Property &Type");
+		 //goToMasterPropertyType.setText("Property &Type");
 		 goToMasterPropertyType.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_TYPE, goToMasterPropertyType);
