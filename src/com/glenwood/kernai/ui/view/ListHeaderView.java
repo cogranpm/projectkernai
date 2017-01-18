@@ -13,6 +13,8 @@ package com.glenwood.kernai.ui.view;
 
 import java.util.List;
 
+import javax.swing.text.MutableAttributeSet;
+
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -132,14 +134,21 @@ public class ListHeaderView extends Composite implements IEntityView {
 
 		
 		/* edit container */
+		
+		GridLayout editContainerLayout = new GridLayout(1, false);
+		editContainer.setLayout(editContainerLayout);
+		
 		GridLayout masterLayout = new GridLayout(2, false);
-		SashForm dividerEdit = new SashForm(editContainer, SWT.VERTICAL | SWT.BORDER);
-		Composite editMaster = new Composite(dividerEdit, SWT.NONE);
-		Composite editDetail = new Composite(dividerEdit, SWT.NONE);
+		masterLayout.verticalSpacing = SWT.FILL;
+		masterLayout.horizontalSpacing = SWT.FILL;
+		
+		Composite editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(masterLayout);
+		editMaster.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
+		Composite editDetail = new Composite(editContainer, SWT.NONE);
+		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		editDetail.setLayout(new FillLayout());
-		editContainer.setLayout(new FillLayout());
-		dividerEdit.setWeights(new int[]{1, 3});
+		
 		
 		errorLabel = new CLabel(editMaster, SWT.NONE);
         GridData gridData = new GridData();
@@ -172,12 +181,6 @@ public class ListHeaderView extends Composite implements IEntityView {
 		editDetail.setLayout(detailTableLayout);
 		detailTableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
 		detailTableLayout.setColumnData(labelColumn.getColumn(), new ColumnWeightData(50));
-
-		/*
-		Label descAllLabel = new Label(editContainer, SWT.NONE);
-        descAllLabel.setText("MOVE THIS TO HEADER, All Validation Problems:");
-        descAllLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, true, false, 1, 1 ));
-        */
         
 		this.setLayout(new FillLayout());
 
