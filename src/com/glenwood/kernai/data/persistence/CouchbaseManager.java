@@ -41,6 +41,11 @@ public class CouchbaseManager implements IPersistenceManager {
 		return database;
 	}
 	
+	public EntityMapper getEntityMapper()
+	{
+		return this.entityMapper;
+	}
+	
 	Logger log = Logger.getLogger("Kernai-CouchbaseRepository");
 	
 	//todo expose a map of views with the view name being the key

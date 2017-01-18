@@ -46,7 +46,16 @@ public class ListDetail extends BaseEntity {
 	
 	public ListDetail()
 	{
-		this.type = TYPE_NAME;
+		this(null);
+	}
+	
+	public ListDetail(ListHeader listHeader)
+	{
+		this.type = TYPE_NAME;		
+		if(listHeader != null)
+		{
+			this.setListHeaderId(listHeader.getId());
+		}
 	}
 	
 	

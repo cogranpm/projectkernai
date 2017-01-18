@@ -4,6 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 
 public class ListHeaderViewModel {
@@ -11,6 +12,7 @@ public class ListHeaderViewModel {
 	private List<ListHeader> items;
 	private ListHeader currentItem;
 	private Boolean dirty;
+	private List<ListDetail> childItems;
 	
 	public List<ListHeader> getItems() {
 		return items;
@@ -41,6 +43,22 @@ public class ListHeaderViewModel {
 		//ApplicationData.instance().getAction("Save").setEnabled(!this.dirty);
 	}
 	
+	
+	
+	
+	
+	public List<ListDetail> getChildItems() {
+		return childItems;
+	}
+	public void setChildItems(List<ListDetail> childItems) {
+		this.childItems = childItems;
+		firePropertyChange("childItems", null, null);
+	}
+
+
+
+
+
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 	
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)

@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
@@ -74,7 +76,10 @@ public class ListHeaderView extends Composite implements IEntityView {
 
 	private Label lblName;
 	private Text txtName;
-	private Label errorLabel;
+	private CLabel errorLabel;
+	private TableViewer detailViewer;
+	private Table detailTable;
+	private WritableList<ListDetail> detailInput;
 	
 	public ListHeaderView(Composite parent, int style) {
 		super(parent, style);
@@ -121,33 +126,72 @@ public class ListHeaderView extends Composite implements IEntityView {
 					model.setCurrentItem(item);
 					value.setValue(model.getCurrentItem());
 					model.setDirty(false);
+					
+					/*
+					ListDetail testing = new ListDetail(model.getCurrentItem());
+					testing.setKey("Combo");
+					testing.setLabel("Combo Box");
+					presenter.saveChildItem(testing);
+					*/
+					
+					presenter.loadChildItems();
+					for(ListDetail daItem : model.getChildItems())
+					{
+						System.out.println(daItem.getKey());
+					}
 				}				
 			}
 		});
 
 		
 		/* edit container */
-		GridLayout layout = new GridLayout(2, false);
-		editContainer.setLayout(layout);
-		lblName = new Label(editContainer, SWT.NONE);
-		lblName.setText("Name");
-		txtName = new Text(editContainer, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
-		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
-		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
+		GridLayout masterLayout = new GridLayout(2, false);
+		SashForm dividerEdit = new SashForm(editContainer, SWT.VERTICAL | SWT.BORDER);
+		Composite editMaster = new Composite(dividerEdit, SWT.NONE);
+		Composite editDetail = new Composite(dividerEdit, SWT.NONE);
+		editMaster.setLayout(masterLayout);
+		editDetail.setLayout(new FillLayout());
+		editContainer.setLayout(new FillLayout());
+		dividerEdit.setWeights(new int[]{1, 3});
 		
-		Label descAllLabel = new Label(editContainer, SWT.NONE);
-        descAllLabel.setText("MOVE THIS TO HEADER, All Validation Problems:");
-        descAllLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, true, false, 1, 1 ));
-        
-        errorLabel = new Label(editContainer, SWT.NONE);
+		errorLabel = new CLabel(editMaster, SWT.NONE);
         GridData gridData = new GridData();
         gridData.horizontalAlignment = SWT.FILL;
         gridData.grabExcessHorizontalSpace = true;
         gridData.horizontalAlignment = GridData.FILL;
-        gridData.horizontalSpan = 1;
+        gridData.horizontalSpan = 2;
         gridData.verticalSpan = 1;
         errorLabel.setLayoutData(gridData);		
 		
+		lblName = new Label(editMaster, SWT.NONE);
+		lblName.setText("Name");
+		txtName = new Text(editMaster, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
+		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
+		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
+		
+		detailViewer = new TableViewer(editDetail, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		detailTable = detailViewer.getTable();
+		detailTable.setHeaderVisible(true);
+		detailTable.setLinesVisible(true);
+		TableViewerColumn keyColumn = new TableViewerColumn(detailViewer, SWT.LEFT);
+		keyColumn.getColumn().setText("Key");
+		keyColumn.getColumn().setResizable(false);
+		keyColumn.getColumn().setMoveable(false);
+		TableViewerColumn labelColumn = new TableViewerColumn(detailViewer, SWT.LEFT);
+		labelColumn.getColumn().setText("Label");
+		labelColumn.getColumn().setResizable(false);
+		labelColumn.getColumn().setMoveable(false);
+		TableColumnLayout detailTableLayout = new TableColumnLayout();
+		editDetail.setLayout(detailTableLayout);
+		detailTableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
+		detailTableLayout.setColumnData(labelColumn.getColumn(), new ColumnWeightData(50));
+
+		/*
+		Label descAllLabel = new Label(editContainer, SWT.NONE);
+        descAllLabel.setText("MOVE THIS TO HEADER, All Validation Problems:");
+        descAllLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, true, false, 1, 1 ));
+        */
+        
 		this.setLayout(new FillLayout());
 
 		ctx = new DataBindingContext();
@@ -234,6 +278,25 @@ public class ListHeaderView extends Composite implements IEntityView {
         
         IObservableList bindings = ctx.getValidationStatusProviders();
         editBinding.getTarget().addChangeListener(stateListener);
+        
+        /* detail grid */
+        ObservableListContentProvider detailContentProvider = new ObservableListContentProvider();
+        detailViewer.setContentProvider(detailContentProvider);
+        
+        IObservableSet<ListDetail> detailElements = detailContentProvider.getKnownElements();
+        final IObservableMap keys = BeanProperties.value(ListDetail.class, "key").observeDetail(detailElements);
+        IObservableMap[] detailLabelMaps = {keys};
+        ILabelProvider detailLabelProvider = new ObservableMapLabelProvider(detailLabelMaps) {
+                @Override
+                public String getColumnText(Object element, int columnIndex) {
+                	ListDetail mc = (ListDetail)element;
+                	return mc.getKey();
+                }
+        };
+        detailViewer.setLabelProvider(detailLabelProvider);
+        List<ListDetail> detailList = model.getChildItems();
+        detailInput = new WritableList(detailList, ListDetail.class);
+        listViewer.setInput(detailInput);
 
 	}
 	
