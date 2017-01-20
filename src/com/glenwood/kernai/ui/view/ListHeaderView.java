@@ -50,6 +50,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -79,6 +80,10 @@ public class ListHeaderView extends Composite implements IEntityView {
 	private Label lblName;
 	private Text txtName;
 	private CLabel errorLabel;
+
+	private Composite editDetail;
+	private ListDetailMasterDetailView listDetailView;
+	
 	private TableViewer detailViewer;
 	private Table detailTable;
 	private WritableList<ListDetail> detailInput;
@@ -127,7 +132,12 @@ public class ListHeaderView extends Composite implements IEntityView {
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					ListHeader item = (ListHeader)selection.getFirstElement();
 					presenter.loadModel(item);
-					presenter.loadChildItems();
+					//presenter.loadChildItems();
+					if(listDetailView == null)
+					{
+						listDetailView = new ListDetailMasterDetailView(editDetail, SWT.NONE, item);
+						editDetail.layout();
+					}
 				}				
 			}
 		});
@@ -145,7 +155,11 @@ public class ListHeaderView extends Composite implements IEntityView {
 		Composite editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(masterLayout);
 		editMaster.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		Composite editDetail = new Composite(editContainer, SWT.NONE);
+		
+		
+		
+		editDetail = new Composite(editContainer, SWT.NONE);
+		//ListDetailMasterDetailView editDetail = new ListDetailMasterDetailView(this, SWT.NONE, null);
 		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		editDetail.setLayout(new FillLayout());
 		
@@ -165,6 +179,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 		
+		/*
 		detailViewer = new TableViewer(editDetail, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		detailTable = detailViewer.getTable();
 		detailTable.setHeaderVisible(true);
@@ -181,7 +196,8 @@ public class ListHeaderView extends Composite implements IEntityView {
 		editDetail.setLayout(detailTableLayout);
 		detailTableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
 		detailTableLayout.setColumnData(labelColumn.getColumn(), new ColumnWeightData(50));
-        
+        */
+		
 		this.setLayout(new FillLayout());
 
 		ctx = new DataBindingContext();
@@ -269,22 +285,31 @@ public class ListHeaderView extends Composite implements IEntityView {
         IObservableList bindings = ctx.getValidationStatusProviders();
         editBinding.getTarget().addChangeListener(stateListener);
         
-        /* detail grid */
+        /* detail grid 
         ObservableListContentProvider detailContentProvider = new ObservableListContentProvider();
         detailViewer.setContentProvider(detailContentProvider);
         
         IObservableSet<ListDetail> detailElements = detailContentProvider.getKnownElements();
         final IObservableMap keys = BeanProperties.value(ListDetail.class, "key").observeDetail(detailElements);
-        IObservableMap[] detailLabelMaps = {keys};
+        final IObservableMap<String, String> labels = BeanProperties.value(ListDetail.class, "label").observeDetail(detailElements);
+        IObservableMap[] detailLabelMaps = {keys, labels};
         ILabelProvider detailLabelProvider = new ObservableMapLabelProvider(detailLabelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
                 	ListDetail mc = (ListDetail)element;
-                	return mc.getKey();
+                	switch(columnIndex)
+                	{
+                	case 0:
+                		return mc.getKey();
+                	case 1:
+                		return mc.getLabel();
+                	default:
+                		return null;
+                	}
                 }
         };
         detailViewer.setLabelProvider(detailLabelProvider);
-      
+      	*/
 
 	}
 	
@@ -299,6 +324,11 @@ public class ListHeaderView extends Composite implements IEntityView {
 		detailViewer.setInput(detailInput);	
 	}
 	
+	
+	private void createActions()
+	{
+		/* toolbar for the child grid */
+	}
 
 
 	@Override

@@ -43,6 +43,7 @@ public class ListHeaderPresenter {
 		this.model.setChildItems(new ArrayList<ListDetail>());
 	}
 	
+	/* to do - remove this */
 	public void loadChildItems()
 	{
 		this.model.setChildItems(this.childRepository.getAllByListHeader(this.model.getCurrentItem().getId()));
