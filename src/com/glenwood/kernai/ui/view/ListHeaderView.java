@@ -138,6 +138,10 @@ public class ListHeaderView extends Composite implements IEntityView {
 						listDetailView = new ListDetailMasterDetailView(editDetail, SWT.NONE, item);
 						editDetail.layout();
 					}
+					else
+					{
+						listDetailView.getPresenter().loadItems(item);
+					}
 				}				
 			}
 		});
@@ -155,8 +159,6 @@ public class ListHeaderView extends Composite implements IEntityView {
 		Composite editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(masterLayout);
 		editMaster.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		
-		
 		
 		editDetail = new Composite(editContainer, SWT.NONE);
 		//ListDetailMasterDetailView editDetail = new ListDetailMasterDetailView(this, SWT.NONE, null);
@@ -178,26 +180,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 		txtName = new Text(editMaster, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
 		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		
-		/*
-		detailViewer = new TableViewer(editDetail, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		detailTable = detailViewer.getTable();
-		detailTable.setHeaderVisible(true);
-		detailTable.setLinesVisible(true);
-		TableViewerColumn keyColumn = new TableViewerColumn(detailViewer, SWT.LEFT);
-		keyColumn.getColumn().setText("Key");
-		keyColumn.getColumn().setResizable(false);
-		keyColumn.getColumn().setMoveable(false);
-		TableViewerColumn labelColumn = new TableViewerColumn(detailViewer, SWT.LEFT);
-		labelColumn.getColumn().setText("Label");
-		labelColumn.getColumn().setResizable(false);
-		labelColumn.getColumn().setMoveable(false);
-		TableColumnLayout detailTableLayout = new TableColumnLayout();
-		editDetail.setLayout(detailTableLayout);
-		detailTableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
-		detailTableLayout.setColumnData(labelColumn.getColumn(), new ColumnWeightData(50));
-        */
-		
+
 		this.setLayout(new FillLayout());
 
 		ctx = new DataBindingContext();
@@ -318,11 +301,13 @@ public class ListHeaderView extends Composite implements IEntityView {
 		value.setValue(model.getCurrentItem());
 	}
 	
+	/*
 	public void refreshChildView()
 	{
 		detailInput = new WritableList(model.getChildItems(), ListDetail.class);
 		detailViewer.setInput(detailInput);	
 	}
+	*/
 	
 	
 	private void createActions()

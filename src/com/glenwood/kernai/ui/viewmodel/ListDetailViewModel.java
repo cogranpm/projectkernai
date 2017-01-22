@@ -30,6 +30,13 @@ public class ListDetailViewModel {
 		firePropertyChange("currentItem", oldValue, this.currentItem);
 	}
 
+	public void setListHeader(ListHeader listHeader)
+	{
+		ListHeader oldValue = this.listHeader;
+		this.listHeader = listHeader;
+		firePropertyChange("listHeader", oldValue, this.listHeader);
+	}
+	
 	public ListHeader getListHeader()
 	{
 		return this.listHeader;

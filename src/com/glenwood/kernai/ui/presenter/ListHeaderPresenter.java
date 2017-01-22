@@ -16,14 +16,14 @@ public class ListHeaderPresenter {
 	private ListHeaderView view;
 	private ListHeaderViewModel model;
 	private ListheaderRepository repository;
-	private ListDetailRepository childRepository;
+	//private ListDetailRepository childRepository;
 	
 	public ListHeaderPresenter(ListHeaderView view, ListHeaderViewModel model)
 	{
 		this.view = view;
 		this.model = model;
 		this.repository = new ListheaderRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
-		this.childRepository = new ListDetailRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
+		//this.childRepository = new ListDetailRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
 	public void loadModel(ListHeader item)
@@ -46,14 +46,14 @@ public class ListHeaderPresenter {
 	/* to do - remove this */
 	public void loadChildItems()
 	{
-		this.model.setChildItems(this.childRepository.getAllByListHeader(this.model.getCurrentItem().getId()));
-		this.view.refreshChildView();
+		//this.model.setChildItems(this.childRepository.getAllByListHeader(this.model.getCurrentItem().getId()));
+		//this.view.refreshChildView();
 	}
 	
 	/* quick and dirty test here */
 	public void saveChildItem(ListDetail entity)
 	{
-		this.childRepository.save(entity);
+		//this.childRepository.save(entity);
 	}
 	
 	public void addModel()
