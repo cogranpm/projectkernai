@@ -310,10 +310,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 	*/
 	
 	
-	private void createActions()
-	{
-		/* toolbar for the child grid */
-	}
+
 
 
 	@Override

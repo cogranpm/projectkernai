@@ -20,12 +20,14 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 
@@ -117,7 +119,14 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		 IAction newAction = new Action() {
 			@Override 
 			public void run() {
-				System.out.println("hello");
+				ListDetailModalView modalView = new ListDetailModalView(getShell());
+				model.setCurrentItem(new ListDetail());
+				modalView.setModel(model);
+				if(modalView.open() == Window.OK)
+				{
+					//save it, update the list binding
+					System.out.println(model.getCurrentItem().getKey() + " " + model.getCurrentItem().getLabel());
+				}
 			}
 		 };
 		 newAction.setEnabled(true);
