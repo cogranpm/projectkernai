@@ -33,4 +33,14 @@ public class ListDetailPresenter {
 		this.model.setListHeader(listHeader);
 		this.loadItems();
 	}
+	
+	public void addModel()
+	{
+		
+	}
+	
+	public void saveModel()
+	{
+		this.repository.save(this.model.getCurrentItem());
+	}
 }

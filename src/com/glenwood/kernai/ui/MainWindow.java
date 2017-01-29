@@ -224,7 +224,7 @@ public class MainWindow extends ApplicationWindow {
 				 ApplicationData.GOTO_MASTERPROPERTY_LISTS, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY, ApplicationData.GOTO_MASTERPROPERTY_TYPE};
 		 
 		 /* master properties */
-		 IAction goToMasterPropertyList = new Action("Lists", SWT.TOGGLE) {
+		 IAction goToMasterPropertyList = new Action("Lists", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_LISTS);
@@ -238,7 +238,7 @@ public class MainWindow extends ApplicationWindow {
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
 		 
-		 IAction goToMasterPropertyCategory = new Action("&Master Category", SWT.TOGGLE) {
+		 IAction goToMasterPropertyCategory = new Action("&Master Category", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				//ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS).get
@@ -253,7 +253,7 @@ public class MainWindow extends ApplicationWindow {
 
 
 		 
-		 IAction goToMasterPropertyProperty = new Action("Master Property", SWT.TOGGLE) {
+		 IAction goToMasterPropertyProperty = new Action("Master Property", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY);
@@ -265,7 +265,7 @@ public class MainWindow extends ApplicationWindow {
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_PROPERTY, goToMasterPropertyProperty);
 		 
-		 IAction goToMasterPropertyGroup = new Action("Property Group", SWT.TOGGLE) {
+		 IAction goToMasterPropertyGroup = new Action("Property Group", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_GROUP);
@@ -277,7 +277,7 @@ public class MainWindow extends ApplicationWindow {
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_GROUP, goToMasterPropertyGroup);
 		 
-		 IAction goToMasterPropertyType = new Action("Property &Type", SWT.TOGGLE) {
+		 IAction goToMasterPropertyType = new Action("Property &Type", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_TYPE);

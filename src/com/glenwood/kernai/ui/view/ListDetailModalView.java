@@ -1,5 +1,6 @@
 package com.glenwood.kernai.ui.view;
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -9,9 +10,11 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -34,6 +37,7 @@ public class ListDetailModalView extends Dialog {
 	private Label lblLabel;
 	private DataBindingContext ctx;
 	private WritableValue<ListDetail> value;
+	private Label lblErrorLabel;
 	
 	public ListDetailViewModel getModel()
 	{
@@ -52,12 +56,15 @@ public class ListDetailModalView extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
+		lblErrorLabel = new Label(container, SWT.CENTER);
 		lblKey= new Label(container, SWT.NONE);
 		lblKey.setText("Key");
 		txtKey = new Text(container, SWT.SINGLE | SWT.BORDER);
 		lblLabel = new Label(container, SWT.NONE);
 		lblLabel.setText("Label");
 		txtLabel = new Text(container, SWT.SINGLE | SWT.BORDER);
+		
+		lblErrorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1 ));
 		lblKey.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1 ));
 		txtKey.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1 ));
 		lblLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1 ));
@@ -82,7 +89,7 @@ public class ListDetailModalView extends Dialog {
                 if (nameValue.length() > 0){
                   return ValidationStatus.ok();
                 }
-                return ValidationStatus.error("Key must be entered");
+                return ValidationStatus.error("Value must be entered");
             }
             
           };
@@ -91,6 +98,10 @@ public class ListDetailModalView extends Dialog {
 	        
 	    Binding keyBinding = ctx.bindValue(keyTarget, key, strategy, null);
 	    Binding labelBinding = ctx.bindValue(labelTarget, label, strategy, null);
+        ControlDecorationSupport.create(keyBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport labelValidater = ControlDecorationSupport.create(labelBinding, SWT.TOP | SWT.LEFT);
+        final IObservableValue errorObservable = WidgetProperties.text().observe(lblErrorLabel);
+        ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
 		
 		return container;
 	}
