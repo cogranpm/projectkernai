@@ -1,5 +1,6 @@
 package com.glenwood.kernai.ui.presenter;
 
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.persistence.ListDetailRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
@@ -36,7 +37,8 @@ public class ListDetailPresenter {
 	
 	public void addModel()
 	{
-		
+		this.model.setCurrentItem(new ListDetail(this.model.getListHeader()));
+		this.view.showAddEdit();
 	}
 	
 	public void saveModel()

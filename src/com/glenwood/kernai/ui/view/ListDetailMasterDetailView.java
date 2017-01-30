@@ -119,14 +119,7 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		 IAction newAction = new Action() {
 			@Override 
 			public void run() {
-				ListDetailModalView modalView = new ListDetailModalView(getShell());
-				model.setCurrentItem(new ListDetail());
-				modalView.setModel(model);
-				if(modalView.open() == Window.OK)
-				{
-					//save it, update the list binding
-					System.out.println(model.getCurrentItem().getKey() + " " + model.getCurrentItem().getLabel());
-				}
+				presenter.addModel();
 			}
 		 };
 		 newAction.setEnabled(true);
@@ -139,6 +132,20 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 	private  ListDetailMasterDetailView(Composite parent, int style) {
 		this(parent, style, null);
 
+	}
+	
+	public void showAddEdit()
+	{
+		ListDetailModalView modalView = new ListDetailModalView(getShell());
+		modalView.setModel(model);
+		if(modalView.open() == Window.OK)
+		{
+			this.presenter.saveModel();
+			this.input.add(this.model.getCurrentItem());
+			//save it, update the list binding
+			//System.out.println(model.getCurrentItem().getKey() + " " + model.getCurrentItem().getLabel());
+			//presenter.
+		}
 	}
 	
 	public void refreshView()
