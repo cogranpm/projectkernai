@@ -5,20 +5,22 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -39,6 +41,8 @@ public class ListDetailModalView extends Dialog {
 	private WritableValue<ListDetail> value;
 	private Label lblErrorLabel;
 	
+	AggregateValidationStatus validationStatus;
+	
 	public ListDetailViewModel getModel()
 	{
 		return this.model;
@@ -56,6 +60,9 @@ public class ListDetailModalView extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
+		//Composite keyContainer = new Composite(container, SWT.NONE);
+		//keyContainer.setLayout(new FillLayout());
+		
 		lblErrorLabel = new Label(container, SWT.CENTER);
 		lblKey= new Label(container, SWT.NONE);
 		lblKey.setText("Key");
@@ -64,11 +71,20 @@ public class ListDetailModalView extends Dialog {
 		lblLabel.setText("Label");
 		txtLabel = new Text(container, SWT.SINGLE | SWT.BORDER);
 		
-		lblErrorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1 ));
+		//
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(lblErrorLabel);
+		GridDataFactory.fillDefaults().applyTo(lblKey);
+		GridDataFactory.fillDefaults().applyTo(lblLabel);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(txtKey);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(txtLabel);
+		
+		//lblErrorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1 ));
+		/*
 		lblKey.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1 ));
 		txtKey.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1 ));
 		lblLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1 ));
 		txtLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 1, 1 ));
+		*/
 		container.setLayout(new GridLayout(2, false));
 		ctx = new DataBindingContext();
 		value = new WritableValue<ListDetail>();
@@ -87,9 +103,10 @@ public class ListDetailModalView extends Dialog {
             public IStatus validate(Object value) {
                 String nameValue = String.valueOf(value).replaceAll("\\s", "");
                 if (nameValue.length() > 0){
-                  return ValidationStatus.ok();
+                  //return ValidationStatus.ok();
+                  return Status.OK_STATUS;
                 }
-                return ValidationStatus.error("Value must be entered");
+                return ValidationStatus.error("Key and Label must be entered");
             }
             
           };
@@ -98,18 +115,25 @@ public class ListDetailModalView extends Dialog {
 	        
 	    Binding keyBinding = ctx.bindValue(keyTarget, key, strategy, null);
 	    Binding labelBinding = ctx.bindValue(labelTarget, label, strategy, null);
-        ControlDecorationSupport.create(keyBinding, SWT.TOP | SWT.LEFT);
+	    ControlDecorationSupport keyValidator = ControlDecorationSupport.create(keyBinding, SWT.TOP | SWT.LEFT);
         ControlDecorationSupport labelValidater = ControlDecorationSupport.create(labelBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(lblErrorLabel);
-        ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
+        validationStatus = new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY); 
+        ctx.bindValue(errorObservable, validationStatus, null, null);
+       
 		
 		return container;
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		
+		 Button okButton = this.getButton(IDialogConstants.OK_ID);
+	     IObservableValue<Button> okBtnTarget = WidgetProperties.enabled().observe(okButton);
+	     IConverter converter = IConverter.create(IStatus.class, Boolean.TYPE, (daStatus)-> new Boolean(((IStatus)daStatus).isOK()));
+	     ctx.bindValue(okBtnTarget, validationStatus, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), UpdateValueStrategy.create(converter));
 	}
 	
 	@Override
