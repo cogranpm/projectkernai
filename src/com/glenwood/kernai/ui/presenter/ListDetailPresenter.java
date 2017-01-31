@@ -47,6 +47,15 @@ public class ListDetailPresenter {
 		this.view.showAddEdit(false);
 	}
 	
+	public void deleteModel(ListDetail listDetail)
+	{
+		if(listDetail != null)
+		{
+			repository.delete(listDetail);
+			this.view.refreshView();
+		}
+	}
+	
 	public void saveModel()
 	{
 		this.repository.save(this.model.getCurrentItem());
