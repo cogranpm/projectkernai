@@ -110,6 +110,7 @@ public class ApplicationData {
 	public static final String IMAGE_ACTIVITY_SMALL = "activitysmall";
 	public static final String IMAGE_ACTIVITY_LARGE = "activitylarge";
 	public static final String IMAGE_ADD_SMALL = "addSmall";
+	public static final String IMAGE_CANCEL_SMALL = "cancelSmall";
 	
 	public static final String DELETE_ACTION_KEY = "delete";
 	public static final String NEW_ACTION_KEY = "new";
@@ -138,6 +139,7 @@ public class ApplicationData {
 		this.imageRegistry.put(IMAGE_DIAGRAM, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Diagram_16x.png")));
 		this.imageRegistry.put(IMAGE_MASTERPAGE, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "MasterPage_16x.png")));
 		this.imageRegistry.put(IMAGE_ADD_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Add_16x.png")));
+		this.imageRegistry.put(IMAGE_CANCEL_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Cancel_16x.png")));
 	}
 	
 	public static ApplicationData instance()

@@ -38,7 +38,13 @@ public class ListDetailPresenter {
 	public void addModel()
 	{
 		this.model.setCurrentItem(new ListDetail(this.model.getListHeader()));
-		this.view.showAddEdit();
+		this.view.showAddEdit(true);
+	}
+	
+	public void editModel(ListDetail listDetail)
+	{
+		this.model.setCurrentItem(listDetail);
+		this.view.showAddEdit(false);
 	}
 	
 	public void saveModel()

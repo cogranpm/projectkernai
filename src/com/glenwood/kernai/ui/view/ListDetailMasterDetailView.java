@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
@@ -44,6 +45,7 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 	Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	
 	private static final String NEW_ACTION_KEY = "new";
+	private static final String DELETE_ACTION_KEY = "delete";
 	
 	
 	public ListDetailPresenter getPresenter() {
@@ -69,6 +71,8 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		ToolBar actionsBar = new ToolBar(headerContainer, SWT.NONE);
 		ToolBarManager toolBarManager = new ToolBarManager(actionsBar);
 		ActionContributionItem newAction = new ActionContributionItem(this.actionMap.get(NEW_ACTION_KEY));
+		toolBarManager.add(newAction);
+		newAction = new ActionContributionItem(this.actionMap.get(DELETE_ACTION_KEY));
 		toolBarManager.add(newAction);
 		toolBarManager.update(true);
 		
@@ -98,7 +102,11 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 			
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				System.out.println("Double clicked me");
+				IStructuredSelection selection = (IStructuredSelection)listViewer.getSelection();
+				if(selection != null)
+				{
+					presenter.editModel((ListDetail)selection.getFirstElement());
+				}
 				
 			}
 		});
@@ -125,6 +133,16 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		 newAction.setEnabled(true);
 		 newAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ADD_SMALL));
 		 this.actionMap.put(NEW_ACTION_KEY, newAction);
+		 
+		 IAction deleteAction = new Action(){
+			 @Override
+			 public void run(){
+				 
+			 }
+		 };
+		 deleteAction.setEnabled(false);
+		 deleteAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_SMALL));
+		 this.actionMap.put(DELETE_ACTION_KEY, deleteAction);
 	}
 	
 	
@@ -134,17 +152,21 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 
 	}
 	
-	public void showAddEdit()
+	public void showAddEdit(Boolean adding)
 	{
 		ListDetailModalView modalView = new ListDetailModalView(getShell());
 		modalView.setModel(model);
 		if(modalView.open() == Window.OK)
 		{
 			this.presenter.saveModel();
-			this.input.add(this.model.getCurrentItem());
-			//save it, update the list binding
-			//System.out.println(model.getCurrentItem().getKey() + " " + model.getCurrentItem().getLabel());
-			//presenter.
+			if(adding)
+			{
+				this.input.add(this.model.getCurrentItem());
+			}
+			else
+			{
+				this.listViewer.refresh();
+			}
 		}
 	}
 	
