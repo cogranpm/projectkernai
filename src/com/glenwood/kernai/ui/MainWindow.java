@@ -174,6 +174,23 @@ public class MainWindow extends ApplicationWindow {
 		    testAction.setEnabled(true);	
 		    ApplicationData.instance().addAction("Test", testAction);
 		    
+		 IAction exitAction = new Action("E&xit\tCtrl+X"){
+			 @Override
+			 public void run()
+			 {
+				 close();
+			 }
+		 };
+		 ApplicationData.instance().addAction(ApplicationData.EXIT_ACTION_KEY, exitAction);
+		 
+		 IAction aboutAction = new Action("&About") {
+			 @Override
+			 public void run() {
+				 System.out.println("About");
+			 }
+		 };
+		 ApplicationData.instance().addAction(ApplicationData.ABOUT_ACTION_KEY, aboutAction);
+		    
 		 IAction saveAction = new Action() {
 			@Override 
 			public void run() {
@@ -186,6 +203,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 saveAction.setText("Save");
+		 saveAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_SAVE_SMALL));
 		 saveAction.setEnabled(true);
 		 ApplicationData.instance().addAction(ApplicationData.SAVE_ACTION_KEY, saveAction);
 
@@ -201,6 +219,8 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 deleteAction.setText("Delete");
+		 deleteAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_SMALL));
+		 deleteAction.setDisabledImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_DISABLED_SMALL));
 		 ApplicationData.instance().addAction(ApplicationData.DELETE_ACTION_KEY, deleteAction);
 
 		 IAction newAction = new Action() {
@@ -215,6 +235,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 newAction.setText("&New");
+		 newAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ADD_SMALL));
 		 newAction.setEnabled(false);
 		 newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.NEW_ACTION_KEY, newAction);
@@ -297,6 +318,14 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected MenuManager createMenuManager() {
 		MenuManager menuManager = new MenuManager("menu");
+		
+		MenuManager fileMenu = new MenuManager("&File");
+		fileMenu.add(ApplicationData.instance().getAction(ApplicationData.EXIT_ACTION_KEY));
+		menuManager.add(fileMenu);
+		
+		MenuManager helpMenu = new MenuManager("&Help");
+		helpMenu.add(ApplicationData.instance().getAction(ApplicationData.ABOUT_ACTION_KEY));
+		menuManager.add(helpMenu);
 		return menuManager;
 	}
 
@@ -307,19 +336,20 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected ToolBarManager createToolBarManager(int style) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.NONE);
-
-		ActionContributionItem item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
-		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		
+		ActionContributionItem item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.SAVE_ACTION_KEY));
+		//item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBarManager.add(item);
 		
 		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY));
-		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		//item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBarManager.add(item);
 		
-		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.SAVE_ACTION_KEY));
-		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-		toolBarManager.add(item);
 		
+		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
+		//item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBarManager.add(item);
+				
 		item = new ActionContributionItem(ApplicationData.instance().getAction("Test"));
 		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBarManager.add(item);

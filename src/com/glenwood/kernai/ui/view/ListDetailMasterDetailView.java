@@ -163,7 +163,6 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 			public void selectionChanged(SelectionChangedEvent event) {
 				actionMap.get(DELETE_ACTION_KEY).setEnabled(true);
 				actionMap.get(EDIT_ACTION_KEY).setEnabled(true);
-				
 			}
 		});
 		

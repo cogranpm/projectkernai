@@ -114,6 +114,11 @@ public class ApplicationData {
 	public static final String IMAGE_CANCEL_DISABLED_SMALL = "cancelDisabledSmall";
 	public static final String IMAGE_EDIT_SMALL = "editSmall";
 	public static final String IMAGE_EDIT_DISABLED_SMALL = "editDisabledSmall";
+	public static final String IMAGE_SAVE_SMALL = "saveSmall";
+	public static final String IMAGE_SAVE_DISABLED_SMALL = "saveDisabledSmall";
+	
+	public static final String EXIT_ACTION_KEY = "exit";
+	public static final String ABOUT_ACTION_KEY = "about";
 	
 	public static final String DELETE_ACTION_KEY = "delete";
 	public static final String NEW_ACTION_KEY = "new";
@@ -146,6 +151,9 @@ public class ApplicationData {
 		this.imageRegistry.put(IMAGE_CANCEL_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Cancel_grey_16x.png")));
 		this.imageRegistry.put(IMAGE_EDIT_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Edit_16x.png")));
 		this.imageRegistry.put(IMAGE_EDIT_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Edit_grey_16x.png")));
+		this.imageRegistry.put(IMAGE_SAVE_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
+		this.imageRegistry.put(IMAGE_SAVE_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
+
 	}
 	
 	public static ApplicationData instance()
