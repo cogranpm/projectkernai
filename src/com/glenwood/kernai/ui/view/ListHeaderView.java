@@ -13,8 +13,6 @@ package com.glenwood.kernai.ui.view;
 
 import java.util.List;
 
-import javax.swing.text.MutableAttributeSet;
-
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -41,6 +39,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -50,7 +49,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -132,16 +130,8 @@ public class ListHeaderView extends Composite implements IEntityView {
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					ListHeader item = (ListHeader)selection.getFirstElement();
 					presenter.loadModel(item);
-					//presenter.loadChildItems();
-					if(listDetailView == null)
-					{
-						listDetailView = new ListDetailMasterDetailView(editDetail, SWT.NONE, item);
-						editDetail.layout();
-					}
-					else
-					{
-						listDetailView.getPresenter().loadItems(item);
-					}
+					refreshListDetailView(item);
+
 				}				
 			}
 		});
@@ -301,13 +291,21 @@ public class ListHeaderView extends Composite implements IEntityView {
 		value.setValue(model.getCurrentItem());
 	}
 	
-	/*
-	public void refreshChildView()
+	
+	public void refreshListDetailView(ListHeader listHeader)
 	{
-		detailInput = new WritableList(model.getChildItems(), ListDetail.class);
-		detailViewer.setInput(detailInput);	
+		if(listDetailView == null)
+		{
+			listDetailView = new ListDetailMasterDetailView(editDetail, SWT.NONE, listHeader);
+			editDetail.layout();
+		}
+		else
+		{
+			listDetailView.getPresenter().loadItems(listHeader);
+			listDetailView.setVisible(true);
+		}
 	}
-	*/
+	
 	
 	
 
@@ -327,8 +325,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 		input.add(this.model.getCurrentItem());
 		if (this.listDetailView != null)
 		{
-			this.listDetailView.getPresenter().loadItems();
-			this.listDetailView.setEnabled(false);
+			this.listDetailView.setVisible(false);
 		}
 		
 	}
@@ -337,6 +334,10 @@ public class ListHeaderView extends Composite implements IEntityView {
 	public void save() {
 		this.presenter.saveModel();
 		this.model.setDirty(false);
+		//this.refreshListDetailView(this.model.getCurrentItem());
+		//selected the newly added item in the list
+		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
+		this.listViewer.setSelection(selection);
 	}
 
 }
