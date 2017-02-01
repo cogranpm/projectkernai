@@ -12,6 +12,8 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -22,6 +24,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -140,6 +144,18 @@ public class MainWindow extends ApplicationWindow {
 		{
 			ApplicationData.instance().getToolItem("Save").setEnabled(false);
 		}
+		
+		this.getShell().getDisplay().addFilter(SWT.KeyUp, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				 if ((event.stateMask & SWT.CTRL) == SWT.CTRL)
+	                {
+	                    System.out.println("Ctrl pressed");
+	                }
+				
+			}
+		});
 		
 		
 		return container;
@@ -400,6 +416,8 @@ public class MainWindow extends ApplicationWindow {
 		newShell.setText("Kernai");
 		newShell.setImages(new Image[]{ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL), 
 				ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL)});
+		
+
 		}
 	
 	

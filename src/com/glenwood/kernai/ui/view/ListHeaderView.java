@@ -325,6 +325,12 @@ public class ListHeaderView extends Composite implements IEntityView {
 		this.presenter.addModel();
 		value.setValue(this.model.getCurrentItem());
 		input.add(this.model.getCurrentItem());
+		if (this.listDetailView != null)
+		{
+			this.listDetailView.getPresenter().loadItems();
+			this.listDetailView.setEnabled(false);
+		}
+		
 	}
 
 	@Override
