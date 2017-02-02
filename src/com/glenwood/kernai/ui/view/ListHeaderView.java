@@ -33,6 +33,7 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -313,8 +314,11 @@ public class ListHeaderView extends Composite implements IEntityView {
 
 	@Override
 	public void delete() {
-		input.remove(this.model.getCurrentItem());
+		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
+		if (!confirm){return;}
 		this.presenter.deleteModel();
+		input.remove(this.model.getCurrentItem());
+		
 	}
 
 	@Override

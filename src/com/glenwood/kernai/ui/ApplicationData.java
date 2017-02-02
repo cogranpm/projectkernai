@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
@@ -154,6 +156,13 @@ public class ApplicationData {
 		this.imageRegistry.put(IMAGE_SAVE_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
 		this.imageRegistry.put(IMAGE_SAVE_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
 
+	}
+	
+	
+	
+	public boolean confirmDelete(Shell parent)
+	{
+		return MessageDialog.openConfirm(parent, "Confirm Delete", "Delete, are you sure?");
 	}
 	
 	public static ApplicationData instance()

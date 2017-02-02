@@ -3,13 +3,19 @@ package com.glenwood.kernai.ui.view;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -17,9 +23,12 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.WidgetSideEffects;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -73,6 +82,7 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 	private Table listTable;
 	private WritableList<ListDetail> input;
 	
+	
 	public ListDetailMasterDetailView(Composite parent, int style, ListHeader listHeader)
 	{
 		super(parent, SWT.BORDER);
@@ -82,6 +92,7 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		
 		Composite headerContainer = new Composite(this, SWT.NONE);
 		headerContainer.setLayout(new GridLayout(1, false));
+		
 		Label headerLabel = new Label(headerContainer, SWT.NONE);
 		ToolBar actionsBar = new ToolBar(headerContainer, SWT.NONE);
 		ToolBarManager toolBarManager = new ToolBarManager(actionsBar);
@@ -156,15 +167,15 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 			}
 		});
 		
-		
+		/*originally used to set the enabled on the toolbar actions, which was a fudge
+		 * now using databinding instead
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				actionMap.get(DELETE_ACTION_KEY).setEnabled(true);
-				actionMap.get(EDIT_ACTION_KEY).setEnabled(true);
 			}
 		});
+		*/
 		
 		this.ctx = new DataBindingContext();
 		initDataBindings();
@@ -209,7 +220,10 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 				 ListDetail selectedItem = getSelection();
 				 if (selectedItem != null)
 				 {
-					 presenter.deleteModel(selectedItem);
+					 if(ApplicationData.instance().confirmDelete(getShell()) == true)
+					 {
+						 presenter.deleteModel(selectedItem);
+					 }
 				 }
 			 }
 		 };
@@ -305,8 +319,37 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
         		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
         	};
         };
-        ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
-        ctx.bindValue(editItemTarget, listViewerSelectionForEdit, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding editBinding = ctx.bindValue(editItemTarget, listViewerSelectionForEdit, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+       
+        //listener required to enable/disable action associated with toolItem, can't databind an action
+        editBinding.getTarget().addChangeListener(new IChangeListener() {
+			
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction editAction = actionMap.get(EDIT_ACTION_KEY);
+				ToolItem editToolItem = toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY);
+				editAction.setEnabled(editToolItem.getEnabled());
+			}
+		});
+        
+        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+			
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction deleteAction = actionMap.get(DELETE_ACTION_KEY);
+				ToolItem deleteToolItem = toolItemMap.get(ID_PREFIX + DELETE_ACTION_KEY);
+				deleteAction.setEnabled(deleteToolItem.getEnabled());				
+			}
+		});
+        
+     // ISideEffect sideEffect =ISideEffect.create( () -> { editAction.setEnabled(editItemTarget.getValue().isEnabled());});
+      
+      //ISideEffectFactory sfactory = WidgetSideEffects.createFactory(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY));
+      //sfactory.create(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY)::getEnabled, this.actionMap.get(EDIT_ACTION_KEY)::setEnabled);
+      //ISideEffect sideEffect = ISideEffect.create(() -> {return deleteItemTarget.getValue()}, this.actionMap.get(DELETE_ACTION_KEY)::setEnabled);
+     // sfactory.create(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY)::toString, dummyLabel::setText);
+   
 
 	}
 
