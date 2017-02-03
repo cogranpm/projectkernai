@@ -351,13 +351,15 @@ public class MainWindow extends ApplicationWindow {
 		fileMenu.add(ApplicationData.instance().getAction(ApplicationData.EXIT_ACTION_KEY));
 		menuManager.add(fileMenu);
 		
+		MenuManager editMenu = new MenuManager("&Edit");
+		editMenu.add(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
+		menuManager.add(editMenu);
+		
 		MenuManager helpMenu = new MenuManager("&Help");
 		helpMenu.add(ApplicationData.instance().getAction(ApplicationData.ABOUT_ACTION_KEY));
 		menuManager.add(helpMenu);
 		
-		MenuManager editMenu = new MenuManager("&Edit");
-		editMenu.add(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
-		menuManager.add(editMenu);
+
 		
 		return menuManager;
 	}

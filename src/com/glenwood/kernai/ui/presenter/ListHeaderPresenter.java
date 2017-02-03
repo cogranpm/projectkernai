@@ -69,7 +69,11 @@ public class ListHeaderPresenter {
 	
 	public void deleteModel()
 	{
+		System.out.println("just deleted the model");
+		this.model.getItems().remove(this.model.getCurrentItem());
 		this.repository.delete(model.getCurrentItem());
+		this.model.setCurrentItem(null);
+		this.view.refreshView();
 	}
 	
 	

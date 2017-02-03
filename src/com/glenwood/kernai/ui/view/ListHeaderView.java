@@ -316,8 +316,9 @@ public class ListHeaderView extends Composite implements IEntityView {
 	public void delete() {
 		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
 		if (!confirm){return;}
-		this.presenter.deleteModel();
 		input.remove(this.model.getCurrentItem());
+		this.presenter.deleteModel();
+		
 		
 	}
 

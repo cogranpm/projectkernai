@@ -52,6 +52,7 @@ public class ListDetailPresenter {
 		if(listDetail != null)
 		{
 			repository.delete(listDetail);
+			
 			this.model.getItems().remove(listDetail);
 			this.view.refreshView();
 		}
