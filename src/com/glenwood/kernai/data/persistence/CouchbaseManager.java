@@ -34,6 +34,7 @@ public class CouchbaseManager implements IPersistenceManager {
 	private Manager manager;
 	private Database database;
 	private EntityMapper entityMapper;
+	private static final String ENTITY_BY_TYPE_VIEW = "entityByType";
 	
 	/* todo, need to look at this, exposing the database type is a no no, but is needed by repository interfaces */
 	public Database getDatabase()
@@ -152,6 +153,31 @@ public class CouchbaseManager implements IPersistenceManager {
 		}
 	}
 	
+	public <T> List<T> getAll(String type, Class<T> aClass)
+	{
+		List<T> entityList = new ArrayList<T>();
+		Query aquery = this.database.getView(ENTITY_BY_TYPE_VIEW).createQuery();
+		List<Object> keys = new ArrayList<Object>();
+        keys.add(type);
+		aquery.setKeys(keys);
+		QueryEnumerator result = null;
+		try {
+			result = aquery.run();
+		} catch (CouchbaseLiteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(Iterator<QueryRow> it = result; it.hasNext();)
+		{
+			QueryRow row = it.next();
+			T entity = this.entityMapper.toEntity(row.getDocument(), aClass);
+			entityList.add(entity);
+		}
+		return entityList;
+
+	}
+	
+	/*
 	public <T> List<T> getAll(String queryName, Class<T> aClass)
 	{
 		List<T> entityList = new ArrayList<T>();
@@ -172,6 +198,7 @@ public class CouchbaseManager implements IPersistenceManager {
 		return entityList;
 
 	}
+	*/
 	
 	public void test()
 	{
@@ -191,6 +218,19 @@ public class CouchbaseManager implements IPersistenceManager {
 	
 	private void generateViews()
 	{
+		
+		View entityByTypeView = this.database.getView(ENTITY_BY_TYPE_VIEW);
+		entityByTypeView.setMap(new Mapper() {
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if (document.containsKey("type"))
+				{
+					emitter.emit(document.get("type"), null);
+				}
+			}
+		}, "1");
+		
 		View attributesView = this.database.getView("attributes");
 		attributesView.setMap(new Mapper(){
 			@Override

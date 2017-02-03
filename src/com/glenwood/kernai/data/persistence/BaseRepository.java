@@ -35,11 +35,19 @@ public class BaseRepository implements IEntityRepository {
 		this.manager.delete(entity);
 
 	}
+	
+	@Override
+	public <T> List<T> getAll(String type, Class<T> aClass)
+	{
+		return this.manager.getAll(type, aClass);
+	}
 
+	/*
 	@Override
 	public <T> List<T> getAll(String queryName, Class<T> aClass) {
 		return this.manager.getAll(queryName, aClass);
 	}
+	*/
 
 	@Override
 	public void test() {
