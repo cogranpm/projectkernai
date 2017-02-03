@@ -166,8 +166,12 @@ public class MasterCategoryView extends Composite implements IEntityView {
 	
 	@Override
 	public void delete() {
-		input.remove(model.getCurrentItem());
-		this.presenter.deleteModel();
+		if (ApplicationData.instance().confirmDelete(this.getShell()))
+		{
+			this.presenter.deleteModel();
+			input.remove(model.getCurrentItem());
+		}
+
 	}
 
 	@Override

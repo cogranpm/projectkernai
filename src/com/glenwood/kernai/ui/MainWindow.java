@@ -5,6 +5,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
@@ -149,10 +150,16 @@ public class MainWindow extends ApplicationWindow {
 			
 			@Override
 			public void handleEvent(Event event) {
-				 if ((event.stateMask & SWT.CTRL) == SWT.CTRL)
+				/* this would be for child toolbar items */
+				IEntityView view = ApplicationData.instance().getCurrentEntityView();
+				if (view != null)
+				{
+					if ((event.stateMask & SWT.CTRL) == SWT.CTRL)
 	                {
-	                    System.out.println("Ctrl pressed");
+	                    //System.out.println("Ctrl pressed");
+					 	
 	                }
+				}
 				
 			}
 		});
@@ -221,6 +228,7 @@ public class MainWindow extends ApplicationWindow {
 		 saveAction.setText("Save");
 		 saveAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_SAVE_SMALL));
 		 saveAction.setEnabled(true);
+		 saveAction.setAccelerator(SWT.MOD1 + 'S');
 		 ApplicationData.instance().addAction(ApplicationData.SAVE_ACTION_KEY, saveAction);
 
 		 IAction deleteAction = new Action() {
@@ -234,6 +242,7 @@ public class MainWindow extends ApplicationWindow {
 				}				
 			}
 		 };
+		 deleteAction.setAccelerator(SWT.MOD1 + 'D');
 		 deleteAction.setText("Delete");
 		 deleteAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_SMALL));
 		 deleteAction.setDisabledImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_DISABLED_SMALL));
@@ -253,7 +262,7 @@ public class MainWindow extends ApplicationWindow {
 		 newAction.setText("&New");
 		 newAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ADD_SMALL));
 		 newAction.setEnabled(false);
-		 newAction.setAccelerator(SWT.CTRL | 'N');
+		 newAction.setAccelerator(SWT.MOD1 | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.NEW_ACTION_KEY, newAction);
 		 
 
@@ -336,12 +345,20 @@ public class MainWindow extends ApplicationWindow {
 		MenuManager menuManager = new MenuManager("menu");
 		
 		MenuManager fileMenu = new MenuManager("&File");
+		fileMenu.add(ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY));
+		fileMenu.add(ApplicationData.instance().getAction(ApplicationData.SAVE_ACTION_KEY));
+		fileMenu.add(new Separator());
 		fileMenu.add(ApplicationData.instance().getAction(ApplicationData.EXIT_ACTION_KEY));
 		menuManager.add(fileMenu);
 		
 		MenuManager helpMenu = new MenuManager("&Help");
 		helpMenu.add(ApplicationData.instance().getAction(ApplicationData.ABOUT_ACTION_KEY));
 		menuManager.add(helpMenu);
+		
+		MenuManager editMenu = new MenuManager("&Edit");
+		editMenu.add(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
+		menuManager.add(editMenu);
+		
 		return menuManager;
 	}
 

@@ -187,6 +187,20 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 		listContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		this.setLayout(mainLayout);
 		
+		this.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("hi");
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	private ListDetail getSelection()
