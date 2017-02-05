@@ -3,12 +3,14 @@ package com.glenwood.kernai.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
@@ -18,7 +20,15 @@ import com.glenwood.kernai.ui.abstraction.IEntityView;
 
 public class ApplicationData {
 	
-	
+	private MainWindow mainWindow;
+
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
+	public void setMainWindow(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
+	}
+
 	private IPersistenceManager persistenceManager;
 	public IPersistenceManager getPersistenceManager()
 	{
@@ -39,15 +49,46 @@ public class ApplicationData {
 		actionsMap.put(key, action);
 	}
 	
-	private Map<String, ToolItem> toolItemsMap;
+	
+
 	public ToolItem getToolItem(String key)
 	{
-		return toolItemsMap.get(key);
+		try
+		{
+			ToolBarManager manager =this.mainWindow.getToolBarManager();
+			if (manager == null){return null;}
+			ToolBar toolBar = manager.getControl();
+			if (toolBar == null) { return null;}
+			ToolItem[] items = toolBar.getItems();
+			if(items == null){return null;}
+			for(ToolItem item : items)
+			{
+				Object itemData = item.getData();
+				if(itemData == null)
+				{
+					return null;
+				}
+				ActionContributionItem actionItem = (ActionContributionItem)itemData;
+				if(actionItem.getAction().getActionDefinitionId().equalsIgnoreCase(key))
+				{
+					return item;
+				}
+			}
+			return null;
+		}
+		catch(Exception ex)
+		{
+			//could be shutting down window, just close gracefully
+			return null;
+		}
 	}
+	
+	/*
 	public void addToolItem(String key, ToolItem toolItem)
 	{
 		this.toolItemsMap.put(key, toolItem);
 	}
+	*/
 	
 	private String persistenceType;
 	public String getPersistenceType()
@@ -118,13 +159,17 @@ public class ApplicationData {
 	public static final String IMAGE_EDIT_DISABLED_SMALL = "editDisabledSmall";
 	public static final String IMAGE_SAVE_SMALL = "saveSmall";
 	public static final String IMAGE_SAVE_DISABLED_SMALL = "saveDisabledSmall";
-	
+
+	//global actions
 	public static final String EXIT_ACTION_KEY = "exit";
 	public static final String ABOUT_ACTION_KEY = "about";
-	
 	public static final String DELETE_ACTION_KEY = "delete";
+	public static final String DELETE_ACTION_TEXT = "Delete";
 	public static final String NEW_ACTION_KEY = "new";
+	public static final String NEW_ACTION_TEXT = "&New";
 	public static final String SAVE_ACTION_KEY = "save";
+	public static final String SAVE_ACTION_TEXT = "Save";
+	
 	public static final String GOTO_MASTERPROPERTY_LISTS = "GoToMasterPropertyLists";
 	public static final String GOTO_MASTERPROPERTY_CATEGORY = "GoToMasterPropertyCategory";
 	public static final String GOTO_MASTERPROPERTY_GROUP = "GoToMasterPropertyGroup";
@@ -134,7 +179,7 @@ public class ApplicationData {
 	protected ApplicationData()
 	{
 		actionsMap = new HashMap<String, IAction>();
-		toolItemsMap = new HashMap<String, ToolItem>();
+	//	toolItemsMap = new HashMap<String, ToolItem>();
 		this.persistenceType = PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE;
 		persistenceManager  = new CouchbaseManager();
 		persistenceManager.init(APPLICATION_NAME);
@@ -163,6 +208,32 @@ public class ApplicationData {
 	public boolean confirmDelete(Shell parent)
 	{
 		return MessageDialog.openConfirm(parent, "Confirm Delete", "Delete, are you sure?");
+	}
+	
+	public void loadEntityView(IEntityView view)
+	{
+		this.getAction(NEW_ACTION_KEY).setEnabled(true);
+	}
+	
+	public void unloadEntityView()
+	{
+		ToolItem item = this.getToolItem(SAVE_ACTION_KEY); 
+		if (item != null){item.setEnabled(false);}
+		
+		IAction actionItem = this.getAction(SAVE_ACTION_KEY);
+		if(actionItem != null){actionItem.setEnabled(false);}
+		
+		item = this.getToolItem(DELETE_ACTION_KEY);
+		if(item != null){item.setEnabled(false);}
+		
+		actionItem = this.getAction(DELETE_ACTION_KEY);
+		if(actionItem != null){actionItem.setEnabled(false);}
+		
+		item = this.getToolItem(NEW_ACTION_KEY);
+		if(item!= null){item.setEnabled(false);}
+		
+		actionItem = this.getAction(NEW_ACTION_KEY);
+		if(actionItem != null){actionItem.setEnabled(false);}
 	}
 	
 	public static ApplicationData instance()

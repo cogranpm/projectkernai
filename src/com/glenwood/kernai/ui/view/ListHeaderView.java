@@ -29,10 +29,12 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -46,6 +48,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -180,6 +184,17 @@ public class ListHeaderView extends Composite implements IEntityView {
 		presenter.loadModels();
 		initDataBindings();
 		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
+		
+		/* undo the global changes */
+		this.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				ApplicationData.instance().unloadEntityView();
+			}
+		});
+		
+		ApplicationData.instance().loadEntityView(this);
 
 	}
 	
@@ -236,7 +251,7 @@ public class ListHeaderView extends Composite implements IEntityView {
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         
         //ToolItems
-        ToolItem saveToolitem = ApplicationData.instance().getToolItem("Save");
+        ToolItem saveToolitem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
         if (saveToolitem != null)
         {
         	IObservableValue save = WidgetProperties.enabled().observe(saveToolitem);
@@ -244,8 +259,7 @@ public class ListHeaderView extends Composite implements IEntityView {
         	dirtyBinding = ctx.bindValue(save, mdirty);
         }
         
-        // this one listenes to all changes
-        ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
+        Binding validationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         
         /* listening to all changes */
         stateListener = new IChangeListener() {
@@ -259,31 +273,30 @@ public class ListHeaderView extends Composite implements IEntityView {
         IObservableList bindings = ctx.getValidationStatusProviders();
         editBinding.getTarget().addChangeListener(stateListener);
         
-        /* detail grid 
-        ObservableListContentProvider detailContentProvider = new ObservableListContentProvider();
-        detailViewer.setContentProvider(detailContentProvider);
         
-        IObservableSet<ListDetail> detailElements = detailContentProvider.getKnownElements();
-        final IObservableMap keys = BeanProperties.value(ListDetail.class, "key").observeDetail(detailElements);
-        final IObservableMap<String, String> labels = BeanProperties.value(ListDetail.class, "label").observeDetail(detailElements);
-        IObservableMap[] detailLabelMaps = {keys, labels};
-        ILabelProvider detailLabelProvider = new ObservableMapLabelProvider(detailLabelMaps) {
-                @Override
-                public String getColumnText(Object element, int columnIndex) {
-                	ListDetail mc = (ListDetail)element;
-                	switch(columnIndex)
-                	{
-                	case 0:
-                		return mc.getKey();
-                	case 1:
-                		return mc.getLabel();
-                	default:
-                		return null;
-                	}
-                }
+        /* set the enabled of the toolbar items */
+        ToolItem deleteToolItem = ApplicationData.instance().getToolItem(ApplicationData.DELETE_ACTION_KEY);
+        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
+        IObservableValue<ToolItem> deleteItemTarget = WidgetProperties.enabled().observe(deleteToolItem);
+        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
+        	@Override
+        	protected IStatus doSet(IObservableValue observableValue, Object value) 
+        	{
+        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
+        	};
         };
-        detailViewer.setLabelProvider(detailLabelProvider);
-      	*/
+        //a binding that sets delete toolitem to disabled based on whether item in list is selected
+        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
+        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction deleteAction = ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY);
+				deleteAction.setEnabled(deleteToolItem.getEnabled());
+			}
+		});
+        
+     
 
 	}
 	

@@ -37,6 +37,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -161,7 +163,18 @@ public class MasterCategoryView extends Composite implements IEntityView {
 		
 		initDataBindings();
 
-		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
+		
+		
+		/* undo the global changes */
+		this.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				ApplicationData.instance().unloadEntityView();
+			}
+		});
+		
+		ApplicationData.instance().loadEntityView(this);
 	}
 	
 	@Override
@@ -271,7 +284,7 @@ public class MasterCategoryView extends Composite implements IEntityView {
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         
         //ToolItems
-        ToolItem saveToolitem = ApplicationData.instance().getToolItem("Save");
+        ToolItem saveToolitem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
         if (saveToolitem != null)
         {
         	IObservableValue save = WidgetProperties.enabled().observe(saveToolitem);

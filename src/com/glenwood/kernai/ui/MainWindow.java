@@ -56,6 +56,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	public MainWindow() {
 		super(null);
+		ApplicationData.instance().setMainWindow(this);
 		ApplicationData.instance().addImagesToRegistry();
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -132,6 +133,7 @@ public class MainWindow extends ApplicationWindow {
 		item.setText("&Scripting");
 		
 
+		/*
 
 		ToolBar toolbar = this.getToolBarManager().getControl();
 		if (toolbar != null )
@@ -139,12 +141,17 @@ public class MainWindow extends ApplicationWindow {
 			for(ToolItem toolItem : toolbar.getItems())
 			{
 				ApplicationData.instance().addToolItem(toolItem.getText(), toolItem);
+				System.out.println(toolItem.getText());
 			}
 		}
+		
+		
 		if (ApplicationData.instance().getToolItem("Save") != null)
 		{
 			ApplicationData.instance().getToolItem("Save").setEnabled(false);
 		}
+		*/
+		
 		
 		this.getShell().getDisplay().addFilter(SWT.KeyUp, new Listener() {
 			
@@ -225,10 +232,11 @@ public class MainWindow extends ApplicationWindow {
 				}				
 			}
 		 };
-		 saveAction.setText("Save");
+		 saveAction.setText(ApplicationData.SAVE_ACTION_TEXT);
 		 saveAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_SAVE_SMALL));
-		 saveAction.setEnabled(true);
+		 saveAction.setEnabled(false);
 		 saveAction.setAccelerator(SWT.MOD1 + 'S');
+		 saveAction.setActionDefinitionId(ApplicationData.SAVE_ACTION_KEY);
 		 ApplicationData.instance().addAction(ApplicationData.SAVE_ACTION_KEY, saveAction);
 
 		 IAction deleteAction = new Action() {
@@ -243,9 +251,11 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 deleteAction.setAccelerator(SWT.MOD1 + 'D');
-		 deleteAction.setText("Delete");
+		 deleteAction.setText(ApplicationData.DELETE_ACTION_TEXT);
 		 deleteAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_SMALL));
 		 deleteAction.setDisabledImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_CANCEL_DISABLED_SMALL));
+		 deleteAction.setEnabled(false);
+		 deleteAction.setActionDefinitionId(ApplicationData.DELETE_ACTION_KEY);
 		 ApplicationData.instance().addAction(ApplicationData.DELETE_ACTION_KEY, deleteAction);
 
 		 IAction newAction = new Action() {
@@ -259,10 +269,11 @@ public class MainWindow extends ApplicationWindow {
 				}
 			}
 		 };
-		 newAction.setText("&New");
+		 newAction.setText(ApplicationData.NEW_ACTION_TEXT);
 		 newAction.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ADD_SMALL));
 		 newAction.setEnabled(false);
 		 newAction.setAccelerator(SWT.MOD1 | 'N');
+		 newAction.setActionDefinitionId(ApplicationData.NEW_ACTION_KEY);
 		 ApplicationData.instance().addAction(ApplicationData.NEW_ACTION_KEY, newAction);
 		 
 
