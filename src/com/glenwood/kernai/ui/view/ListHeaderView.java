@@ -90,10 +90,11 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	
 	private ListDetailMasterDetailView listDetailView;
 	
+	/*
 	private TableViewer detailViewer;
 	private Table detailTable;
 	private WritableList<ListDetail> detailInput;
-	
+	*/
 
 	
 	public ListHeaderView(Composite parent, int style) {
