@@ -112,29 +112,6 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	//need to make this an inline class	nameColumn.setEditingSupport(new NameEditor(listViewer));
 		
 		
-		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if(event.getSelection().isEmpty())
-				{
-					return;
-				}
-				if(event.getSelection() instanceof IStructuredSelection)
-				{
-					if (model.getCurrentItem() != null)
-					{
-						presenter.saveModel();
-					}
-
-					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-					ListHeader item = (ListHeader)selection.getFirstElement();
-					presenter.loadModel(item);
-					refreshListDetailView(item);
-
-				}				
-			}
-		});
 
 		
 		
@@ -153,6 +130,18 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 		ApplicationData.instance().loadEntityView(this);
 
 	}
+	
+	@Override
+	protected ListHeader listSelectionChangedHandler(SelectionChangedEvent event)
+	{
+		ListHeader item = super.listSelectionChangedHandler(event);
+		if(item != null)
+		{
+			refreshListDetailView(item);
+		}
+		return item;
+	}
+
 	
 	protected void initDataBindings() {
 		if (editBinding != null)
