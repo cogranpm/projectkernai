@@ -57,12 +57,12 @@ import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailView;
-import com.glenwood.kernai.ui.presenter.ListDetailPresenter;
+import com.glenwood.kernai.ui.presenter.ListDetailViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
 public class ListDetailMasterDetailView extends Composite implements IEntityMasterDetailView {
 	
-	private ListDetailPresenter presenter;
+	private ListDetailViewPresenter presenter;
 	private Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	private Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
 	private static final String NEW_ACTION_KEY = "new";
@@ -72,7 +72,7 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 	private DataBindingContext ctx;
 	
 	
-	public ListDetailPresenter getPresenter() {
+	public ListDetailViewPresenter getPresenter() {
 		return presenter;
 	}
 
@@ -87,13 +87,16 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 	{
 		super(parent, SWT.BORDER);
 		this.model = new ListDetailViewModel(listHeader);
-		this.presenter = new ListDetailPresenter(this, model);
+		this.presenter = new ListDetailViewPresenter(this, model);
 		this.createActions();
 		
 		Composite headerContainer = new Composite(this, SWT.NONE);
-		headerContainer.setLayout(new GridLayout(1, false));
+		GridLayout headerLayout = new GridLayout(1, false);
+		headerLayout.marginHeight = 0;
+		headerLayout.marginWidth = 0;
+		headerContainer.setLayout(headerLayout);
 		
-		Label headerLabel = new Label(headerContainer, SWT.NONE);
+		//Label headerLabel = new Label(headerContainer, SWT.NONE);
 		ToolBar actionsBar = new ToolBar(headerContainer, SWT.NONE);
 		ToolBarManager toolBarManager = new ToolBarManager(actionsBar);
 		ActionContributionItem newAction = new ActionContributionItem(this.actionMap.get(NEW_ACTION_KEY));
@@ -132,9 +135,9 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 			}
 		}
 		
-		headerLabel.setText("List Items");
+	//	headerLabel.setText("List Items");
 		actionsBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		headerLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
+		//headerLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		
 		Composite listContainer = new Composite(this, SWT.NONE);
 		listViewer = new TableViewer(listContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -167,22 +170,14 @@ public class ListDetailMasterDetailView extends Composite implements IEntityMast
 			}
 		});
 		
-		/*originally used to set the enabled on the toolbar actions, which was a fudge
-		 * now using databinding instead
-		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-			}
-		});
-		*/
-		
 		this.ctx = new DataBindingContext();
 		initDataBindings();
 		this.presenter.loadItems();
 		GridLayout mainLayout = new GridLayout(1, false);
 		mainLayout.verticalSpacing = SWT.FILL;
 		mainLayout.horizontalSpacing = SWT.FILL;
+		mainLayout.marginHeight = 0;
+		mainLayout.marginWidth = 0;
 		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 		listContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		this.setLayout(mainLayout);

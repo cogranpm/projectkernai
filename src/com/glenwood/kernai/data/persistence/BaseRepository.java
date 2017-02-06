@@ -6,7 +6,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 
-public class BaseRepository implements IEntityRepository {
+public class BaseRepository<T> implements IEntityRepository<T> {
 	
 	private IPersistenceManager manager;
 	
@@ -17,7 +17,7 @@ public class BaseRepository implements IEntityRepository {
 	
 	private BaseRepository()
 	{
-		
+
 	}
 	
 	public BaseRepository(IPersistenceManager manager)
@@ -26,28 +26,25 @@ public class BaseRepository implements IEntityRepository {
 	}
 
 	@Override
-	public void save(BaseEntity entity) {
-		this.manager.save(entity);
+	public void save(T entity) {
+		this.manager.save((BaseEntity)entity);
 	}
 
 	@Override
-	public void delete(BaseEntity entity) {
-		this.manager.delete(entity);
+	public void delete(T entity) {
+		this.manager.delete((BaseEntity)entity);
 
 	}
 	
 	@Override
-	public <T> List<T> getAll(String type, Class<T> aClass)
+	public List<T> getAll(String type, Class<T> aClass)
 	{
 		return this.manager.getAll(type, aClass);
 	}
 
-	/*
-	@Override
-	public <T> List<T> getAll(String queryName, Class<T> aClass) {
-		return this.manager.getAll(queryName, aClass);
-	}
-	*/
+	
+
+	
 
 	@Override
 	public void test() {

@@ -363,4 +363,10 @@ public class MasterCategoryView extends Composite implements IEntityView {
 			viewer.update(element, null);
 		}
 	}
+
+	@Override
+	public void refreshView() {
+		// TODO Auto-generated method stub
+		
+	}
 }

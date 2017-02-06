@@ -7,7 +7,7 @@ import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 
-public class EntityRepository extends BaseRepository {
+public class EntityRepository extends BaseRepository<Entity> {
 
 	/* refactor this to have instance that is singleton */
 	public EntityRepository(IPersistenceManager manager) {
@@ -17,7 +17,7 @@ public class EntityRepository extends BaseRepository {
 
 	
 	@Override
-	public void save(BaseEntity entity) {
+	public void save(Entity entity) {
 		super.save(entity);
 	}
 }

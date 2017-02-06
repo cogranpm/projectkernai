@@ -9,13 +9,13 @@ import com.glenwood.kernai.ui.view.ListDetailMasterDetailView;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
 
-public class ListDetailPresenter {
+public class ListDetailViewPresenter {
 
 	private ListDetailMasterDetailView view;
 	private ListDetailViewModel model;
 	private ListDetailRepository repository;
 	
-	public ListDetailPresenter(ListDetailMasterDetailView view, ListDetailViewModel model)
+	public ListDetailViewPresenter(ListDetailMasterDetailView view, ListDetailViewModel model)
 	{
 		this.view = view;
 		this.model = model;

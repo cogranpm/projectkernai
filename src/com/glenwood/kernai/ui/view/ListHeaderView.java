@@ -35,7 +35,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -62,15 +62,17 @@ import org.eclipse.swt.widgets.ToolItem;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.IEntityView;
-import com.glenwood.kernai.ui.presenter.ListHeaderPresenter;
+import com.glenwood.kernai.ui.abstraction.BaseEntityView;
+import com.glenwood.kernai.ui.abstraction.IViewModel;
+import com.glenwood.kernai.ui.presenter.ListHeaderViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ListHeaderViewModel;
 
 
-public class ListHeaderView extends Composite implements IEntityView {
+public class ListHeaderView extends BaseEntityView<ListHeader> {
 
-	private ListHeaderViewModel model;
-	private ListHeaderPresenter presenter;
+	//private ListHeaderViewModel model;
+	
+	/*
 	private TableViewer listViewer;
 	private Table listTable;
 	private WritableList<ListHeader> input;
@@ -79,34 +81,26 @@ public class ListHeaderView extends Composite implements IEntityView {
 	private Binding dirtyBinding;
 	private DataBindingContext ctx;
 	private IChangeListener stateListener; 
+	*/
 
 	private Label lblName;
 	private Text txtName;
-	private CLabel errorLabel;
 
-	private Composite editDetail;
+
+	
 	private ListDetailMasterDetailView listDetailView;
 	
 	private TableViewer detailViewer;
 	private Table detailTable;
 	private WritableList<ListDetail> detailInput;
 	
+
+	
 	public ListHeaderView(Composite parent, int style) {
 		super(parent, style);
 		this.model = new ListHeaderViewModel();
-		this.presenter = new ListHeaderPresenter(this, model);
+		this.presenter = new ListHeaderViewPresenter(this, (ListHeaderViewModel) this.model);
 
-		SashForm dividerMain = new SashForm(this, SWT.HORIZONTAL);
-		
-		Composite listContainer = new Composite(dividerMain, SWT.NONE);
-		Composite editContainer = new Composite(dividerMain, SWT.NONE);
-		dividerMain.setWeights(new int[]{1, 2});
-		
-		
-		listViewer = new TableViewer(listContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		listTable = listViewer.getTable();
-		listTable.setHeaderVisible(true);
-		listTable.setLinesVisible(true);
 		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
@@ -142,33 +136,6 @@ public class ListHeaderView extends Composite implements IEntityView {
 		});
 
 		
-		/* edit container */
-		
-		GridLayout editContainerLayout = new GridLayout(1, false);
-		editContainer.setLayout(editContainerLayout);
-		
-		GridLayout masterLayout = new GridLayout(2, false);
-		masterLayout.verticalSpacing = SWT.FILL;
-		masterLayout.horizontalSpacing = SWT.FILL;
-		
-		Composite editMaster = new Composite(editContainer, SWT.NONE);
-		editMaster.setLayout(masterLayout);
-		editMaster.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		
-		editDetail = new Composite(editContainer, SWT.NONE);
-		//ListDetailMasterDetailView editDetail = new ListDetailMasterDetailView(this, SWT.NONE, null);
-		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
-		editDetail.setLayout(new FillLayout());
-		
-		
-		errorLabel = new CLabel(editMaster, SWT.NONE);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = SWT.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.horizontalSpan = 2;
-        gridData.verticalSpan = 1;
-        errorLabel.setLayoutData(gridData);		
 		
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
@@ -176,24 +143,12 @@ public class ListHeaderView extends Composite implements IEntityView {
 		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 
-		this.setLayout(new FillLayout());
-
-		ctx = new DataBindingContext();
-		value = new WritableValue<ListHeader>();
-
+		Label lblListDetailCaption = new Label(editMaster, SWT.NONE);
+		lblListDetailCaption.setText("List Items");
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(lblListDetailCaption);
 		presenter.loadModels();
 		initDataBindings();
 		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
-		
-		/* undo the global changes */
-		this.addDisposeListener(new DisposeListener() {
-			
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				ApplicationData.instance().unloadEntityView();
-			}
-		});
-		
 		ApplicationData.instance().loadEntityView(this);
 
 	}
@@ -300,11 +255,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 
 	}
 	
-	public void refreshView()
-	{
-		value.setValue(model.getCurrentItem());
-	}
-	
+
 	
 	public void refreshListDetailView(ListHeader listHeader)
 	{
@@ -320,27 +271,21 @@ public class ListHeaderView extends Composite implements IEntityView {
 		}
 	}
 	
-	
-	
-
-
-
+	/*
 	@Override
 	public void delete() {
 		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
 		if (!confirm){return;}
 		input.remove(this.model.getCurrentItem());
 		this.presenter.deleteModel();
-		
-		
 	}
+	*/
 
 	@Override
 	public void add() {
 		this.txtName.setFocus();
-		this.presenter.addModel();
-		value.setValue(this.model.getCurrentItem());
-		input.add(this.model.getCurrentItem());
+		super.add();
+		//input.add(this.model.getCurrentItem());
 		if (this.listDetailView != null)
 		{
 			this.listDetailView.setVisible(false);
@@ -350,9 +295,7 @@ public class ListHeaderView extends Composite implements IEntityView {
 
 	@Override
 	public void save() {
-		this.presenter.saveModel();
-		this.model.setDirty(false);
-		//this.refreshListDetailView(this.model.getCurrentItem());
+		super.save();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
 		this.listViewer.setSelection(selection);

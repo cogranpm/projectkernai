@@ -13,14 +13,14 @@ import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.ListDetail;
 
-public class ListDetailRepository extends BaseRepository implements IEntityRepository {
+public class ListDetailRepository extends BaseRepository<ListDetail> implements IEntityRepository<ListDetail> {
 
 	public ListDetailRepository(IPersistenceManager manager) {
 		super(manager);
 	}
 	
 	@Override
-	public void save(BaseEntity entity) {
+	public void save(ListDetail entity) {
 		ListDetail listDetail = (ListDetail)entity;
 		if(listDetail.getListHeaderId().equals(null))
 		{
