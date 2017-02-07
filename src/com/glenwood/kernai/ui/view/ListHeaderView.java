@@ -70,64 +70,19 @@ import com.glenwood.kernai.ui.viewmodel.ListHeaderViewModel;
 
 public class ListHeaderView extends BaseEntityView<ListHeader> {
 
-	//private ListHeaderViewModel model;
-	
-	/*
-	private TableViewer listViewer;
-	private Table listTable;
-	private WritableList<ListHeader> input;
-	private WritableValue<ListHeader> value;
-	private Binding editBinding;
-	private Binding dirtyBinding;
-	private DataBindingContext ctx;
-	private IChangeListener stateListener; 
-	*/
-
 	private Label lblName;
 	private Text txtName;
-
-
-	
 	private ListDetailMasterDetailView listDetailView;
-	
-	/*
-	private TableViewer detailViewer;
-	private Table detailTable;
-	private WritableList<ListDetail> detailInput;
-	*/
-
 	
 	public ListHeaderView(Composite parent, int style) {
 		super(parent, style);
+	}
+	
+	@Override
+	protected void setupModelAndPresenter()
+	{
 		this.model = new ListHeaderViewModel();
 		this.presenter = new ListHeaderViewPresenter(this, (ListHeaderViewModel) this.model);
-
-		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-		nameColumn.getColumn().setText("Name");
-		nameColumn.getColumn().setResizable(false);
-		nameColumn.getColumn().setMoveable(false);
-		TableColumnLayout tableLayout = new TableColumnLayout();
-		listContainer.setLayout(tableLayout);
-		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
-	//need to make this an inline class	nameColumn.setEditingSupport(new NameEditor(listViewer));
-		
-		
-
-		
-		
-		lblName = new Label(editMaster, SWT.NONE);
-		lblName.setText("Name");
-		txtName = new Text(editMaster, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
-		lblName.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, SWT.FILL, false, false, 1, 1 ));
-		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-
-		Label lblListDetailCaption = new Label(editMaster, SWT.NONE);
-		lblListDetailCaption.setText("List Items");
-		GridDataFactory.fillDefaults().span(2, 1).applyTo(lblListDetailCaption);
-		presenter.loadModels();
-		initDataBindings();
-		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
-		ApplicationData.instance().loadEntityView(this);
 
 	}
 	
@@ -142,8 +97,38 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 		return item;
 	}
 
+	@Override
+	protected void setupListColumns()
+	{
+		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
+		nameColumn.getColumn().setText("Name");
+		nameColumn.getColumn().setResizable(false);
+		nameColumn.getColumn().setMoveable(false);
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		listContainer.setLayout(tableLayout);
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+	}
 	
+	@Override
+	protected void setupEditingContainer()
+	{
+		super.setupEditingContainer();
+		lblName = new Label(editMaster, SWT.NONE);
+		lblName.setText("Name");
+		txtName = viewHelper.getTextEditor(editMaster);
+		viewHelper.layoutEditLabel(lblName);
+		viewHelper.layoutEditEditor(txtName);
+
+		Label lblListDetailCaption = new Label(editMaster, SWT.NONE);
+		lblListDetailCaption.setText("List Items");
+		viewHelper.layoutMasterDetailCaption(lblListDetailCaption);
+		
+	}
+	
+	@Override
 	protected void initDataBindings() {
+
+     
 		if (editBinding != null)
 		{
 			editBinding.getTarget().removeChangeListener(stateListener);
@@ -151,7 +136,6 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 		ctx.dispose();
 		
 		
-		/* content provider is not array provider but the following: */
         ObservableListContentProvider contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
         
@@ -171,11 +155,11 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
         listViewer.setInput(input);
         
         /* binding for the edit screen on name field */
-        IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
-        IObservableValue dbmodel = BeanProperties.value("name").observeDetail(value);
+        IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
+        IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
        
         /* just the validators and decorators in the name field */
-        IValidator validator = new IValidator() {
+        IValidator nameValidator = new IValidator() {
             @Override
             public IStatus validate(Object value) {
                 String nameValue = String.valueOf(value).replaceAll("\\s", "");
@@ -187,24 +171,13 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
             }
             
           };
-        UpdateValueStrategy strategy = new UpdateValueStrategy();
-        strategy.setAfterConvertValidator(validator);
-        
-        editBinding = ctx.bindValue(target, dbmodel, strategy, null);
+        UpdateValueStrategy nameUpdateStrategy = new UpdateValueStrategy();
+        nameUpdateStrategy.setAfterConvertValidator(nameValidator);
+        editBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         
         ControlDecorationSupport.create(editBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
-        
-        //ToolItems
-        ToolItem saveToolitem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
-        if (saveToolitem != null)
-        {
-        	IObservableValue save = WidgetProperties.enabled().observe(saveToolitem);
-        	IObservableValue mdirty= BeanProperties.value(ListHeaderViewModel.class, "dirty").observe(this.model);
-        	dirtyBinding = ctx.bindValue(save, mdirty);
-        }
-        
-        Binding validationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
+        Binding allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         
         /* listening to all changes */
         stateListener = new IChangeListener() {
@@ -217,35 +190,8 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
         
         IObservableList bindings = ctx.getValidationStatusProviders();
         editBinding.getTarget().addChangeListener(stateListener);
-        
-        
-        /* set the enabled of the toolbar items */
-        ToolItem deleteToolItem = ApplicationData.instance().getToolItem(ApplicationData.DELETE_ACTION_KEY);
-        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
-        IObservableValue<ToolItem> deleteItemTarget = WidgetProperties.enabled().observe(deleteToolItem);
-        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
-        	@Override
-        	protected IStatus doSet(IObservableValue observableValue, Object value) 
-        	{
-        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
-        	};
-        };
-        //a binding that sets delete toolitem to disabled based on whether item in list is selected
-        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
-        //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
-        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				IAction deleteAction = ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY);
-				deleteAction.setEnabled(deleteToolItem.getEnabled());
-			}
-		});
-        
-     
 
 	}
-	
-
 	
 	public void refreshListDetailView(ListHeader listHeader)
 	{
@@ -260,16 +206,7 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 			listDetailView.setVisible(true);
 		}
 	}
-	
-	/*
-	@Override
-	public void delete() {
-		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
-		if (!confirm){return;}
-		input.remove(this.model.getCurrentItem());
-		this.presenter.deleteModel();
-	}
-	*/
+
 
 	@Override
 	public void add() {
@@ -281,14 +218,6 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 			this.listDetailView.setVisible(false);
 		}
 		
-	}
-
-	@Override
-	public void save() {
-		super.save();
-		//selected the newly added item in the list
-		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
-		this.listViewer.setSelection(selection);
 	}
 
 }

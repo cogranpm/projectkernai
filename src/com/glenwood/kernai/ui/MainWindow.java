@@ -291,7 +291,7 @@ public class MainWindow extends ApplicationWindow {
 		 };
 		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
 		 goToMasterPropertyList.setEnabled(true);
-		 goToMasterPropertyList.setAccelerator(SWT.CTRL | 'L');
+		 goToMasterPropertyList.setAccelerator(SWT.MOD1 | 'L');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
 
 		 

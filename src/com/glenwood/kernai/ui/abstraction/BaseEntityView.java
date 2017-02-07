@@ -1,14 +1,35 @@
 package com.glenwood.kernai.ui.abstraction;
 
+import java.util.List;
+
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -20,9 +41,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolItem;
+
 
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
+
 
 
 public class BaseEntityView<T> extends Composite implements IEntityView {
@@ -50,13 +74,13 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
 	public BaseEntityView(Composite parent, int style) {
 		super(parent, style);
 		this.init();
-
-
 	}
 	
 	protected void init()
 	{
 		this.viewHelper = new EntityViewHelper();
+		this.setupModelAndPresenter();
+		
 		dividerMain = new SashForm(this, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
@@ -70,18 +94,8 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
 				listSelectionChangedHandler(event);
 			}
 		});
-
-		
-		editMaster = new Composite(editContainer, SWT.NONE);
-		editMaster.setLayout(viewHelper.getViewLayout(2));
-		viewHelper.setViewLayoutData(editMaster, true, false);
-
-		
-		editDetail = new Composite(editContainer, SWT.NONE);
-		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
-		editDetail.setLayout(new FillLayout());
-		errorLabel = new CLabel(editMaster, SWT.NONE);
-		viewHelper.setViewLayoutData(errorLabel, 2);
+		setupListColumns();
+		setupEditingContainer();
 		this.setLayout(new FillLayout());
 		
     	ctx = new DataBindingContext();
@@ -95,6 +109,13 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
 				unloadEntityView();
 			}
 		});		
+		
+		presenter.loadModels();
+		initDataBindings();
+		setupDeleteBinding();
+		setupSaveBinding();
+		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
+		ApplicationData.instance().loadEntityView(this);
 		
 	}
 	
@@ -138,6 +159,84 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
 	{
 		dividerMain.setWeights(new int[]{1, 2});
 	}
+	
+	protected void setupListColumns()
+	{
+		
+	}
+	
+	protected void setupModelAndPresenter()
+	{
+		
+	}
+	
+	protected void setupEditingContainer()
+	{
+		editMaster = new Composite(editContainer, SWT.NONE);
+		editMaster.setLayout(viewHelper.getViewLayout(2));
+		viewHelper.setViewLayoutData(editMaster, true, false);
+		editDetail = new Composite(editContainer, SWT.NONE);
+		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
+		editDetail.setLayout(new FillLayout());
+		errorLabel = new CLabel(editMaster, SWT.NONE);
+		viewHelper.setViewLayoutData(errorLabel, 2);
+	}
+	
+	protected void initDataBindings()
+	{
+		if (editBinding != null)
+		{
+			editBinding.getTarget().removeChangeListener(stateListener);
+		}
+		ctx.dispose();
+		
+  
+       
+	}
+	
+	protected void setupSaveBinding()
+	{
+        ToolItem saveToolItem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
+        if (saveToolItem != null)
+        {
+        	IObservableValue save = WidgetProperties.enabled().observe(saveToolItem);
+        	IObservableValue mdirty= BeanProperties.value("dirty").observe(this.model);
+        	dirtyBinding = ctx.bindValue(save, mdirty);
+        	dirtyBinding.getTarget().addChangeListener(new IChangeListener() {
+    			@Override
+    			public void handleChange(ChangeEvent event) {
+    				IAction saveAction = ApplicationData.instance().getAction(ApplicationData.SAVE_ACTION_KEY);
+    				saveAction.setEnabled(saveToolItem.getEnabled());
+    			}
+    		});
+        }	
+	}
+	
+	protected void setupDeleteBinding()
+	{
+        /* set the enabled of the toolbar items */
+        ToolItem deleteToolItem = ApplicationData.instance().getToolItem(ApplicationData.DELETE_ACTION_KEY);
+        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
+        IObservableValue<ToolItem> deleteItemTarget = WidgetProperties.enabled().observe(deleteToolItem);
+        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
+        	@Override
+        	protected IStatus doSet(IObservableValue observableValue, Object value) 
+        	{
+        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
+        	};
+        };
+		
+        //a binding that sets delete toolitem to disabled based on whether item in list is selected
+        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
+        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction deleteAction = ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY);
+				deleteAction.setEnabled(deleteToolItem.getEnabled());
+			}
+		});
+	}
 
 	@Override
 	public void delete() {
@@ -157,6 +256,9 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
 	@Override
 	public void save() {
 		this.presenter.saveModel();
+		//selected the newly added item in the list
+		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
+		this.listViewer.setSelection(selection);
 	}
 
 	@Override
