@@ -8,9 +8,6 @@
  */
 package com.glenwood.kernai.ui.view;
 
-
-
-
 import java.util.List;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
@@ -37,7 +34,9 @@ import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,6 +44,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
+import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
@@ -104,6 +105,31 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
 		nameColumn.getColumn().setMoveable(false);
+		
+		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((ListHeader)element).setName(String.valueOf(value));
+				listViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((ListHeader)element).getName();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(listViewer.getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
