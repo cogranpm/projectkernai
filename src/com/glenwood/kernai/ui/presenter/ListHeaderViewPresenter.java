@@ -25,24 +25,12 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 	public ListHeaderViewPresenter(ListHeaderView view, ListHeaderViewModel model)
 	{
 		super(view, model);
-		//this.view = view;
-		//this.model = model;
 		this.repository = new ListheaderRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 
 	}
 	
 
-	/*
-	@Override
-	public void loadModel(BaseEntity item)
-	{
-		//ListHeader domainEntity = (ListHeader)item;
-		//model.setCurrentItem(domainEntity);
-		model.setCurrentItem(item);
-		model.setDirty(false);
-		this.view.refreshView();
-	}
-	*/
+
 	@Override
 	public void loadModels()
 	{
@@ -52,7 +40,6 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 			this.model.setCurrentItem(this.model.getItems().get(0));
 		}
 
-		//this.model.setChildItems(new ArrayList<ListDetail>());
 		ListHeaderViewModel daModel = (ListHeaderViewModel)this.model;
 		daModel.setChildItems(new ArrayList<ListDetail>());
 	}
@@ -64,23 +51,7 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 		model.setCurrentItem(newListHeader);
 	}
 	
-	/*
-	@Override
-	public void saveModel()
-	{
-		this.repository.save(model.getCurrentItem());
-	}
-	
-	@Override
-	public void deleteModel()
-	{
-		this.model.getItems().remove(this.model.getCurrentItem());
-		this.repository.delete(model.getCurrentItem());
-		this.model.setCurrentItem(null);
-		this.view.refreshView();
-	}
-	*/
-	
+
 	
 	
 
