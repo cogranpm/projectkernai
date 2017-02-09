@@ -11,6 +11,7 @@ package com.glenwood.kernai.ui.view;
 import java.util.List;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -23,7 +24,6 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
@@ -130,9 +130,6 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	protected void initDataBindings() {
 		super.initDataBindings();
 		
-        ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-        listViewer.setContentProvider(contentProvider);
-        
         IObservableSet<ListHeader> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(ListHeader.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
@@ -167,13 +164,13 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
           };
         UpdateValueStrategy nameUpdateStrategy = new UpdateValueStrategy();
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
-        editBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
+        Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         
-        ControlDecorationSupport.create(editBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-        editBinding.getTarget().addChangeListener(stateListener);
+        nameBinding.getTarget().addChangeListener(stateListener);
 
 	}
 	

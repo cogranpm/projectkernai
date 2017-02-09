@@ -40,6 +40,7 @@ import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
+import com.glenwood.kernai.ui.view.PropertyGroupView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
@@ -298,7 +299,6 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToMasterPropertyCategory = new Action("&Master Category", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
-				//ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS).get
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_CATEGORY);
 				ApplicationData.instance().setCurrentEntityView(new MasterCategoryView(clearComposite(masterPropertyPane), SWT.NONE));
 				masterPropertyPane.layout();
@@ -314,7 +314,7 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY);
-				System.out.println("hello");
+
 			}
 		 };
 		 //goToMasterPropertyProperty.setText("Master &Property");
@@ -326,12 +326,11 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_GROUP);
-				System.out.println("hello");
+				ApplicationData.instance().setCurrentEntityView(new PropertyGroupView(clearComposite(masterPropertyPane), SWT.NONE));
+				masterPropertyPane.layout();
 			}
 		 };
-		 //goToMasterPropertyGroup.setText("Property &Group");
 		 goToMasterPropertyGroup.setEnabled(true);
-		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_GROUP, goToMasterPropertyGroup);
 		 
 		 IAction goToMasterPropertyType = new Action("Property &Type", IAction.AS_CHECK_BOX) {

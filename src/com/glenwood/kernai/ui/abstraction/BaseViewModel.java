@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
-public class BaseViewModel<T> implements IViewModel<T> {
+public class BaseViewModel<T extends BaseEntity> implements IViewModel<T> {
 	
 	protected List<T> items;
 	protected T currentItem;

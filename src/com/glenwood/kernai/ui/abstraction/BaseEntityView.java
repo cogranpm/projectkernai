@@ -12,6 +12,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,21 +30,23 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolItem;
 
+import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
 
 
-public class BaseEntityView<T> extends Composite implements IEntityView {
+public class BaseEntityView<T extends BaseEntity> extends Composite implements IEntityView {
 	
 	
 	protected TableViewer listViewer;
 	protected Table listTable;
 	protected WritableList<T> input;
 	protected WritableValue<T> value;
-	protected Binding editBinding;
+//	protected Binding editBinding;
 	protected Binding dirtyBinding;
 	protected Binding allValidationBinding;
+	protected ObservableListContentProvider contentProvider;
 	protected DataBindingContext ctx;
 	protected IChangeListener stateListener; 
 	protected IEntityPresenter<T> presenter;
@@ -179,12 +182,10 @@ public class BaseEntityView<T> extends Composite implements IEntityView {
             	model.setDirty(true);
             }
         };
-        
-		if (editBinding != null && stateListener != null)
-		{
-			editBinding.getTarget().removeChangeListener(stateListener);
-		}
 		ctx.dispose();
+		
+        contentProvider = new ObservableListContentProvider();
+        listViewer.setContentProvider(contentProvider);
 
 	}
 	
