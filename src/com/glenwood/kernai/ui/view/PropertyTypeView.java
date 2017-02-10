@@ -126,7 +126,7 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	protected void setupListColumns() {
 		super.setupListColumns();
 		
-		listViewer.setComparator(new NameComparator());
+		listViewer.setComparator(new ViewerComparator());
 		
 		TableViewerColumn nameColumn = viewHelper.getListColumn(listViewer, "Name");
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
@@ -153,8 +153,6 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 			}
 		});
 		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
-
-		
 		TableViewerColumn notesColumn  = viewHelper.getListColumn(listViewer, "Notes");
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
@@ -168,7 +166,7 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
 	             @Override
 	             public void widgetSelected(SelectionEvent e) {
-	            	 	NameComparator comparator = (NameComparator)listViewer.getComparator();
+	            	 	ViewerComparator comparator = (ViewerComparator)listViewer.getComparator();
 	                    comparator.setColumn(index);
 	            	 	int dir = comparator.getDirection();
 	                    listViewer.getTable().setSortDirection(dir);
@@ -202,7 +200,7 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 		super.add();
 	}
 	
-	private class NameComparator extends ListSorterHelper
+	private class ViewerComparator extends ListSorterHelper
 	{
 
 		@Override
@@ -210,7 +208,15 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 			PropertyType p1 = (PropertyType)e1;
 			PropertyType p2 = (PropertyType)e2;
 			int rc = 0;
-			rc = p1.getName().compareTo(p2.getName());
+			switch(this.propertyIndex)
+			{
+			case 0:
+				rc = p1.getName().compareTo(p2.getName());
+				break;
+			default:
+				rc = 0;
+			}
+			
 			if (this.direction == DESCENDING)
 			{
 				rc = -rc;
