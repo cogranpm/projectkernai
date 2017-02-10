@@ -24,14 +24,21 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.PropertyType;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.PropertyTypeViewPresenter;
+import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.PropertyTypeViewModel;
 
 public class PropertyTypeView extends BaseEntityView<PropertyType> {
@@ -118,11 +125,10 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	@Override
 	protected void setupListColumns() {
 		super.setupListColumns();
-		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-		nameColumn.getColumn().setText("Name");
-		nameColumn.getColumn().setResizable(false);
-		nameColumn.getColumn().setMoveable(false);
 		
+		listViewer.setComparator(new NameComparator());
+		
+		TableViewerColumn nameColumn = viewHelper.getListColumn(listViewer, "Name");
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
 			
 			@Override
@@ -146,17 +152,32 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 				return true;
 			}
 		});
+		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
+
 		
-		TableViewerColumn notesColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-		notesColumn.getColumn().setText("Notes");
-		notesColumn.getColumn().setResizable(false);
-		notesColumn.getColumn().setMoveable(false);
-		
+		TableViewerColumn notesColumn  = viewHelper.getListColumn(listViewer, "Notes");
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(50));		
 		tableLayout.setColumnData(notesColumn.getColumn(), new ColumnWeightData(50));
+		
+
 	}
+	
+	 private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
+	             @Override
+	             public void widgetSelected(SelectionEvent e) {
+	            	 	NameComparator comparator = (NameComparator)listViewer.getComparator();
+	                    comparator.setColumn(index);
+	            	 	int dir = comparator.getDirection();
+	                    listViewer.getTable().setSortDirection(dir);
+	                    listViewer.getTable().setSortColumn(column);
+	                    listViewer.refresh();
+	             }
+	     };
+	     return selectionAdapter;
+	 }
 	
 	@Override
 	protected void setupEditingContainer() {
@@ -179,5 +200,22 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	public void add() {
 		this.txtName.setFocus();
 		super.add();
+	}
+	
+	private class NameComparator extends ListSorterHelper
+	{
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			PropertyType p1 = (PropertyType)e1;
+			PropertyType p2 = (PropertyType)e2;
+			int rc = 0;
+			rc = p1.getName().compareTo(p2.getName());
+			if (this.direction == DESCENDING)
+			{
+				rc = -rc;
+			}
+			return rc;
+		}
 	}
 }

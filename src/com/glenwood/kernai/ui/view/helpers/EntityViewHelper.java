@@ -1,6 +1,8 @@
 package com.glenwood.kernai.ui.view.helpers;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -57,6 +59,20 @@ public class EntityViewHelper {
 	public void layoutMasterDetailCaption(Label label)
 	{
 		GridDataFactory.fillDefaults().span(2, 1).applyTo(label);
+	}
+	
+	public TableViewerColumn getListColumn(TableViewer listViewer, String columnText)
+	{
+		return this.getListColumn(listViewer, columnText, SWT.LEFT);
+	}
+	
+	public TableViewerColumn getListColumn(TableViewer listViewer, String columnText, int style)
+	{
+		TableViewerColumn column = new TableViewerColumn(listViewer, SWT.LEFT);
+		column.getColumn().setText(columnText);
+		column.getColumn().setResizable(false);
+		column.getColumn().setMoveable(false);
+		return column; 
 	}
 
 }
