@@ -43,7 +43,6 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	protected Table listTable;
 	protected WritableList<T> input;
 	protected WritableValue<T> value;
-//	protected Binding editBinding;
 	protected Binding dirtyBinding;
 	protected Binding allValidationBinding;
 	protected ObservableListContentProvider contentProvider;
@@ -59,6 +58,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	protected Composite editDetail;
 	
 	protected EntityViewHelper viewHelper;
+	protected boolean fillEditingSpace;
 
 	public BaseEntityView(Composite parent, int style) {
 		super(parent, style);
@@ -163,7 +163,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	{
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
-		viewHelper.setViewLayoutData(editMaster, true, false);
+		viewHelper.setViewLayoutData(editMaster, true, fillEditingSpace);
 		editDetail = new Composite(editContainer, SWT.NONE);
 		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		editDetail.setLayout(new FillLayout());

@@ -160,6 +160,7 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	
 	@Override
 	protected void setupEditingContainer() {
+		fillEditingSpace = true;
 		super.setupEditingContainer();
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
@@ -168,9 +169,10 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 		viewHelper.layoutEditEditor(txtName);
 		lblNotes = new Label(editMaster, SWT.NONE);
 		lblNotes.setText("Notes");
-		txtNotes = new Text(editMaster, SWT.MULTI);
+		txtNotes = viewHelper.getMultiLineTextEditor(editMaster);
 		viewHelper.layoutEditLabel(lblNotes);
-		viewHelper.layoutEditEditor(txtNotes);
+		viewHelper.layoutMultiLineText(txtNotes);
+		
 	}
 	
 	@Override

@@ -39,9 +39,19 @@ public class EntityViewHelper {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
 	}
 	
+	public void layoutMultiLineText(Text text)
+	{
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+	}
+	
 	public Text getTextEditor(Composite parent)
 	{
 		return new Text(parent, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
+	}
+	
+	public Text getMultiLineTextEditor(Composite parent)
+	{
+		return new Text(parent, SWT.LEFT | SWT.MULTI | SWT.BORDER);
 	}
 	
 	public void layoutMasterDetailCaption(Label label)
