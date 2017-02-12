@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.MasterCategory;
+import com.glenwood.kernai.data.entity.PropertyType;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.MasterCategoryViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
@@ -172,13 +173,17 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 == null || e2 == null)
+			{
+				return 0;
+			}
 			MasterCategory p1 = (MasterCategory)e1;
 			MasterCategory p2 = (MasterCategory)e2;
 			int rc = 0;
 			switch(this.propertyIndex)
 			{
 			case 0:
-				rc = p1.getName().compareTo(p2.getName());
+				rc = this.compareName(p1, p2);
 				break;
 			default:
 				rc = 0;
@@ -189,6 +194,19 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 				rc = -rc;
 			}
 			return rc;
+		}
+		
+		private int compareName(MasterCategory p1, MasterCategory p2)
+		{
+			if (p1 == null || p2 == null)
+			{
+				return 0;
+			}
+			String nameOne = "";
+			String nameTwo = "";
+			nameOne = p1.getName() == null ? "" : p1.getName();
+			nameTwo = p2.getName() == null ? "" : p2.getName();
+			return nameOne.compareTo(nameTwo);
 		}
 	}
 	

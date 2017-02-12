@@ -160,13 +160,17 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 == null || e2 == null)
+			{
+				return 0;
+			}
 			PropertyGroup p1 = (PropertyGroup)e1;
 			PropertyGroup p2 = (PropertyGroup)e2;
 			int rc = 0;
 			switch(this.propertyIndex)
 			{
 			case 0:
-				rc = p1.getName().compareTo(p2.getName());
+				rc = this.compareName(p1, p2);
 				break;
 			default:
 				rc = 0;
@@ -178,5 +182,22 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 			}
 			return rc;
 		}
+		
+		private int compareName(PropertyGroup p1, PropertyGroup p2)
+		{
+			if (p1 == null || p2 == null)
+			{
+				return 0;
+			}
+			String nameOne = "";
+			String nameTwo = "";
+			nameOne = (p1.getName() == null) ? "" : p1.getName();
+			nameTwo = (p2.getName() == null) ? "" : p2.getName();
+			return nameOne.compareTo(nameTwo);
+		}
+		
+		
 	}
+	
+	
 }
