@@ -24,10 +24,13 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -232,6 +235,21 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 			}
 		});
 	}
+	
+	 protected SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
+	             @Override
+	             public void widgetSelected(SelectionEvent e) {
+	            	 IListSortComparator comparator = (IListSortComparator)listViewer.getComparator();
+	                    comparator.setColumn(index);
+	            	 	int dir = comparator.getDirection();
+	                    listViewer.getTable().setSortDirection(dir);
+	                    listViewer.getTable().setSortColumn(column);
+	                    listViewer.refresh();
+	             }
+	     };
+	     return selectionAdapter;
+	 }
 
 	@Override
 	public void delete() {

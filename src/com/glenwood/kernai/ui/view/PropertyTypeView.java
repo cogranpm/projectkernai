@@ -162,20 +162,7 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 
 	}
 	
-	 private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
-	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
-	             @Override
-	             public void widgetSelected(SelectionEvent e) {
-	            	 	ViewerComparator comparator = (ViewerComparator)listViewer.getComparator();
-	                    comparator.setColumn(index);
-	            	 	int dir = comparator.getDirection();
-	                    listViewer.getTable().setSortDirection(dir);
-	                    listViewer.getTable().setSortColumn(column);
-	                    listViewer.refresh();
-	             }
-	     };
-	     return selectionAdapter;
-	 }
+
 	
 	@Override
 	protected void setupEditingContainer() {

@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import com.glenwood.kernai.data.entity.PropertyGroup;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.PropertyGroupViewPresenter;
+import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.PropertyGroupViewModel;
 
 public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
@@ -101,6 +103,7 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	@Override
 	protected void setupListColumns() {
 		super.setupListColumns();
+		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
@@ -129,6 +132,7 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 				return true;
 			}
 		});
+		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
 		
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
@@ -149,5 +153,30 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	public void add() {
 		this.txtName.setFocus();
 		super.add();
+	}
+	
+	private class ViewerComparator extends ListSorterHelper
+	{
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			PropertyGroup p1 = (PropertyGroup)e1;
+			PropertyGroup p2 = (PropertyGroup)e2;
+			int rc = 0;
+			switch(this.propertyIndex)
+			{
+			case 0:
+				rc = p1.getName().compareTo(p2.getName());
+				break;
+			default:
+				rc = 0;
+			}
+			
+			if (this.direction == DESCENDING)
+			{
+				rc = -rc;
+			}
+			return rc;
+		}
 	}
 }

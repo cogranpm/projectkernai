@@ -3,7 +3,9 @@ package com.glenwood.kernai.ui.view.helpers;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
-public class ListSorterHelper extends ViewerComparator {
+import com.glenwood.kernai.ui.abstraction.IListSortComparator;
+
+public class ListSorterHelper extends ViewerComparator implements IListSortComparator {
 	
 	protected static final int DESCENDING = 1;
 	protected int direction = DESCENDING;

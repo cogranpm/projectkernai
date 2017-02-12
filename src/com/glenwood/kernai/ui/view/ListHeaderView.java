@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Text;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.ListHeaderViewPresenter;
+import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.ListHeaderViewModel;
 
 
@@ -76,11 +78,13 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	@Override
 	protected void setupListColumns()
 	{
+		super.setupListColumns();
+		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
 		nameColumn.getColumn().setMoveable(false);
-		
+		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
 			
 			@Override
@@ -199,6 +203,31 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 			this.listDetailView.setVisible(false);
 		}
 		
+	}
+	
+	private class ViewerComparator extends ListSorterHelper
+	{
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			ListHeader p1 = (ListHeader)e1;
+			ListHeader p2 = (ListHeader)e2;
+			int rc = 0;
+			switch(this.propertyIndex)
+			{
+			case 0:
+				rc = p1.getName().compareTo(p2.getName());
+				break;
+			default:
+				rc = 0;
+			}
+			
+			if (this.direction == DESCENDING)
+			{
+				rc = -rc;
+			}
+			return rc;
+		}
 	}
 
 }
