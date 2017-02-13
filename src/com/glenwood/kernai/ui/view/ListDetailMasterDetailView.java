@@ -7,15 +7,11 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
-import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -23,32 +19,24 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.swt.WidgetSideEffects;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -56,32 +44,23 @@ import org.eclipse.swt.widgets.ToolItem;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailView;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
 import com.glenwood.kernai.ui.presenter.ListDetailViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
-public class ListDetailMasterDetailView extends Composite implements IEntityMasterDetailView {
+public class ListDetailMasterDetailView extends BaseEntityMasterDetailView<ListDetail> {
 	
 	private ListDetailViewPresenter presenter;
-	private Map<String, IAction> actionMap = new HashMap<String, IAction>();
-	private Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
-	private static final String NEW_ACTION_KEY = "new";
-	private static final String DELETE_ACTION_KEY = "delete";
-	private static final String EDIT_ACTION_KEY = "edit";
-	private static final String ID_PREFIX = "com.glenwood.kernai.ui.view.ListDetailMasterDetailView.";
-	private DataBindingContext ctx;
+	private ListDetailViewModel model;
+
+	private WritableList<ListDetail> input;
+
 	
 	
 	public ListDetailViewPresenter getPresenter() {
 		return presenter;
 	}
 
-	private ListDetailViewModel model;
-	
-	private TableViewer listViewer;
-	private Table listTable;
-	private WritableList<ListDetail> input;
-	
 	
 	public ListDetailMasterDetailView(Composite parent, int style, ListHeader listHeader)
 	{

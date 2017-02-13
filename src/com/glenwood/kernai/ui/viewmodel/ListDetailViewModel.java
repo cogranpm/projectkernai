@@ -6,67 +6,18 @@ import java.util.List;
 
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
+import com.glenwood.kernai.ui.abstraction.BaseMasterDetailViewModel;
+import com.glenwood.kernai.ui.abstraction.BaseViewModel;
 
-public class ListDetailViewModel {
+public class ListDetailViewModel extends BaseMasterDetailViewModel<ListDetail, ListHeader>{
 	
-	private List<ListDetail> items;
-	private ListDetail currentItem;
-	private ListHeader listHeader;
-	
-	public List<ListDetail> getItems() {
-		return items;
-	}
-	public void setItems(List<ListDetail> items) {
-		this.items = items;
-		firePropertyChange("items", null, null);
-	}
 
-	public ListDetail getCurrentItem() {
-		return currentItem;
-	}
-	public void setCurrentItem(ListDetail currentItem) {
-		ListDetail oldValue = this.currentItem;
-		this.currentItem = currentItem;
-		firePropertyChange("currentItem", oldValue, this.currentItem);
-	}
-
-	public void setListHeader(ListHeader listHeader)
-	{
-		ListHeader oldValue = this.listHeader;
-		this.listHeader = listHeader;
-		firePropertyChange("listHeader", oldValue, this.listHeader);
-	}
-	
-	public ListHeader getListHeader()
-	{
-		return this.listHeader;
-	}
-	
-	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-	
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
-	{
-		changeSupport.addPropertyChangeListener(listener);
-	}
-	
-	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
-	{
-		changeSupport.removePropertyChangeListener(listener);
-	}
-	
-	public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
-	{
-		changeSupport.firePropertyChange(propertyName, oldValue, newValue);
-	}
 	
 	public ListDetailViewModel(ListHeader listHeader)
 	{
-		this.listHeader = listHeader;
+		super(listHeader);
 	}
 	
-	private ListDetailViewModel()
-	{
-		
-	}
+	
 
 }

@@ -25,19 +25,19 @@ public class ListDetailViewPresenter {
 	
 	public void loadItems()
 	{
-		this.model.setItems(this.repository.getAllByListHeader(this.model.getListHeader().getId()));
+		this.model.setItems(this.repository.getAllByListHeader(this.model.getParent().getId()));
 		this.view.refreshView();
 	}
 	
 	public void loadItems(ListHeader listHeader)
 	{
-		this.model.setListHeader(listHeader);
+		this.model.setParent(listHeader);
 		this.loadItems();
 	}
 	
 	public void addModel()
 	{
-		this.model.setCurrentItem(new ListDetail(this.model.getListHeader()));
+		this.model.setCurrentItem(new ListDetail(this.model.getParent()));
 		this.view.showAddEdit(true);
 	}
 	
