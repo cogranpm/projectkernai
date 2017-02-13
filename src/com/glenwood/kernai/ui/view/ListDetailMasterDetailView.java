@@ -1,8 +1,5 @@
 package com.glenwood.kernai.ui.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -37,7 +34,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -45,10 +41,11 @@ import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
+import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailView;
 import com.glenwood.kernai.ui.presenter.ListDetailViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
-public class ListDetailMasterDetailView extends BaseEntityMasterDetailView<ListDetail> {
+public class ListDetailMasterDetailView extends BaseEntityMasterDetailView<ListDetail, ListHeader> {
 	
 	private ListDetailViewPresenter presenter;
 	private ListDetailViewModel model;

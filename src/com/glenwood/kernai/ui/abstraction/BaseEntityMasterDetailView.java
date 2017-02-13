@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
-public class BaseEntityMasterDetailView<T extends BaseEntity> extends Composite implements IEntityMasterDetailView {
+public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P> {
 
 	protected Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	protected Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
@@ -26,6 +26,36 @@ public class BaseEntityMasterDetailView<T extends BaseEntity> extends Composite 
 	
 	public BaseEntityMasterDetailView(Composite parent, int style) {
 		super(parent, style);
+	}
+
+	@Override
+	public void delete() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void add() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void save() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refreshView() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showAddEdit(Boolean adding) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

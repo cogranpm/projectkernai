@@ -5,35 +5,38 @@ import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.persistence.ListDetailRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailPresenter;
 import com.glenwood.kernai.ui.view.ListDetailMasterDetailView;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
 
-public class ListDetailViewPresenter {
+public class ListDetailViewPresenter extends BaseEntityMasterDetailPresenter<ListDetail, ListHeader> {
 
-	private ListDetailMasterDetailView view;
-	private ListDetailViewModel model;
-	private ListDetailRepository repository;
+	//private ListDetailMasterDetailView view;
+	//private ListDetailViewModel model;
+	//private ListDetailRepository repository;
 	
 	public ListDetailViewPresenter(ListDetailMasterDetailView view, ListDetailViewModel model)
 	{
-		this.view = view;
-		this.model = model;
+		super(view, model);
 		this.repository = new ListDetailRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
-	
+	@Override
 	public void loadItems()
 	{
-		this.model.setItems(this.repository.getAllByListHeader(this.model.getParent().getId()));
+		ListDetailRepository srepo = (ListDetailRepository)this.repository;
+		this.model.setItems(srepo.getAllByListHeader(this.model.getParent().getId()));
 		this.view.refreshView();
 	}
 	
+	/*
 	public void loadItems(ListHeader listHeader)
 	{
 		this.model.setParent(listHeader);
 		this.loadItems();
 	}
+	*/
 	
 	public void addModel()
 	{
@@ -41,11 +44,13 @@ public class ListDetailViewPresenter {
 		this.view.showAddEdit(true);
 	}
 	
+	/*
 	public void editModel(ListDetail listDetail)
 	{
 		this.model.setCurrentItem(listDetail);
 		this.view.showAddEdit(false);
 	}
+	
 	
 	public void deleteModel(ListDetail listDetail)
 	{
@@ -62,4 +67,6 @@ public class ListDetailViewPresenter {
 	{
 		this.repository.save(this.model.getCurrentItem());
 	}
+	
+	*/
 }

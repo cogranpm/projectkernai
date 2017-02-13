@@ -6,43 +6,53 @@ import com.glenwood.kernai.data.abstractions.IEntityRepository;
 public abstract class BaseEntityMasterDetailPresenter<T extends BaseEntity, P extends BaseEntity> implements IEntityMasterDetailPresenter<T, P> {
 
 	protected IEntityRepository<T> repository;
-	protected IEntityView view;
-	protected IViewModel<T> model;
+	protected IEntityMasterDetailView<T, P> view;
+	protected IMasterDetailViewModel<T, P> model;
+	
+	public BaseEntityMasterDetailPresenter(IEntityMasterDetailView<T, P> view, IMasterDetailViewModel<T, P> model) {
+		super();
+		this.view = view;
+		this.model = model;
+	}
+
 	
 	@Override
 	public void loadItems() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void loadItems(P parent) {
-		// TODO Auto-generated method stub
-		
+		this.model.setParent(parent);
+		this.loadItems();
 	}
 
 	@Override
 	public void addModel() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void editModel(T entity) {
-		// TODO Auto-generated method stub
-		
+		this.model.setCurrentItem(entity);
+		this.view.showAddEdit(false);
 	}
 
 	@Override
 	public void deleteModel(T entity) {
-		// TODO Auto-generated method stub
+		if(entity != null)
+		{
+			repository.delete(entity);
+			
+			this.model.getItems().remove(entity);
+			this.view.refreshView();
+		}
 		
 	}
 
 	@Override
 	public void saveModel() {
-		// TODO Auto-generated method stub
-		
+		this.repository.save(this.model.getCurrentItem());
 	}
 
 }
