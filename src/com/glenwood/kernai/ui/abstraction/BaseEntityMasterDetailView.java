@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -37,6 +35,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
 public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P> {
 
@@ -56,6 +55,7 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	protected IMasterDetailViewModel<T, P> model;
 	protected WritableList<T> input;
 	protected ObservableListContentProvider detailContentProvider;
+	protected EntityViewHelper viewHelper;
 	
 	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity) {
 		super(parent, style);
@@ -124,14 +124,10 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	
 	protected void init()
 	{
+		this.viewHelper = new EntityViewHelper();
 		this.createActions();
-		
 		headerContainer = new Composite(this, SWT.NONE);
-		GridLayout headerLayout = new GridLayout(1, false);
-		headerLayout.marginHeight = 0;
-		headerLayout.marginWidth = 0;
-		headerContainer.setLayout(headerLayout);
-		
+		headerContainer.setLayout(viewHelper.getViewLayout(1));
 
 		ToolBar actionsBar = new ToolBar(headerContainer, SWT.NONE);
 		ToolBarManager toolBarManager = new ToolBarManager(actionsBar);
@@ -179,6 +175,9 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		
 		initDataBindings();
 		this.presenter.loadItems();
+		this.viewHelper.setViewLayoutData(headerContainer, 1);
+		this.viewHelper.setViewLayoutData(listContainer, 1);
+		/*
 		GridLayout mainLayout = new GridLayout(1, false);
 		mainLayout.verticalSpacing = SWT.FILL;
 		mainLayout.horizontalSpacing = SWT.FILL;
@@ -186,7 +185,8 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		mainLayout.marginWidth = 0;
 		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
 		listContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
-		this.setLayout(mainLayout);
+		*/
+		//this.setLayout(mainLayout);
 	}
 	
 	private void createActions()
@@ -267,33 +267,31 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	     return selectionAdapter;
 	 }
 
+	/*
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void add() {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
 		
 	}
+	*/
 
 	@Override
 	public void refreshView() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void showAddEdit(Boolean adding) {
-		// TODO Auto-generated method stub
 		
 	}
 

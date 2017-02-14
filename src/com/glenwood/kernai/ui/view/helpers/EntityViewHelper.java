@@ -68,7 +68,7 @@ public class EntityViewHelper {
 	
 	public TableViewerColumn getListColumn(TableViewer listViewer, String columnText, int style)
 	{
-		TableViewerColumn column = new TableViewerColumn(listViewer, SWT.LEFT);
+		TableViewerColumn column = new TableViewerColumn(listViewer, style);
 		column.getColumn().setText(columnText);
 		column.getColumn().setResizable(false);
 		column.getColumn().setMoveable(false);

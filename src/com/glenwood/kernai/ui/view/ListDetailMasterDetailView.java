@@ -46,17 +46,11 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 	protected void setupListColumns() {
 		super.setupListColumns();
 		this.listViewer.setComparator(new ViewerComparator());
-		TableViewerColumn keyColumn = new TableViewerColumn(listViewer, SWT.LEFT);
+		TableViewerColumn keyColumn = this.viewHelper.getListColumn(listViewer, "Key");
 		keyColumn.getColumn().addSelectionListener(this.getSelectionAdapter(keyColumn.getColumn(), 0));
-		keyColumn.getColumn().setText("Key");
-		keyColumn.getColumn().setResizable(false);
-		keyColumn.getColumn().setMoveable(false);
-		TableViewerColumn labelColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-		
+
+		TableViewerColumn labelColumn = this.viewHelper.getListColumn(listViewer, "Label");
 		labelColumn.getColumn().addSelectionListener(this.getSelectionAdapter(labelColumn.getColumn(), 1));
-		labelColumn.getColumn().setText("Label");
-		labelColumn.getColumn().setResizable(false);
-		labelColumn.getColumn().setMoveable(false);
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
@@ -64,6 +58,7 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 	}
 
 	
+	@Override
 	public void showAddEdit(Boolean adding)
 	{
 		ListDetailModalView modalView = new ListDetailModalView(getShell());
@@ -82,6 +77,7 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 		}
 	}
 	
+	@Override
 	public void refreshView()
 	{
 		input = new WritableList(model.getItems(), ListDetail.class);

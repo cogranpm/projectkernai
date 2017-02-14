@@ -243,8 +243,22 @@ public class CouchbaseManager implements IPersistenceManager {
 			}
 		}
 		, "3");
+		
+		
+		View listDetailByListHeaderView = this.database.getView(ListDetail.TYPE_NAME);
+		listDetailByListHeaderView.setMap(new Mapper(){
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if(document.containsKey("type") && ListDetail.TYPE_NAME.equals(document.get("type")))
+				{
+					emitter.emit(document.get("listHeaderId"), null);
+				}
+			}
+		}, "1");
 	
 		
+		/* THIS IS OLD STUFF, DON'T NEED IT ANY MORE, REPLACED BY ENTITYBYTYPE VIEW
 		View masterCategoryView = this.database.getView(MasterCategory.TYPE_NAME);
 		masterCategoryView.setMap(new Mapper() {
 			@Override
@@ -269,19 +283,9 @@ public class CouchbaseManager implements IPersistenceManager {
 				}
 			}
 		}, "1");
+		*/
 		
-		
-		View listDetailByListHeaderView = this.database.getView(ListDetail.TYPE_NAME);
-		listDetailByListHeaderView.setMap(new Mapper(){
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter)
-			{
-				if(document.containsKey("type") && ListDetail.TYPE_NAME.equals(document.get("type")))
-				{
-					emitter.emit(document.get("listHeaderId"), null);
-				}
-			}
-		}, "1");
+
 		
 	}
 
