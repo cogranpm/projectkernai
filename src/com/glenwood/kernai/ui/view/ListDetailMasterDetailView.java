@@ -1,53 +1,29 @@
 package com.glenwood.kernai.ui.view;
 
-import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
-import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailPresenter;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailView;
 import com.glenwood.kernai.ui.presenter.ListDetailViewPresenter;
+import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
 public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView<ListDetail, ListHeader> {
 	
+	@SuppressWarnings("unused")
 	private  ListDetailMasterDetailView(Composite parent, int style) {
 		this(parent, style, null);
 	}
@@ -69,12 +45,15 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 	@Override
 	protected void setupListColumns() {
 		super.setupListColumns();
-		
+		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn keyColumn = new TableViewerColumn(listViewer, SWT.LEFT);
+		keyColumn.getColumn().addSelectionListener(this.getSelectionAdapter(keyColumn.getColumn(), 0));
 		keyColumn.getColumn().setText("Key");
 		keyColumn.getColumn().setResizable(false);
 		keyColumn.getColumn().setMoveable(false);
 		TableViewerColumn labelColumn = new TableViewerColumn(listViewer, SWT.LEFT);
+		
+		labelColumn.getColumn().addSelectionListener(this.getSelectionAdapter(labelColumn.getColumn(), 1));
 		labelColumn.getColumn().setText("Label");
 		labelColumn.getColumn().setResizable(false);
 		labelColumn.getColumn().setMoveable(false);
@@ -83,11 +62,6 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 		tableLayout.setColumnData(keyColumn.getColumn(), new ColumnWeightData(50));
 		tableLayout.setColumnData(labelColumn.getColumn(), new ColumnWeightData(50));
 	}
-
-	
-	
-	
-	
 
 	
 	public void showAddEdit(Boolean adding)
@@ -117,8 +91,7 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 	@Override
 	protected void initDataBindings()
 	{
-        ObservableListContentProvider detailContentProvider = new ObservableListContentProvider();
-        listViewer.setContentProvider(detailContentProvider);
+		super.initDataBindings();
         
         IObservableSet<ListDetail> detailElements = detailContentProvider.getKnownElements();
         final IObservableMap keys = BeanProperties.value(ListDetail.class, "key").observeDetail(detailElements);
@@ -140,51 +113,53 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
                 }
         };
         listViewer.setLabelProvider(detailLabelProvider);
-        
-        /* set the enabled of the toolbar items */
-        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
-        IObservableValue listViewerSelectionForEdit = ViewersObservables.observeSingleSelection(listViewer);
-        IObservableValue<ToolItem> deleteItemTarget = WidgetProperties.enabled().observe(this.toolItemMap.get(ID_PREFIX + DELETE_ACTION_KEY));
-        IObservableValue<ToolItem> editItemTarget = WidgetProperties.enabled().observe(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY));
-        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
-        	@Override
-        	protected IStatus doSet(IObservableValue observableValue, Object value) 
-        	{
-        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
-        	};
-        };
-        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
-        Binding editBinding = ctx.bindValue(editItemTarget, listViewerSelectionForEdit, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
-       
-        //listener required to enable/disable action associated with toolItem, can't databind an action
-        editBinding.getTarget().addChangeListener(new IChangeListener() {
-			
-			@Override
-			public void handleChange(ChangeEvent event) {
-				IAction editAction = actionMap.get(EDIT_ACTION_KEY);
-				ToolItem editToolItem = toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY);
-				editAction.setEnabled(editToolItem.getEnabled());
-			}
-		});
-        
-        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
-			
-			@Override
-			public void handleChange(ChangeEvent event) {
-				IAction deleteAction = actionMap.get(DELETE_ACTION_KEY);
-				ToolItem deleteToolItem = toolItemMap.get(ID_PREFIX + DELETE_ACTION_KEY);
-				deleteAction.setEnabled(deleteToolItem.getEnabled());				
-			}
-		});
-        
-     // ISideEffect sideEffect =ISideEffect.create( () -> { editAction.setEnabled(editItemTarget.getValue().isEnabled());});
-      
-      //ISideEffectFactory sfactory = WidgetSideEffects.createFactory(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY));
-      //sfactory.create(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY)::getEnabled, this.actionMap.get(EDIT_ACTION_KEY)::setEnabled);
-      //ISideEffect sideEffect = ISideEffect.create(() -> {return deleteItemTarget.getValue()}, this.actionMap.get(DELETE_ACTION_KEY)::setEnabled);
-     // sfactory.create(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY)::toString, dummyLabel::setText);
-   
 
 	}
+	
+	private class ViewerComparator extends ListSorterHelper
+	{
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 == null || e2 == null)
+			{
+				return 0;
+			}
+			ListDetail p1 = (ListDetail)e1;
+			ListDetail p2 = (ListDetail)e2;
+			int rc = 0;
+			switch(this.propertyIndex)
+			{
+			case 0:
+				rc = this.compareString(p1.getKey(), p2.getKey());
+				break;
+			case 1:
+				rc = this.compareString(p1.getLabel(), p2.getLabel());
+				break;
+			default:
+				rc = 0;
+			}
+			
+			if (this.direction == DESCENDING)
+			{
+				rc = -rc;
+			}
+			return rc;
+		}
+		
+		private int compareString(String s1, String s2)
+		{
+			if (s1 == null || s2 == null)
+			{
+				return 0;
+			}
+			String stringOne = "";
+			String stringTwo = "";
+			stringOne = s1 == null ? "" : s1;
+			stringTwo = s2 == null ? "" : s2;
+			return stringOne.compareTo(stringTwo);
+		}
+	}
+
 
 }

@@ -3,12 +3,21 @@ package com.glenwood.kernai.ui.abstraction;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -16,10 +25,13 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -43,6 +55,7 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	protected IEntityMasterDetailPresenter<T, P> presenter;
 	protected IMasterDetailViewModel<T, P> model;
 	protected WritableList<T> input;
+	protected ObservableListContentProvider detailContentProvider;
 	
 	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity) {
 		super(parent, style);
@@ -67,7 +80,45 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	
 	protected void initDataBindings()
 	{
-		
+        detailContentProvider = new ObservableListContentProvider();
+        listViewer.setContentProvider(detailContentProvider);
+        
+        /* set the enabled of the toolbar items */
+        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
+        IObservableValue listViewerSelectionForEdit = ViewersObservables.observeSingleSelection(listViewer);
+        IObservableValue<ToolItem> deleteItemTarget = WidgetProperties.enabled().observe(this.toolItemMap.get(ID_PREFIX + DELETE_ACTION_KEY));
+        IObservableValue<ToolItem> editItemTarget = WidgetProperties.enabled().observe(this.toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY));
+        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
+        	@Override
+        	protected IStatus doSet(IObservableValue observableValue, Object value) 
+        	{
+        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
+        	};
+        };
+        Binding deleteBinding = ctx.bindValue(deleteItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding editBinding = ctx.bindValue(editItemTarget, listViewerSelectionForEdit, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+       
+        //listener required to enable/disable action associated with toolItem, can't databind an action
+        editBinding.getTarget().addChangeListener(new IChangeListener() {
+			
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction editAction = actionMap.get(EDIT_ACTION_KEY);
+				ToolItem editToolItem = toolItemMap.get(ID_PREFIX + EDIT_ACTION_KEY);
+				editAction.setEnabled(editToolItem.getEnabled());
+			}
+		});
+        
+        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+			
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction deleteAction = actionMap.get(DELETE_ACTION_KEY);
+				ToolItem deleteToolItem = toolItemMap.get(ID_PREFIX + DELETE_ACTION_KEY);
+				deleteAction.setEnabled(deleteToolItem.getEnabled());				
+			}
+		});
+	
 	}
 
 	
@@ -92,24 +143,8 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		newAction = new ActionContributionItem(this.actionMap.get(EDIT_ACTION_KEY));
 		toolBarManager.add(newAction);
 		toolBarManager.update(true);
-		
 
 		ToolBar toolbar = toolBarManager.getControl();
-		toolbar.addKeyListener(new KeyListener() {
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("farook");
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("farook");				
-			}
-		});
-		
 		if (toolbar != null )
 		{
 			for(ToolItem toolItem : toolbar.getItems())
@@ -119,9 +154,7 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 			}
 		}
 		
-	//	headerLabel.setText("List Items");
 		actionsBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		//headerLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		
 		listContainer = new Composite(this, SWT.NONE);
 		listViewer = new TableViewer(listContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -217,6 +250,22 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		}
 		return item;
 	}
+	
+	
+	protected SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
+	             @Override
+	             public void widgetSelected(SelectionEvent e) {
+	            	 IListSortComparator comparator = (IListSortComparator)listViewer.getComparator();
+	                    comparator.setColumn(index);
+	            	 	int dir = comparator.getDirection();
+	                    listViewer.getTable().setSortDirection(dir);
+	                    listViewer.getTable().setSortColumn(column);
+	                    listViewer.refresh();
+	             }
+	     };
+	     return selectionAdapter;
+	 }
 
 	@Override
 	public void delete() {
