@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
+import com.glenwood.kernai.data.entity.helper.MasterPropertyToMasterCategoryDataObject;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class MasterProperty extends BaseEntity {
@@ -19,7 +20,7 @@ public class MasterProperty extends BaseEntity {
 	private String propertyGroupId;
 	private String propertyTypeId;
 
-	private List<MasterCategory> masterCategories;
+	private List<MasterPropertyToMasterCategoryDataObject> masterCategories;
 	
 	@JsonProperty
 	public String getName() {
@@ -105,21 +106,26 @@ public class MasterProperty extends BaseEntity {
 		this.firePropertyChange("propertyTypeId", oldPropertyTypeId, this.propertyTypeId);
 	}
 
-	public List<MasterCategory> getMasterCategories()
+	public List<MasterPropertyToMasterCategoryDataObject> getMasterCategories()
 	{
 		return this.masterCategories;
 	}
 	
-	public void assignMasterCategory(MasterCategory entity)
+	public void assignMasterCategory(MasterPropertyToMasterCategoryDataObject entity)
 	{
 		this.masterCategories.add(entity);
+	}
+	
+	public void removeMasterCategory(MasterPropertyToMasterCategoryDataObject entity)
+	{
+		this.masterCategories.remove(entity);
 	}
 
 
 	public MasterProperty()
 	{
 		this.type = TYPE_NAME;
-		this.masterCategories = new ArrayList<MasterCategory>();
+		this.masterCategories = new ArrayList<MasterPropertyToMasterCategoryDataObject>();
 	}
 	
 

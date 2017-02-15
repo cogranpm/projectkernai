@@ -3,7 +3,7 @@ package com.glenwood.kernai.ui.abstraction;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.entity.ListHeader;
-import com.glenwood.kernai.data.persistence.ListheaderRepository;
+import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 

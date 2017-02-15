@@ -7,11 +7,11 @@ import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 
-public class ListheaderRepository extends BaseRepository<ListHeader> implements IEntityRepository<ListHeader> {
+public class ListHeaderRepository extends BaseRepository<ListHeader> implements IEntityRepository<ListHeader> {
 
 	private ListDetailRepository listDetailRepository;
 	
-	public ListheaderRepository(IPersistenceManager manager) {
+	public ListHeaderRepository(IPersistenceManager manager) {
 		super(manager);
 		this.listDetailRepository = new ListDetailRepository(manager);
 	}
