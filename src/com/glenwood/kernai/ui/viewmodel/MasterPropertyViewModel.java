@@ -9,8 +9,5 @@ public class MasterPropertyViewModel extends BaseViewModel<MasterProperty> {
 	{
 		super();
 	}
-	
-	/* list of master categories available */
-	
-	/* list of master categories currently assigned to the master property */
+
 }
