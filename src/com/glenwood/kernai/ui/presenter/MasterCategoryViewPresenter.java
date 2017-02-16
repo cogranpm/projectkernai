@@ -13,12 +13,13 @@ public class MasterCategoryViewPresenter extends BaseEntityPresenter<MasterCateg
 	
 	public MasterCategoryViewPresenter(MasterCategoryView view, MasterCategoryViewModel model)
 	{
-		super(view, model);
+		super(view, model, MasterCategory.class, MasterCategory.TYPE_NAME);
 		this.repository = new MasterCategoryRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 
 	}
 
 	
+	/*
 	@Override
 	public void loadModels()
 	{
@@ -35,6 +36,6 @@ public class MasterCategoryViewPresenter extends BaseEntityPresenter<MasterCateg
 		MasterCategory newMasterCategory = new MasterCategory();
 		model.setCurrentItem(newMasterCategory);
 	}
-	
+	*/
 
 }

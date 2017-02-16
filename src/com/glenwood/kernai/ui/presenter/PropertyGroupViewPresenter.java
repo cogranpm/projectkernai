@@ -11,11 +11,11 @@ import com.glenwood.kernai.ui.abstraction.IViewModel;
 public class PropertyGroupViewPresenter extends BaseEntityPresenter<PropertyGroup>{
 
 	public PropertyGroupViewPresenter(IEntityView view, IViewModel<PropertyGroup> model) {
-		super(view, model);
+		super(view, model, PropertyGroup.class, PropertyGroup.TYPE_NAME);
 		this.repository = new PropertyGroupRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
-
+/*
 	@Override
 	public void loadModels()
 	{
@@ -33,6 +33,6 @@ public class PropertyGroupViewPresenter extends BaseEntityPresenter<PropertyGrou
 		PropertyGroup newEntity = new PropertyGroup();
 		model.setCurrentItem(newEntity);
 	}
-	
+	*/
 
 }

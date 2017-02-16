@@ -18,7 +18,7 @@ public class ListDetailViewPresenter extends BaseEntityMasterDetailPresenter<Lis
 	
 	public ListDetailViewPresenter(ListDetailMasterDetailView view, ListDetailViewModel model)
 	{
-		super(view, model);
+		super(view, model, ListDetail.class, ListDetail.TYPE_NAME);
 		this.repository = new ListDetailRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
@@ -38,11 +38,13 @@ public class ListDetailViewPresenter extends BaseEntityMasterDetailPresenter<Lis
 	}
 	*/
 	
+	/*
 	public void addModel()
 	{
 		this.model.setCurrentItem(new ListDetail(this.model.getParent()));
 		this.view.showAddEdit(true);
 	}
+	*/
 	
 	/*
 	public void editModel(ListDetail listDetail)

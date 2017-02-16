@@ -6,7 +6,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 
-public class BaseRepository<T> implements IEntityRepository<T> {
+public class BaseRepository<T extends BaseEntity> implements IEntityRepository<T> {
 	
 	private IPersistenceManager manager;
 	
@@ -46,7 +46,7 @@ public class BaseRepository<T> implements IEntityRepository<T> {
 
 	
 
-	@Override
+
 	public void test() {
 		this.manager.test();
 

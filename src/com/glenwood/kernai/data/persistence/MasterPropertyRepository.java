@@ -2,13 +2,14 @@ package com.glenwood.kernai.data.persistence;
 
 import java.util.List;
 
+import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
 import com.glenwood.kernai.data.entity.helper.MasterPropertyToMasterCategoryDataObject;
 
-public class MasterPropertyRepository extends BaseRepository<MasterProperty> {
+public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	
 	MasterPropertyToMasterCategoryRepository assignedCategoryRepository;
 	MasterCategoryRepository masterCategoryRepository;

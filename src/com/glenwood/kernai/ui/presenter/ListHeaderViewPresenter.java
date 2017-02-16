@@ -24,7 +24,7 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 	
 	public ListHeaderViewPresenter(ListHeaderView view, ListHeaderViewModel model)
 	{
-		super(view, model);
+		super(view, model, ListHeader.class, ListHeader.TYPE_NAME);
 		this.repository = new ListHeaderRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 
 	}
@@ -34,23 +34,16 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 	@Override
 	public void loadModels()
 	{
-		this.model.setItems(this.repository.getAll(ListHeader.TYPE_NAME, ListHeader.class));
-		if (this.model.getItems() != null && this.model.getItems().size() > 0)
-		{
-			this.model.setCurrentItem(this.model.getItems().get(0));
-		}
-
+		super.loadModels();
 		ListHeaderViewModel daModel = (ListHeaderViewModel)this.model;
 		daModel.setChildItems(new ArrayList<ListDetail>());
 	}
 	
+
 	@Override
-	public void addModel()
-	{
-		ListHeader newListHeader= new ListHeader();
-		model.setCurrentItem(newListHeader);
+	public void loadModel(ListHeader item) {
+		super.loadModel(item);
 	}
-	
 
 	
 	

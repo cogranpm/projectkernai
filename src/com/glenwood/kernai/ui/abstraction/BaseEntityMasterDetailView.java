@@ -175,18 +175,19 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		
 		initDataBindings();
 		this.presenter.loadItems();
-		this.viewHelper.setViewLayoutData(headerContainer, 1);
-		this.viewHelper.setViewLayoutData(listContainer, 1);
-		/*
+
+		//this.viewHelper.setViewLayoutData(headerContainer, 1);
+		//this.viewHelper.setViewLayoutData(listContainer, 1);
+		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
+		listContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
+
 		GridLayout mainLayout = new GridLayout(1, false);
 		mainLayout.verticalSpacing = SWT.FILL;
 		mainLayout.horizontalSpacing = SWT.FILL;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
-		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1 ));
-		listContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
-		*/
-		//this.setLayout(mainLayout);
+		this.setLayout(mainLayout);
+//		this.viewHelper.setViewLayoutData(this, 1);
 	}
 	
 	private void createActions()

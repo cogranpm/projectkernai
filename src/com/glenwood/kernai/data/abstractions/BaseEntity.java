@@ -1,12 +1,11 @@
 package com.glenwood.kernai.data.abstractions;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BaseEntity  {
+public class BaseEntity implements IBaseEntity {
 	
 	@JsonProperty(value = "_id")
 	protected String id;
@@ -14,15 +13,19 @@ public class BaseEntity  {
 	@JsonProperty
 	protected String type;
 	
+	@Override
 	public String getId() {
 		return id;
 	}
+	
+	@Override
 	public void setId(String id) {
 		String oldId = this.id;
 		this.id = id;
 		firePropertyChange("id", oldId, this.id);
 	}
 	
+	@Override
 	public String getType() {
 		return type;
 	}

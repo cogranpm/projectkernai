@@ -1,22 +1,34 @@
 package com.glenwood.kernai.ui.abstraction;
 
+import com.glenwood.customExceptions.EntityInstantiationError;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
-import com.glenwood.kernai.data.entity.ListHeader;
-import com.glenwood.kernai.data.persistence.ListHeaderRepository;
-import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
-import com.glenwood.kernai.ui.ApplicationData;
 
 public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresenter<T> {
 	
 	protected IEntityRepository<T> repository;
 	protected IEntityView view;
 	protected IViewModel<T> model;
+	private Class<T> clazz;
+	private String entityTypeName;
 	
-	public BaseEntityPresenter(IEntityView view, IViewModel<T> model) {
+	/**
+	 * blah
+	 * <p>
+	 * blah
+	 * blah
+	 *
+	 * @param  entityTypeName  a string that uniquely identifies the domain entity
+	 * @param  
+	 * @return      
+	 * @see         
+	 */
+	public BaseEntityPresenter(IEntityView view, IViewModel<T> model, Class entityClass, String entityTypeName) {
 		super();
 		this.view = view;
 		this.model = model;
+		this.clazz = entityClass;
+		this.entityTypeName = entityTypeName;
 	}
 
 	@Override
@@ -28,12 +40,21 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 
 	@Override
 	public void loadModels() {
-
+		this.model.setItems(this.repository.getAll(this.entityTypeName, this.clazz));
+		if (this.model.getItems() != null && this.model.getItems().size() > 0)
+		{
+			this.model.setCurrentItem(this.model.getItems().get(0));
+		}
 	}
 
 	@Override
 	public void addModel() {
-
+		try {
+			this.model.setCurrentItem(this.clazz.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new EntityInstantiationError(e);
+		}
 
 	}
 

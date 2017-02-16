@@ -11,11 +11,12 @@ import com.glenwood.kernai.ui.abstraction.IViewModel;
 public class PropertyTypeViewPresenter extends BaseEntityPresenter<PropertyType> {
 
 	public PropertyTypeViewPresenter(IEntityView view, IViewModel<PropertyType> model) {
-		super(view, model);
+		super(view, model, PropertyType.class, PropertyType.TYPE_NAME);
 		this.repository = new PropertyTypeRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 
 	
+	/*
 	@Override
 	public void loadModels()
 	{
@@ -33,4 +34,5 @@ public class PropertyTypeViewPresenter extends BaseEntityPresenter<PropertyType>
 		PropertyType newEntity = new PropertyType();
 		this.model.setCurrentItem(newEntity);
 	}
+	*/
 }
