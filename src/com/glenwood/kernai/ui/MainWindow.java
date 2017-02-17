@@ -35,6 +35,7 @@ import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
+import com.glenwood.kernai.ui.view.MasterPropertyView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
 
@@ -310,7 +311,8 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY);
-
+				ApplicationData.instance().setCurrentEntityView(new MasterPropertyView(masterPropertyPane, SWT.NONE));
+				masterPropertyPane.layout();
 			}
 		 };
 		 //goToMasterPropertyProperty.setText("Master &Property");
