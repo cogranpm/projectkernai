@@ -311,7 +311,7 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(masterpropertyActionKeys, ApplicationData.GOTO_MASTERPROPERTY_PROPERTY);
-				ApplicationData.instance().setCurrentEntityView(new MasterPropertyView(masterPropertyPane, SWT.NONE));
+				ApplicationData.instance().setCurrentEntityView(new MasterPropertyView(clearComposite(masterPropertyPane), SWT.NONE));
 				masterPropertyPane.layout();
 			}
 		 };

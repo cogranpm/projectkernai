@@ -1,6 +1,7 @@
 package com.glenwood.kernai.ui.view.helpers;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -46,6 +47,11 @@ public class EntityViewHelper {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
 	}
 	
+	public void layoutComboViewer(ComboViewer control)
+	{
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(control.getControl());
+	}
+	
 	public Text getTextEditor(Composite parent)
 	{
 		return new Text(parent, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
@@ -70,7 +76,7 @@ public class EntityViewHelper {
 	{
 		TableViewerColumn column = new TableViewerColumn(listViewer, style);
 		column.getColumn().setText(columnText);
-		column.getColumn().setResizable(false);
+		column.getColumn().setResizable(true);
 		column.getColumn().setMoveable(false);
 		return column; 
 	}
