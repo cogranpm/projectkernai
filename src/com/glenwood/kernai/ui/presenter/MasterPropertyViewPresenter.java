@@ -31,6 +31,15 @@ public class MasterPropertyViewPresenter extends BaseEntityPresenter<MasterPrope
 		daModel.setPropertyTypeLookup(this.propertyTypeRepository.getAll(PropertyType.TYPE_NAME, PropertyType.class));
 	}
 	
+	@Override
+	public void loadModels() {
+		super.loadModels();
+		for(MasterProperty masterProperty : this.model.getItems())
+		{
+			System.out.println(masterProperty.getPropertyGroupId());
+			System.out.println(masterProperty.getPropertyTypeId());
+		}
+	}
 
 
 }
