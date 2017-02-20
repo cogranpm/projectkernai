@@ -37,7 +37,29 @@ public class MasterPropertyViewModel extends BaseViewModel<MasterProperty> {
 		this.propertyGroupLookup = propertyGroupLookup;
 	}
 
-
+	public PropertyGroup findPropertyGroupById(String id)
+	{
+		for(PropertyGroup item : this.propertyGroupLookup)
+		{
+			if(id.equalsIgnoreCase(item.getId()))
+			{
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	public PropertyType findPropertyTypeById(String id)
+	{
+		for(PropertyType item : this.propertyTypeLookup)
+		{
+			if(id.equalsIgnoreCase(item.getId()))
+			{
+				return item;
+			}
+		}
+		return null;
+	}
 
 	public MasterPropertyViewModel()
 	{
