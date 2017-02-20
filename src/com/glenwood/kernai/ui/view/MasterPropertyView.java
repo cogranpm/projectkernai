@@ -206,13 +206,9 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         IObservableValue labelTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtLabel);
         IObservableValue labelModelObservable = BeanProperties.value("label").observeDetail(value);
 		
-        
-      //  IObservableValue propertyGroupTargetObservable = WidgetProperties.selection().observe(cboPropertyGroup.getCombo());
         IObservableValue propertyGroupTargetObservable = ViewerProperties.singleSelection().observe(cboPropertyGroup);
         IObservableValue propertyGroupModelObservable = BeanProperties.value("propertyGroup").observeDetail(value);
         
-        //IObservableValue propertyTypeTargetObservable = WidgetProperties.selection().observe(cboPropertyType.getCombo());
-        //IObservableValue propertyTypeTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyType);
         IObservableValue propertyTypeTargetObservable = ViewerProperties.singleSelection().observe(cboPropertyType);
         IObservableValue propertyTypeModelObservable = BeanProperties.value("propertyType").observeDetail(value);
        
@@ -235,102 +231,8 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         Binding notesBinding = ctx.bindValue(notesTargetObservable, notesModelObservable);
         Binding defaultValueBinding = ctx.bindValue(defaultValueTargetObservable, defaultValueModelObservable);
         
-        /*
-        UpdateValueStrategy propertyGroupConverter  = new UpdateValueStrategy(){
-        	@Override
-        	protected IStatus doSet(IObservableValue observableValue, Object value) 
-        	{
-        		if (value == null)
-        		{
-        			return super.doSet(observableValue, null);
-        		}
-        		else
-        		{
-        			if (value instanceof PropertyGroup)
-        			{
-        			PropertyGroup entity = (PropertyGroup)value;
-        			return super.doSet(observableValue, entity.getId());
-        			}
-        			else
-        			{
-        				return super.doSet(observableValue,  ((MasterPropertyViewModel)model).findPropertyGroupById(value.toString()));
-        			}
-        		}
-        	};
-        };
-        */
-        
-        
-        /*
-        UpdateValueStrategy propertyGroupConverter = new UpdateValueStrategy().setConverter(new IConverter() {
-
-            @Override
-            public Object getFromType() {
-                return PropertyGroup.class;
-            }
-
-            @Override
-            public Object getToType() {
-                return String.class;
-            }
-
-            @Override
-            public Object convert(Object fromObject) {
-            	if(fromObject == null)
-            	{
-            		return null;
-            	}
-            	else
-            	{
-            		if (fromObject instanceof PropertyGroup)
-            		{
-	            		PropertyGroup propertyGroup = (PropertyGroup)fromObject;
-	            		return propertyGroup.getId();
-            		}
-            		else
-            		{
-            			return ((MasterPropertyViewModel)model).findPropertyGroupById(fromObject.toString());
-            		}
-            	}
-                //return Integer.parseInt(fromObject.toString());
-            }
-        });
-        */
-       
-        
-        Binding propertyGroupBinding = ctx.bindValue(propertyGroupTargetObservable, propertyGroupModelObservable, null, null);
-        //Binding reversePropertyGroupBinding = ctx.bindValue(propertyGroupModelObservable, propertyGroupTargetObservable, null, null);
-        
-        /*
-        UpdateValueStrategy propertyTypeConverter = new UpdateValueStrategy(){
-        	@Override
-        	protected IStatus doSet(IObservableValue observableValue, Object value) 
-        	{
-        		if (value == null)
-        		{
-        			return super.doSet(observableValue, null);
-        		}
-        		else
-        		{
-        			if (value instanceof PropertyType)
-        			{
-	        			PropertyType entity = (PropertyType)value;
-	        			String entityId = entity.getId();
-	        			return super.doSet(observableValue, entityId);
-        			}
-        			else
-        			{
-        				return super.doSet(observableValue,  ((MasterPropertyViewModel)model).findPropertyTypeById(value.toString()));
-        			}
-        		}
-        	};
-        };
-        */
-       
-        
-        
-        Binding propertyTypeBinding = ctx.bindValue(propertyTypeTargetObservable, propertyTypeModelObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
-        //Binding reversePropertyTypeBinding = ctx.bindValue(propertyTypeModelObservable, propertyTypeTargetObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
+        Binding propertyGroupBinding = ctx.bindValue(propertyGroupTargetObservable, propertyGroupModelObservable);
+        Binding propertyTypeBinding = ctx.bindValue(propertyTypeTargetObservable, propertyTypeModelObservable);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
@@ -339,6 +241,9 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         nameBinding.getTarget().addChangeListener(stateListener);
         notesBinding.getTarget().addChangeListener(stateListener);
         defaultValueBinding.getTarget().addChangeListener(stateListener);
+        labelBinding.getTarget().addChangeListener(stateListener);
+        propertyGroupBinding.getTarget().addChangeListener(stateListener);
+        propertyTypeBinding.getTarget().addChangeListener(stateListener);
 	}
 	
 	@Override
