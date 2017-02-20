@@ -108,6 +108,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		setupSaveBinding();
 		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
 		ApplicationData.instance().loadEntityView(this);
+		this.disableEditControls();
 		
 	}
 	
@@ -279,6 +280,28 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		value.setValue(model.getCurrentItem());
 	}
 	
+	
+	public void disableEditControls()
+	{
+		this.viewHelper.setEnabled(editContainer, false);
+	}
+	
+	public void enableEditControls()
+	{
+		this.viewHelper.setEnabled(editContainer, true);
+	}
+
+	@Override
+	public void afterAdd() {
+		this.enableEditControls();
+		
+	}
+
+	@Override
+	public void afterSelection() {
+		this.enableEditControls();
+		
+	}
 	
 
 }

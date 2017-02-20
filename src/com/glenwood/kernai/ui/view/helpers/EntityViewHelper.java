@@ -80,5 +80,13 @@ public class EntityViewHelper {
 		column.getColumn().setMoveable(false);
 		return column; 
 	}
+	
+	public void setEnabled(Composite parent, boolean enable)
+	{
+		for(Control control : parent.getChildren())
+		{
+			control.setEnabled(enable);
+		}
+	}
 
 }

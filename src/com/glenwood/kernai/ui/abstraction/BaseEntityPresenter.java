@@ -36,6 +36,7 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 		model.setCurrentItem(item);
 		model.setDirty(false);
 		this.view.refreshView();
+		this.view.afterSelection();
 	}
 
 	@Override
@@ -55,6 +56,7 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 			e.printStackTrace();
 			throw new EntityInstantiationError(e);
 		}
+		this.view.afterAdd();
 
 	}
 
