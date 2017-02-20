@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -18,10 +19,10 @@ public class MasterProperty extends BaseEntity {
 	private String defaultValue;
 	private String notes;
 	
-	/*
+
 	private String propertyGroupId;
 	private String propertyTypeId;
-	*/
+
 	private PropertyGroup propertyGroup;
 	private PropertyType propertyType;
 	
@@ -84,7 +85,8 @@ public class MasterProperty extends BaseEntity {
 	}
 
 	
-	@JsonProperty
+	//not mapped
+	@JsonIgnore
 	public PropertyGroup getPropertyGroup() {
 		return propertyGroup;
 	}
@@ -99,7 +101,8 @@ public class MasterProperty extends BaseEntity {
 	
 
 
-	@JsonProperty
+	//not mapped
+	@JsonIgnore
 	public PropertyType getPropertyType() {
 		return propertyType;
 	}
@@ -112,7 +115,7 @@ public class MasterProperty extends BaseEntity {
 		this.firePropertyChange("propertyType", oldPropertyType, this.propertyType);
 	}
 
-	/*
+
 	@JsonProperty
 	public String getPropertyGroupId() {
 		return propertyGroupId;
@@ -140,8 +143,8 @@ public class MasterProperty extends BaseEntity {
 		this.propertyTypeId = propertyTypeId;
 		this.firePropertyChange("propertyTypeId", oldPropertyTypeId, this.propertyTypeId);
 	}
-	*/
 
+	@JsonIgnore
 	public List<MasterPropertyToMasterCategoryDataObject> getMasterCategories()
 	{
 		return this.masterCategories;

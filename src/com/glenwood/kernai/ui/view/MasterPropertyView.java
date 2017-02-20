@@ -208,7 +208,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		
         
       //  IObservableValue propertyGroupTargetObservable = WidgetProperties.selection().observe(cboPropertyGroup.getCombo());
-        IObservableValue propertyGroupTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyGroup);
+        IObservableValue propertyGroupTargetObservable = ViewerProperties.singleSelection().observe(cboPropertyGroup);
         IObservableValue propertyGroupModelObservable = BeanProperties.value("propertyGroup").observeDetail(value);
         
         //IObservableValue propertyTypeTargetObservable = WidgetProperties.selection().observe(cboPropertyType.getCombo());

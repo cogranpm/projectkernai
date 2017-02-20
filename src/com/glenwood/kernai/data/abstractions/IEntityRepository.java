@@ -6,5 +6,5 @@ public interface IEntityRepository<T extends BaseEntity> {
 	public void save(T entity);
 	public void delete(T entity);
 	public List<T> getAll(String type, Class<T> aClass);
-
+	public T get(String id, Class<T> aClass);
 }

@@ -178,6 +178,22 @@ public class CouchbaseManager implements IPersistenceManager {
 
 	}
 	
+
+	@Override
+	public <T> T get(String id, Class<T> aClass) {
+		Document document = this.database.getExistingDocument(id);
+		if (document == null)
+		{
+			return null;
+		}
+		else
+		{
+			T entity = this.entityMapper.toEntity(document, aClass);
+			return entity;
+		}
+	}
+
+	
 	/*
 	public <T> List<T> getAll(String queryName, Class<T> aClass)
 	{

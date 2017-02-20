@@ -1,11 +1,11 @@
 package com.glenwood.kernai.data.mapping;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.couchbase.lite.Document;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
+import com.glenwood.kernai.data.entity.MasterProperty;
 
 public class EntityMapper {
 	
@@ -21,7 +21,12 @@ public class EntityMapper {
 	 public <T> T toEntity(Document document, Class<T> aClass) 
 	 {
 		 ObjectMapper m = new ObjectMapper();
-	     return m.convertValue(document.getProperties(), aClass);
+		 Map<String, Object> map = document.getProperties();
+		 if(aClass == MasterProperty.class)
+		 {
+			 System.out.println(map.toString());
+		 }
+	     return m.convertValue(map, aClass);
 	 }
 
 }

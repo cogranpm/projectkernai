@@ -52,4 +52,9 @@ public class BaseRepository<T extends BaseEntity> implements IEntityRepository<T
 
 	}
 
+	@Override
+	public T get(String id, Class<T> aClass) {
+		return manager.get(id, aClass);
+	}
+
 }

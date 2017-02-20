@@ -45,6 +45,7 @@ public class MasterPropertyViewPresenter extends BaseEntityPresenter<MasterPrope
 			{
 				System.out.println(masterProperty.getPropertyType().getId());
 			}
+		//	this.repository.delete(masterProperty);
 		//	System.out.println(masterProperty.getPropertyGroupId());
 		//	System.out.println(masterProperty.getPropertyTypeId());
 		}

@@ -7,18 +7,25 @@ import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
+import com.glenwood.kernai.data.entity.PropertyGroup;
+import com.glenwood.kernai.data.entity.PropertyType;
 import com.glenwood.kernai.data.entity.helper.MasterPropertyToMasterCategoryDataObject;
 
 public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	
-	MasterPropertyToMasterCategoryRepository assignedCategoryRepository;
-	MasterCategoryRepository masterCategoryRepository;
+	private MasterPropertyToMasterCategoryRepository assignedCategoryRepository;
+	private MasterCategoryRepository masterCategoryRepository;
+	private PropertyTypeRepository propertyTypeRepository;
+	private PropertyGroupRepository propertyGroupRepository;
+	
 
 	public MasterPropertyRepository(IPersistenceManager manager) {
 		super(manager);
 		//to do: change this to a registry of repositories to save recreating instances
 		assignedCategoryRepository = new MasterPropertyToMasterCategoryRepository(manager);
 		masterCategoryRepository = new MasterCategoryRepository(manager);
+		propertyTypeRepository = new PropertyTypeRepository(manager);
+		propertyGroupRepository = new PropertyGroupRepository(manager);
 	}
 	
 	@Override
@@ -37,6 +44,17 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 				MasterPropertyToMasterCategoryDataObject categoryItem = new MasterPropertyToMasterCategoryDataObject(masterCategoryIsAssigned, masterCategory.getId());
 				masterProperty.assignMasterCategory(categoryItem);
 			}
+			
+			/* load the dependant object instances */
+			if(masterProperty.getPropertyGroupId() != null)
+			{
+				masterProperty.setPropertyGroup(this.propertyGroupRepository.get(masterProperty.getPropertyGroupId(), PropertyGroup.class));
+			}
+			
+			if(masterProperty.getPropertyTypeId() != null)
+			{
+				masterProperty.setPropertyType(this.propertyTypeRepository.get(masterProperty.getPropertyTypeId(), PropertyType.class));
+			}
 		}
 		return allItems;
 	}
@@ -44,6 +62,26 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	
 	@Override
 	public void save(MasterProperty entity) {
+		
+		/* map object to foreign keys for embedded objects */
+		if(entity.getPropertyGroup() != null)
+		{
+			entity.setPropertyGroupId(entity.getPropertyGroup().getId());
+		}
+		else
+		{
+			entity.setPropertyGroupId(null);
+		}
+		
+		if (entity.getPropertyType() != null)
+		{
+			entity.setPropertyTypeId(entity.getPropertyType().getId());
+		}
+		else
+		{
+			entity.setPropertyTypeId(null);
+		}
+		
 		super.save(entity);
 		/* loop over the list of master category items and save junction entity */
 		
