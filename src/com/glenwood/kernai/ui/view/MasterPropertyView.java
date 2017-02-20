@@ -177,7 +177,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
                 	case 0:
                 		return entity.getName();
                 	case 1:
-                		return entity.getNotes();
+                		return entity.getLabel();
                 	case 2:
                 		return entity.getDefaultValue();
                 	default:
@@ -297,7 +297,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
        
         
         Binding propertyGroupBinding = ctx.bindValue(propertyGroupTargetObservable, propertyGroupModelObservable, null, null);
-        Binding reversePropertyGroupBinding = ctx.bindValue(propertyGroupModelObservable, propertyGroupTargetObservable, null, null);
+        //Binding reversePropertyGroupBinding = ctx.bindValue(propertyGroupModelObservable, propertyGroupTargetObservable, null, null);
         
         /*
         UpdateValueStrategy propertyTypeConverter = new UpdateValueStrategy(){
@@ -328,7 +328,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         
         
         Binding propertyTypeBinding = ctx.bindValue(propertyTypeTargetObservable, propertyTypeModelObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
-        Binding reversePropertyTypeBinding = ctx.bindValue(propertyTypeModelObservable, propertyTypeTargetObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
+        //Binding reversePropertyTypeBinding = ctx.bindValue(propertyTypeModelObservable, propertyTypeTargetObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);

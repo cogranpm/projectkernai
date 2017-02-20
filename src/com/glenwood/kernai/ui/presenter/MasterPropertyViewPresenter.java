@@ -37,6 +37,14 @@ public class MasterPropertyViewPresenter extends BaseEntityPresenter<MasterPrope
 		
 		for(MasterProperty masterProperty : this.model.getItems())
 		{
+			if (masterProperty.getPropertyGroup() != null)
+			{
+			System.out.println(masterProperty.getPropertyGroup().getId());
+			}
+			if (masterProperty.getPropertyType() != null)
+			{
+				System.out.println(masterProperty.getPropertyType().getId());
+			}
 		//	System.out.println(masterProperty.getPropertyGroupId());
 		//	System.out.println(masterProperty.getPropertyTypeId());
 		}
