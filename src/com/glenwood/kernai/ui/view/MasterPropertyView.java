@@ -120,12 +120,12 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		lblPropertyGroup.setText("Group");
 		cboPropertyGroup = new ComboViewer(editMaster);
 
-		//cboPropertyGroup.setContentProvider(ArrayContentProvider.getInstance());
-		
+		cboPropertyGroup.setContentProvider(ArrayContentProvider.getInstance());
+		/*
 		propertyGroupList = BeansObservables.observeList(daModel, "propertyGroupLookup", PropertyGroup.class);
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 		cboPropertyGroup.setContentProvider(contentProvider);
-		
+		*/
 		cboPropertyGroup.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element)
@@ -136,8 +136,8 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		});
 		
 
-		cboPropertyGroup.setInput(propertyGroupList);
-		//cboPropertyGroup.setInput(daModel.getPropertyGroupLookup());
+		//cboPropertyGroup.setInput(propertyGroupList);
+		cboPropertyGroup.setInput(daModel.getPropertyGroupLookup());
 		
 		lblPropertyType = new Label(editMaster, SWT.NONE);
 		lblPropertyType.setText("Type");
@@ -208,11 +208,11 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         
       //  IObservableValue propertyGroupTargetObservable = WidgetProperties.selection().observe(cboPropertyGroup.getCombo());
         IObservableValue propertyGroupTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyGroup);
-        IObservableValue propertyGroupModelObservable = BeanProperties.value("propertyGroupId").observeDetail(value);
+        IObservableValue propertyGroupModelObservable = BeanProperties.value("propertyGroup").observeDetail(value);
         
         //IObservableValue propertyTypeTargetObservable = WidgetProperties.selection().observe(cboPropertyType.getCombo());
         IObservableValue propertyTypeTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyType);
-        IObservableValue propertyTypeModelObservable = BeanProperties.value("propertyTypeId").observeDetail(value);
+        IObservableValue propertyTypeModelObservable = BeanProperties.value("propertyType").observeDetail(value);
        
         /* just the validators and decorators in the name field */
         IValidator nameValidator = new IValidator() {
@@ -244,13 +244,22 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         		}
         		else
         		{
+        			if (value instanceof PropertyGroup)
+        			{
         			PropertyGroup entity = (PropertyGroup)value;
         			return super.doSet(observableValue, entity.getId());
+        			}
+        			else
+        			{
+        				return super.doSet(observableValue,  ((MasterPropertyViewModel)model).findPropertyGroupById(value.toString()));
+        			}
         		}
         	};
         };
         */
         
+        
+        /*
         UpdateValueStrategy propertyGroupConverter = new UpdateValueStrategy().setConverter(new IConverter() {
 
             @Override
@@ -284,11 +293,13 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
                 //return Integer.parseInt(fromObject.toString());
             }
         });
+        */
        
         
-        Binding propertyGroupBinding = ctx.bindValue(propertyGroupTargetObservable, propertyGroupModelObservable, null, propertyGroupConverter);
-        Binding reversePropertyGroupBinding = ctx.bindValue(propertyGroupModelObservable, propertyGroupTargetObservable, null, propertyGroupConverter);
+        Binding propertyGroupBinding = ctx.bindValue(propertyGroupTargetObservable, propertyGroupModelObservable, null, null);
+        Binding reversePropertyGroupBinding = ctx.bindValue(propertyGroupModelObservable, propertyGroupTargetObservable, null, null);
         
+        /*
         UpdateValueStrategy propertyTypeConverter = new UpdateValueStrategy(){
         	@Override
         	protected IStatus doSet(IObservableValue observableValue, Object value) 
@@ -312,12 +323,12 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         		}
         	};
         };
-        
+        */
        
         
         
-        Binding propertyTypeBinding = ctx.bindValue(propertyTypeTargetObservable, propertyTypeModelObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), propertyTypeConverter);
-        Binding reversePropertyTypeBinding = ctx.bindValue(propertyTypeModelObservable, propertyTypeTargetObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), propertyTypeConverter);
+        Binding propertyTypeBinding = ctx.bindValue(propertyTypeTargetObservable, propertyTypeModelObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
+        Binding reversePropertyTypeBinding = ctx.bindValue(propertyTypeModelObservable, propertyTypeTargetObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), null);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);

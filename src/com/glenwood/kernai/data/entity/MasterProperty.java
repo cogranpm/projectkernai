@@ -17,9 +17,14 @@ public class MasterProperty extends BaseEntity {
 	private String label;
 	private String defaultValue;
 	private String notes;
+	
+	/*
 	private String propertyGroupId;
 	private String propertyTypeId;
-
+	*/
+	private PropertyGroup propertyGroup;
+	private PropertyType propertyType;
+	
 	private List<MasterPropertyToMasterCategoryDataObject> masterCategories;
 	
 	@JsonProperty
@@ -78,7 +83,36 @@ public class MasterProperty extends BaseEntity {
 		this.firePropertyChange("notes", oldNotes, this.notes);
 	}
 
+	
+	@JsonProperty
+	public PropertyGroup getPropertyGroup() {
+		return propertyGroup;
+	}
 
+
+
+	public void setPropertyGroup(PropertyGroup propertyGroup) {
+		PropertyGroup oldPropertyGroup = this.propertyGroup;
+		this.propertyGroup = propertyGroup;
+		this.firePropertyChange("propertyGroup", oldPropertyGroup, this.propertyGroup);
+	}
+	
+
+
+	@JsonProperty
+	public PropertyType getPropertyType() {
+		return propertyType;
+	}
+
+
+
+	public void setPropertyType(PropertyType propertyType) {
+		PropertyType oldPropertyType = this.propertyType;
+		this.propertyType = propertyType;
+		this.firePropertyChange("propertyType", oldPropertyType, this.propertyType);
+	}
+
+	/*
 	@JsonProperty
 	public String getPropertyGroupId() {
 		return propertyGroupId;
@@ -91,6 +125,7 @@ public class MasterProperty extends BaseEntity {
 		this.propertyGroupId = propertyGroupId;
 		this.firePropertyChange("propertyGroupId", oldPropertyGroupId, this.propertyGroupId);
 	}
+	
 
 
 	@JsonProperty
@@ -105,6 +140,7 @@ public class MasterProperty extends BaseEntity {
 		this.propertyTypeId = propertyTypeId;
 		this.firePropertyChange("propertyTypeId", oldPropertyTypeId, this.propertyTypeId);
 	}
+	*/
 
 	public List<MasterPropertyToMasterCategoryDataObject> getMasterCategories()
 	{
@@ -136,7 +172,7 @@ public class MasterProperty extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.name, this.notes, this.label, this.propertyGroupId, this.propertyTypeId);
+		return Objects.hash(this.name, this.notes, this.label, this.defaultValue);
 	}
 
 	@Override

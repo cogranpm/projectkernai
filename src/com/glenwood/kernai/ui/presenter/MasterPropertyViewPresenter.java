@@ -34,11 +34,13 @@ public class MasterPropertyViewPresenter extends BaseEntityPresenter<MasterPrope
 	@Override
 	public void loadModels() {
 		super.loadModels();
+		
 		for(MasterProperty masterProperty : this.model.getItems())
 		{
-			System.out.println(masterProperty.getPropertyGroupId());
-			System.out.println(masterProperty.getPropertyTypeId());
+		//	System.out.println(masterProperty.getPropertyGroupId());
+		//	System.out.println(masterProperty.getPropertyTypeId());
 		}
+		
 	}
 
 
