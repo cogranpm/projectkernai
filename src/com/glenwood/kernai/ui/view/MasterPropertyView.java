@@ -20,6 +20,7 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -211,7 +212,8 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         IObservableValue propertyGroupModelObservable = BeanProperties.value("propertyGroup").observeDetail(value);
         
         //IObservableValue propertyTypeTargetObservable = WidgetProperties.selection().observe(cboPropertyType.getCombo());
-        IObservableValue propertyTypeTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyType);
+        //IObservableValue propertyTypeTargetObservable = ViewersObservables.observeSingleSelection(cboPropertyType);
+        IObservableValue propertyTypeTargetObservable = ViewerProperties.singleSelection().observe(cboPropertyType);
         IObservableValue propertyTypeModelObservable = BeanProperties.value("propertyType").observeDetail(value);
        
         /* just the validators and decorators in the name field */
