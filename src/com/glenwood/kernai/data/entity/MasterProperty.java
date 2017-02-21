@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
-import com.glenwood.kernai.data.entity.helper.MasterPropertyToMasterCategoryDataObject;
+import com.glenwood.kernai.data.entity.helper.CheckedNamedItemDataObject;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class MasterProperty extends BaseEntity {
@@ -26,7 +26,7 @@ public class MasterProperty extends BaseEntity {
 	private PropertyGroup propertyGroup;
 	private PropertyType propertyType;
 	
-	private List<MasterPropertyToMasterCategoryDataObject> masterCategories;
+	private List<CheckedNamedItemDataObject> masterCategories;
 	
 	@JsonProperty
 	public String getName() {
@@ -145,17 +145,17 @@ public class MasterProperty extends BaseEntity {
 	}
 
 	@JsonIgnore
-	public List<MasterPropertyToMasterCategoryDataObject> getMasterCategories()
+	public List<CheckedNamedItemDataObject> getMasterCategories()
 	{
 		return this.masterCategories;
 	}
 	
-	public void assignMasterCategory(MasterPropertyToMasterCategoryDataObject entity)
+	public void assignMasterCategory(CheckedNamedItemDataObject entity)
 	{
 		this.masterCategories.add(entity);
 	}
 	
-	public void removeMasterCategory(MasterPropertyToMasterCategoryDataObject entity)
+	public void removeMasterCategory(CheckedNamedItemDataObject entity)
 	{
 		this.masterCategories.remove(entity);
 	}
@@ -164,7 +164,7 @@ public class MasterProperty extends BaseEntity {
 	public MasterProperty()
 	{
 		this.type = TYPE_NAME;
-		this.masterCategories = new ArrayList<MasterPropertyToMasterCategoryDataObject>();
+		this.masterCategories = new ArrayList<CheckedNamedItemDataObject>();
 	}
 	
 

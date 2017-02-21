@@ -9,7 +9,7 @@ import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
 import com.glenwood.kernai.data.entity.PropertyGroup;
 import com.glenwood.kernai.data.entity.PropertyType;
-import com.glenwood.kernai.data.entity.helper.MasterPropertyToMasterCategoryDataObject;
+import com.glenwood.kernai.data.entity.helper.CheckedNamedItemDataObject;
 
 public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	
@@ -41,7 +41,7 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 			for(MasterCategory masterCategory : allCategories)
 			{
 				masterCategoryIsAssigned = this.getMasterCategoryIsAssigned(masterCategory.getId(), assignedCategories);
-				MasterPropertyToMasterCategoryDataObject categoryItem = new MasterPropertyToMasterCategoryDataObject(masterCategoryIsAssigned, masterCategory.getId());
+				CheckedNamedItemDataObject categoryItem = new CheckedNamedItemDataObject(masterCategoryIsAssigned, masterCategory.getId());
 				masterProperty.assignMasterCategory(categoryItem);
 			}
 			
@@ -89,24 +89,24 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 		List<MasterPropertyToMasterCategory> assignedCategories = this.getAssignedMasterCategories(entity.getId());
 		
 		/* is junction entity deleted? - if not checked and exists then delete */
-		for(MasterPropertyToMasterCategoryDataObject item : entity.getMasterCategories())
+		for(CheckedNamedItemDataObject item : entity.getMasterCategories())
 		{
 			if (item.getAssigned() == false)
 			{
 				/* if exists - then delete */
-				if(this.getMasterCategoryIsAssigned(item.getMasterCategoryId(), assignedCategories))
+				if(this.getMasterCategoryIsAssigned(item.getId(), assignedCategories))
 				{
-					MasterPropertyToMasterCategory assignedItem = this.assignedCategoryRepository.get(entity.getId(), item.getMasterCategoryId());
+					MasterPropertyToMasterCategory assignedItem = this.assignedCategoryRepository.get(entity.getId(), item.getId());
 					this.assignedCategoryRepository.delete(assignedItem);
 				}
 			}
 			else
 			{
-				MasterPropertyToMasterCategory assignedItem = this.assignedCategoryRepository.get(entity.getId(), item.getMasterCategoryId());
+				MasterPropertyToMasterCategory assignedItem = this.assignedCategoryRepository.get(entity.getId(), item.getId());
 				if (assignedItem == null)
 				{
 					MasterPropertyToMasterCategory newAssignedItem = new MasterPropertyToMasterCategory();
-					newAssignedItem.setMasterCategoryId(item.getMasterCategoryId());
+					newAssignedItem.setMasterCategoryId(item.getId());
 					newAssignedItem.setMasterPropertyId(entity.getId());
 					this.assignedCategoryRepository.save(newAssignedItem);
 				}

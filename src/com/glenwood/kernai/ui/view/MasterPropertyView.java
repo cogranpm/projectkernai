@@ -18,21 +18,29 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.PropertyGroup;
 import com.glenwood.kernai.data.entity.PropertyType;
+import com.glenwood.kernai.data.entity.helper.CheckedNamedItemDataObject;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.MasterPropertyViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.MasterPropertyViewModel;
@@ -53,7 +61,10 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	Label lblPropertyGroup;
 	ComboViewer cboPropertyGroup;
 	
-	IObservableList<PropertyGroup> propertyGroupList;
+	CheckboxTableViewer masterCategoryViewer;
+	Table masterCategoryTable;
+	
+	//IObservableList<PropertyGroup> propertyGroupList;
 
 	public MasterPropertyView(Composite parent, int style) {
 		super(parent, style);
@@ -155,6 +166,59 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		viewHelper.layoutEditLabel(lblPropertyType);
 		viewHelper.layoutComboViewer(cboPropertyType);
 		
+	//	Group masterCategoryGroup = new Group(editMaster, SWT.NONE);
+	//	masterCategoryGroup.setText("Master Category");
+	//	GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(masterCategoryGroup);
+		this.masterCategoryViewer = CheckboxTableViewer.newCheckList(editMaster, SWT.NONE);
+		this.masterCategoryTable = this.masterCategoryViewer.getTable();
+		this.masterCategoryTable.setHeaderVisible(true);
+		this.masterCategoryTable.setLinesVisible(true);
+		this.masterCategoryViewer.setContentProvider(ArrayContentProvider.getInstance());
+		
+		
+		this.masterCategoryViewer.setCheckStateProvider(new ICheckStateProvider() {
+			
+			@Override
+			public boolean isGrayed(Object element) {
+				 return false;
+			}
+			
+			@Override
+			public boolean isChecked(Object element) {
+				if (element == null)
+				{
+					return false;
+				}
+				else
+				{
+					CheckedNamedItemDataObject item = (CheckedNamedItemDataObject)element;
+					return item.getAssigned();
+				}
+			}
+		});
+		
+		TableViewerColumn nameColumn = viewHelper.getListColumn(this.masterCategoryViewer, "Category");
+		nameColumn.setLabelProvider(new ColumnLabelProvider(){
+			
+			@Override
+			public String getText(Object element) {
+				if (element == null)
+				{
+					return "";
+				}
+				else
+				{
+					CheckedNamedItemDataObject item = (CheckedNamedItemDataObject)element;
+					return item.getId();
+				}
+			}
+		});
+		
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		this.masterCategoryTable.setLayout(tableLayout);
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(this.masterCategoryTable);
+		
 	}
 	
 	@Override
@@ -246,6 +310,12 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	public void add() {
 		super.add();
 		this.txtName.setFocus();
+	}
+	
+	@Override
+	public void afterSelection() {
+		super.afterSelection();
+		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
 	}
 
 }
