@@ -4,6 +4,7 @@ public class CheckedNamedItemDataObject {
 	
 	private String id;
 	private Boolean assigned;
+	private String label;
 	
 	public String getId() {
 		return id;
@@ -18,6 +19,14 @@ public class CheckedNamedItemDataObject {
 		this.assigned = assigned;
 	}
 	
+	
+	
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	public CheckedNamedItemDataObject()
 	{
 		
@@ -25,11 +34,11 @@ public class CheckedNamedItemDataObject {
 	}
 	
 	
-	public CheckedNamedItemDataObject(Boolean assigned, String id)
+	public CheckedNamedItemDataObject(Boolean assigned, String id, String label)
 	{
 		this.id = id;
 		this.assigned = assigned;
-		
+		this.label = label;
 	}
 	
 

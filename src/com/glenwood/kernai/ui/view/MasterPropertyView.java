@@ -21,16 +21,16 @@ import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -166,14 +166,23 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		viewHelper.layoutEditLabel(lblPropertyType);
 		viewHelper.layoutComboViewer(cboPropertyType);
 		
-	//	Group masterCategoryGroup = new Group(editMaster, SWT.NONE);
-	//	masterCategoryGroup.setText("Master Category");
-	//	GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(masterCategoryGroup);
-		this.masterCategoryViewer = CheckboxTableViewer.newCheckList(editMaster, SWT.NONE);
+		Label lblMasterCategory = new Label(editMaster, SWT.NONE);
+		lblMasterCategory.setText("Categories");
+		viewHelper.layoutEditLabel(lblMasterCategory);
+//		this.masterCategoryTable = new Table(editMaster, SWT.BORDER);
+		this.masterCategoryViewer = CheckboxTableViewer.newCheckList(editMaster, SWT.BORDER);
 		this.masterCategoryTable = this.masterCategoryViewer.getTable();
-		this.masterCategoryTable.setHeaderVisible(true);
-		this.masterCategoryTable.setLinesVisible(true);
+		this.masterCategoryTable.setHeaderVisible(false);
+		this.masterCategoryTable.setLinesVisible(false);
 		this.masterCategoryViewer.setContentProvider(ArrayContentProvider.getInstance());
+		this.masterCategoryViewer.setLabelProvider(new LabelProvider(){
+			@Override
+			public String getText(Object element)
+			{
+				CheckedNamedItemDataObject item = (CheckedNamedItemDataObject)element;
+				return item.getLabel();
+			}
+		});
 		
 		
 		this.masterCategoryViewer.setCheckStateProvider(new ICheckStateProvider() {
@@ -197,27 +206,21 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 			}
 		});
 		
-		TableViewerColumn nameColumn = viewHelper.getListColumn(this.masterCategoryViewer, "Category");
-		nameColumn.setLabelProvider(new ColumnLabelProvider(){
+		this.masterCategoryViewer.addCheckStateListener(new ICheckStateListener() {
 			
 			@Override
-			public String getText(Object element) {
-				if (element == null)
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object checkedElement = event.getElement();
+				if(checkedElement != null)
 				{
-					return "";
+					CheckedNamedItemDataObject item = (CheckedNamedItemDataObject)checkedElement;
+					item.setAssigned(event.getChecked());
+					model.setDirty(true);
 				}
-				else
-				{
-					CheckedNamedItemDataObject item = (CheckedNamedItemDataObject)element;
-					return item.getId();
-				}
+				
 			}
 		});
-		
-		TableColumnLayout tableLayout = new TableColumnLayout();
-		this.masterCategoryTable.setLayout(tableLayout);
-		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
-		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(this.masterCategoryTable);
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).align(SWT.FILL, SWT.FILL).applyTo(this.masterCategoryTable);
 		
 	}
 	

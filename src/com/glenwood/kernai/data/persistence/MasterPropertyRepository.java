@@ -41,7 +41,7 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 			for(MasterCategory masterCategory : allCategories)
 			{
 				masterCategoryIsAssigned = this.getMasterCategoryIsAssigned(masterCategory.getId(), assignedCategories);
-				CheckedNamedItemDataObject categoryItem = new CheckedNamedItemDataObject(masterCategoryIsAssigned, masterCategory.getId());
+				CheckedNamedItemDataObject categoryItem = new CheckedNamedItemDataObject(masterCategoryIsAssigned, masterCategory.getId(), masterCategory.getName());
 				masterProperty.assignMasterCategory(categoryItem);
 			}
 			
