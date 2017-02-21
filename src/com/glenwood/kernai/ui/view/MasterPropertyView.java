@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -301,18 +300,14 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-        nameBinding.getTarget().addChangeListener(stateListener);
-        notesBinding.getTarget().addChangeListener(stateListener);
-        defaultValueBinding.getTarget().addChangeListener(stateListener);
-        labelBinding.getTarget().addChangeListener(stateListener);
-        propertyGroupBinding.getTarget().addChangeListener(stateListener);
-        propertyTypeBinding.getTarget().addChangeListener(stateListener);
+
 	}
 	
 	@Override
 	public void add() {
 		super.add();
 		this.txtName.setFocus();
+		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
 	}
 	
 	@Override

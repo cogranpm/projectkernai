@@ -1,5 +1,6 @@
 package com.glenwood.kernai.data.persistence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
@@ -17,7 +18,7 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	private MasterCategoryRepository masterCategoryRepository;
 	private PropertyTypeRepository propertyTypeRepository;
 	private PropertyGroupRepository propertyGroupRepository;
-	
+	private List<MasterCategory> allCategories;
 
 	public MasterPropertyRepository(IPersistenceManager manager) {
 		super(manager);
@@ -32,18 +33,10 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	public List<MasterProperty> getAll(String type, Class<MasterProperty> aClass) {
 
 		List<MasterProperty> allItems = super.getAll(type, aClass);
-		List<MasterCategory> allCategories = this.getAllMasterCategories();
 		for(MasterProperty masterProperty : allItems)
 		{
 			//query all the master categories
-			Boolean masterCategoryIsAssigned = false;
-			List<MasterPropertyToMasterCategory> assignedCategories = this.getAssignedMasterCategories(masterProperty.getId());
-			for(MasterCategory masterCategory : allCategories)
-			{
-				masterCategoryIsAssigned = this.getMasterCategoryIsAssigned(masterCategory.getId(), assignedCategories);
-				CheckedNamedItemDataObject categoryItem = new CheckedNamedItemDataObject(masterCategoryIsAssigned, masterCategory.getId(), masterCategory.getName());
-				masterProperty.assignMasterCategory(categoryItem);
-			}
+			this.addMasterCategories(masterProperty);
 			
 			/* load the dependant object instances */
 			if(masterProperty.getPropertyGroupId() != null)
@@ -57,6 +50,22 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 			}
 		}
 		return allItems;
+	}
+	
+	public void addMasterCategories(MasterProperty masterProperty)
+	{
+		Boolean masterCategoryIsAssigned = false;
+		List<MasterPropertyToMasterCategory> assignedCategories = new ArrayList<MasterPropertyToMasterCategory>();
+		if(masterProperty.getId() != null)
+		{
+			assignedCategories = this.getAssignedMasterCategories(masterProperty.getId());
+		}
+		for(MasterCategory masterCategory : this.getAllMasterCategories())
+		{
+			masterCategoryIsAssigned = this.getMasterCategoryIsAssigned(masterCategory.getId(), assignedCategories);
+			CheckedNamedItemDataObject categoryItem = new CheckedNamedItemDataObject(masterCategoryIsAssigned, masterCategory.getId(), masterCategory.getName());
+			masterProperty.assignMasterCategory(categoryItem);
+		}
 	}
 
 	
@@ -121,7 +130,11 @@ public class MasterPropertyRepository extends BaseRepository<MasterProperty>  {
 	
 	private List<MasterCategory> getAllMasterCategories()
 	{
-		return this.masterCategoryRepository.getAll(MasterCategory.TYPE_NAME, MasterCategory.class);
+		if(this.allCategories == null)
+		{
+			this.allCategories =  this.masterCategoryRepository.getAll(MasterCategory.TYPE_NAME, MasterCategory.class);
+		}
+		return this.allCategories;
 	}
 	
 	private Boolean getMasterCategoryIsAssigned(String masterCategoryId, List<MasterPropertyToMasterCategory> assignedMasterCategories)

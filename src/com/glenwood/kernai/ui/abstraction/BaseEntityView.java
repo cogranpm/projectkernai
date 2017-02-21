@@ -50,7 +50,6 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	protected Binding allValidationBinding;
 	protected ObservableListContentProvider contentProvider;
 	protected DataBindingContext ctx;
-	protected IChangeListener stateListener; 
 	protected IEntityPresenter<T> presenter;
 	protected IViewModel<T> model;
 	protected CLabel errorLabel;
@@ -177,17 +176,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	
 	protected void initDataBindings()
 	{
-		
-        /* listening to all changes */
-        stateListener = new IChangeListener() {
-            @Override
-            public void handleChange(ChangeEvent event) {
-            	/* is there any way to check if just the properties of model changed */
-            	model.setDirty(true);
-            }
-        };
 		ctx.dispose();
-		
         contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
 

@@ -10,5 +10,6 @@ public interface IEntityPresenter<T> {
 	public void addModel();
 	public void saveModel();
 	public void deleteModel();
+	public void modelChanged();
 
 }

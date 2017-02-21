@@ -1,5 +1,8 @@
 package com.glenwood.kernai.ui.abstraction;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import com.glenwood.customExceptions.EntityInstantiationError;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
@@ -35,6 +38,12 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 	public void loadModel(T item) {
 		model.setCurrentItem(item);
 		model.setDirty(false);
+		this.model.getCurrentItem().addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				modelChanged();
+			}
+		});
 		this.view.refreshView();
 		this.view.afterSelection();
 	}
@@ -52,6 +61,13 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 	public void addModel() {
 		try {
 			this.model.setCurrentItem(this.clazz.newInstance());
+			model.setDirty(true);
+			this.model.getCurrentItem().addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					modelChanged();
+				}
+			});
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			throw new EntityInstantiationError(e);
@@ -71,7 +87,13 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 		this.model.getItems().remove(this.model.getCurrentItem());
 		this.repository.delete(model.getCurrentItem());
 		this.model.setCurrentItem(null);
+		this.model.setDirty(false);
 		this.view.refreshView();
+	}
+
+	@Override
+	public void modelChanged() {
+		this.model.setDirty(true);
 	}
 
 }

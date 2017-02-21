@@ -175,7 +175,6 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-        nameBinding.getTarget().addChangeListener(stateListener);
 
 	}
 	

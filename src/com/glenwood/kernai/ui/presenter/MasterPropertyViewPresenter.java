@@ -44,6 +44,13 @@ public class MasterPropertyViewPresenter extends BaseEntityPresenter<MasterPrope
 		}
 		
 	}
+	
+	@Override
+	public void addModel() {
+		super.addModel();
+		MasterPropertyRepository aRepository = (MasterPropertyRepository)this.repository;
+		aRepository.addMasterCategories(this.model.getCurrentItem());
+	}
 
 
 }

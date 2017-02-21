@@ -164,7 +164,6 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
         // this one listenes to all changes
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-        nameBinding.getTarget().addChangeListener(stateListener);
 
 	}
 	
