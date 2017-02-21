@@ -219,7 +219,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 				
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).align(SWT.FILL, SWT.FILL).applyTo(this.masterCategoryTable);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 1).align(SWT.FILL, SWT.FILL).applyTo(this.masterCategoryTable);
 		
 	}
 	

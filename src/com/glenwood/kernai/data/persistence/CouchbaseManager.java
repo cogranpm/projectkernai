@@ -27,6 +27,7 @@ import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.entity.MasterCategory;
+import com.glenwood.kernai.data.entity.MasterPropertyListItem;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
 import com.glenwood.kernai.data.mapping.EntityMapper;
 
@@ -270,6 +271,18 @@ public class CouchbaseManager implements IPersistenceManager {
 				if(document.containsKey("type") && ListDetail.TYPE_NAME.equals(document.get("type")))
 				{
 					emitter.emit(document.get("listHeaderId"), null);
+				}
+			}
+		}, "1");
+		
+		View masterPropertyListItemByMasterPropertyView = this.database.getView(MasterPropertyListItem.TYPE_NAME);
+		masterPropertyListItemByMasterPropertyView.setMap(new Mapper(){
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if(document.containsKey("type") && MasterPropertyListItem.TYPE_NAME.equals(document.get("type")))
+				{
+					emitter.emit(document.get("masterPropertyId"), null);
 				}
 			}
 		}, "1");

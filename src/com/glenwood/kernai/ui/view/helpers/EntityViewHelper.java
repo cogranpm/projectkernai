@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,7 +35,7 @@ public class EntityViewHelper {
 	
 	public void layoutEditLabel(Label label)
 	{
-		GridDataFactory.fillDefaults().grab(false, false).align(SWT.FILL, SWT.CENTER).applyTo(label);
+		GridDataFactory.fillDefaults().grab(false, false).align(SWT.FILL, SWT.TOP).applyTo(label);
 	}
 	
 	public void layoutEditEditor(Control control)
@@ -44,7 +45,10 @@ public class EntityViewHelper {
 	
 	public void layoutMultiLineText(Text text)
 	{
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gridData.heightHint = 8 * text.getLineHeight();
+		text.setLayoutData(gridData);
+		//GridDataFactory.fillDefaults().grab(true, true).span(2, 4).applyTo(text);
 	}
 	
 	public void layoutComboViewer(ComboViewer control)
