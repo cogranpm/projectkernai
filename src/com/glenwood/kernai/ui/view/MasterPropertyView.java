@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
+import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.PropertyGroup;
 import com.glenwood.kernai.data.entity.PropertyType;
@@ -64,6 +66,8 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	Table masterCategoryTable;
 	
 	//IObservableList<PropertyGroup> propertyGroupList;
+	
+	private MasterPropertyListItemMasterDetailView listItemView;
 
 	public MasterPropertyView(Composite parent, int style) {
 		super(parent, style);
@@ -221,6 +225,10 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		});
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 1).align(SWT.FILL, SWT.FILL).applyTo(this.masterCategoryTable);
 		
+		Label lblListItemCaption = new Label(editMaster, SWT.NONE);
+		lblListItemCaption.setText("List Items");
+		viewHelper.layoutMasterDetailCaption(lblListItemCaption);
+		
 	}
 	
 	@Override
@@ -304,6 +312,17 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	}
 	
 	@Override
+	protected MasterProperty listSelectionChangedHandler(SelectionChangedEvent event)
+	{
+		MasterProperty item = super.listSelectionChangedHandler(event);
+		if(item != null)
+		{
+			refreshListItemView(item);
+		}
+		return item;
+	}
+	
+	@Override
 	public void add() {
 		super.add();
 		this.txtName.setFocus();
@@ -314,6 +333,20 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	public void afterSelection() {
 		super.afterSelection();
 		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
+	}
+	
+	public void refreshListItemView(MasterProperty masterProperty)
+	{
+		if(listItemView == null)
+		{
+			listItemView = new MasterPropertyListItemMasterDetailView(editDetail, SWT.NONE, masterProperty);
+			editDetail.layout();
+		}
+		else
+		{
+			listItemView.getPresenter().loadItems(masterProperty);
+			listItemView.setVisible(true);
+		}
 	}
 
 }
