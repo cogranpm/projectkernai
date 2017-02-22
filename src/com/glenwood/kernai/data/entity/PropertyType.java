@@ -10,6 +10,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 public class PropertyType extends BaseEntity {
 
 	public static final String TYPE_NAME = "PROPERTYTYPE";
+	public static final String LIST_ITEM_NAME = "List";
 	
 	private String name;
 	

@@ -10,4 +10,5 @@ public interface IEntityMasterDetailView <T extends BaseEntity, P extends BaseEn
 	*/
 	public void refreshView();
 	public void showAddEdit(Boolean adding);
+	public void setToolbarEnabled(Boolean enable);
 }

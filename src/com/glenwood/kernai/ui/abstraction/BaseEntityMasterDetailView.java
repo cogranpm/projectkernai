@@ -37,7 +37,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
-public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P> {
+public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P> {
 
 	protected Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	protected Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
@@ -56,6 +56,9 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 	protected WritableList<T> input;
 	protected ObservableListContentProvider detailContentProvider;
 	protected EntityViewHelper viewHelper;
+	
+	protected ToolBar actionsBar;
+	protected ToolBarManager toolBarManager;
 	
 	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity) {
 		super(parent, style);
@@ -129,8 +132,8 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 		headerContainer = new Composite(this, SWT.NONE);
 		headerContainer.setLayout(viewHelper.getViewLayout(1));
 
-		ToolBar actionsBar = new ToolBar(headerContainer, SWT.NONE);
-		ToolBarManager toolBarManager = new ToolBarManager(actionsBar);
+		actionsBar = new ToolBar(headerContainer, SWT.NONE);
+		toolBarManager = new ToolBarManager(actionsBar);
 		ActionContributionItem newAction = new ActionContributionItem(this.actionMap.get(NEW_ACTION_KEY));
 		
 		toolBarManager.add(newAction);
@@ -293,6 +296,13 @@ public class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEnti
 
 	@Override
 	public void showAddEdit(Boolean adding) {
+		
+	}
+
+
+	@Override
+	public void setToolbarEnabled(Boolean enable) {
+		this.actionsBar.setEnabled(enable);
 		
 	}
 

@@ -6,6 +6,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -28,16 +30,17 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.PropertyGroup;
 import com.glenwood.kernai.data.entity.PropertyType;
@@ -46,28 +49,29 @@ import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.MasterPropertyViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.MasterPropertyViewModel;
 
-public class MasterPropertyView extends BaseEntityView<MasterProperty> {
+public final class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	
-	Label lblName;
-	Text txtName;
-	Label lblLabel;
-	Text txtLabel;
-	Label lblDefaultValue;
-	Text txtDefaultValue;
-	Label lblNotes;
-	Text txtNotes;
+	private Label lblName;
+	private Text txtName;
+	private Label lblLabel;
+	private Text txtLabel;
+	private Label lblDefaultValue;
+	private Text txtDefaultValue;
+	private Label lblNotes;
+	private Text txtNotes;
 	
-	Label lblPropertyType;
-	ComboViewer cboPropertyType;
-	Label lblPropertyGroup;
-	ComboViewer cboPropertyGroup;
+	private Label lblPropertyType;
+	private ComboViewer cboPropertyType;
+	private Label lblPropertyGroup;
+	private ComboViewer cboPropertyGroup;
 	
-	CheckboxTableViewer masterCategoryViewer;
-	Table masterCategoryTable;
+	private CheckboxTableViewer masterCategoryViewer;
+	private Table masterCategoryTable;
 	
 	//IObservableList<PropertyGroup> propertyGroupList;
 	
 	private MasterPropertyListItemMasterDetailView listItemView;
+	private Label lblListItemCaption;
 
 	public MasterPropertyView(Composite parent, int style) {
 		super(parent, style);
@@ -225,7 +229,7 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		});
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 1).align(SWT.FILL, SWT.FILL).applyTo(this.masterCategoryTable);
 		
-		Label lblListItemCaption = new Label(editMaster, SWT.NONE);
+		lblListItemCaption = new Label(editMaster, SWT.NONE);
 		lblListItemCaption.setText("List Items");
 		viewHelper.layoutMasterDetailCaption(lblListItemCaption);
 		
@@ -308,6 +312,15 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
+        
+        propertyTypeBinding.getTarget().addChangeListener(new IChangeListener() {
+			
+			@Override
+			public void handleChange(ChangeEvent event) {
+				propertyTypeChanged();
+				
+			}
+		});
 
 	}
 	
@@ -333,6 +346,35 @@ public class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	public void afterSelection() {
 		super.afterSelection();
 		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
+	}
+	
+	private void propertyTypeChanged()
+	{
+		IStructuredSelection selection =  this.cboPropertyType.getStructuredSelection();
+		if (selection == null){return;}
+		PropertyType propertyType = (PropertyType)selection.getFirstElement();
+		if(propertyType.getName().equalsIgnoreCase((PropertyType.LIST_ITEM_NAME)))
+		{
+			this.setEnabledListItems(true);
+		}
+		else
+		{
+			this.setEnabledListItems(false);
+		}
+	}
+	
+	private void setEnabledListItems(Boolean enable)
+	{
+		this.lblListItemCaption.setEnabled(enable);
+		if(this.listItemView != null)
+		{
+			this.listItemView.setToolbarEnabled(enable);
+			this.listItemView.setEnabled(enable);
+			for(Control control : this.listItemView.getChildren())
+			{
+				control.setEnabled(enable);
+			}
+		}
 	}
 	
 	public void refreshListItemView(MasterProperty masterProperty)
