@@ -252,8 +252,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	@Override
 	public void add() {
 		this.presenter.addModel();
-		value.setValue(this.model.getCurrentItem());
-		input.add(this.model.getCurrentItem());
+
 	}
 
 	@Override
@@ -282,6 +281,8 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 
 	@Override
 	public void afterAdd() {
+		value.setValue(this.model.getCurrentItem());
+		input.add(this.model.getCurrentItem());
 		this.enableEditControls();
 		
 	}

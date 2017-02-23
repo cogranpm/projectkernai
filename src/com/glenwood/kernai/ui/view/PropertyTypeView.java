@@ -181,8 +181,9 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	
 	@Override
 	public void add() {
-		this.txtName.setFocus();
 		super.add();
+		this.txtName.setFocus();
+
 	}
 	
 	private class ViewerComparator extends ListSorterHelper

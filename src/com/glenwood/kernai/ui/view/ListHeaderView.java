@@ -195,8 +195,8 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 
 	@Override
 	public void add() {
-		this.txtName.setFocus();
 		super.add();
+		this.txtName.setFocus();
 		//input.add(this.model.getCurrentItem());
 		if (this.listDetailView != null)
 		{

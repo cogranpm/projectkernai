@@ -48,6 +48,7 @@ public class PropertyType extends BaseEntity {
 
 	public PropertyType()
 	{
+		super();
 		this.type = TYPE_NAME;
 	}
 	

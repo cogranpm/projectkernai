@@ -114,8 +114,8 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 
 	@Override
 	public void add() {
-		this.txtName.setFocus();
 		super.add();
+		this.txtName.setFocus();
 	}
 
 

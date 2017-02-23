@@ -30,6 +30,7 @@ public class ListHeader extends BaseEntity {
 
 	public ListHeader()
 	{
+		super();
 		this.type = TYPE_NAME;
 	}
 	

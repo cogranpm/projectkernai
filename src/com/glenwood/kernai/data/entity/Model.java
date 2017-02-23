@@ -1,8 +1,5 @@
 package com.glenwood.kernai.data.entity;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -13,36 +10,44 @@ public class Model extends BaseEntity {
 	public static final String TYPE_NAME = "MODEL";
 	
 	
-	@JsonProperty
 	private String name;
-	@JsonProperty
 	private String modelType;
 	
 	/* foreign keys */
-	@JsonProperty
 	private String projectId;
-	private Project project;
 	
+	
+	//private Project project;
+
+	@JsonProperty
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		String oldName = this.name;
 		this.name = name;
 		firePropertyChange("name", oldName, this.name);
 	}
+	
+	@JsonProperty
 	public String getModelType() {
 		return modelType;
 	}
+	
 	public void setModelType(String modelType) {
 		this.modelType = modelType;
 	}
+	
+	@JsonProperty
 	public String getProjectId() {
 		return projectId;
 	}
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
+	
+	/*
 	public Project getProject() {
 		return project;
 	}
@@ -51,6 +56,7 @@ public class Model extends BaseEntity {
 		this.project = project;
 		firePropertyChange("project", oldProject, this.project);
 	}
+	*/
 	
 	public Model()
 	{

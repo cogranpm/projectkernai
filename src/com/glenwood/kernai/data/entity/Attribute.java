@@ -13,12 +13,12 @@ public class Attribute extends BaseEntity {
 	
 	public Attribute()
 	{
-		this(null, null, null, null, null);
+		this(null, null, null, true);
 	}
 	
-	public Attribute(Entity entity, String name, String dataType, Long length, Boolean allowNull)
+	public Attribute(String name, String dataType, Long length, Boolean allowNull)
 	{
-		this.entity = entity;
+		//this.entity = entity;
 		this.name = name;
 		this.dataType = dataType;
 		this.length = length;
@@ -39,7 +39,8 @@ public class Attribute extends BaseEntity {
 	/* foreign keys */
 	@JsonProperty
 	private String entityId;
-	private Entity entity;
+	
+	//private Entity entity;
 
 	
 
@@ -80,7 +81,7 @@ public class Attribute extends BaseEntity {
 	}
 	*/
 	
-	
+	/*
 	public Entity getEntity()
 	{
 		return this.entity;
@@ -99,6 +100,7 @@ public class Attribute extends BaseEntity {
 			this.entityId = null;
 		}
 	}
+	*/
 
 
 	@Override

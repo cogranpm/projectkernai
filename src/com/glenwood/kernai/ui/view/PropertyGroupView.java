@@ -150,8 +150,9 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	
 	@Override
 	public void add() {
-		this.txtName.setFocus();
 		super.add();
+		this.txtName.setFocus();
+
 	}
 	
 	private class ViewerComparator extends ListSorterHelper
