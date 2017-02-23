@@ -97,19 +97,6 @@ public class NavViewPresenter {
 		
 	}
 	
-	public void test()
-	{
-		Entity customersEntity = new Entity();
-		customersEntity.setName("customers");
-		Attribute companyName = new Attribute();
-		companyName.setName("CompanyName");
-		companyName.setLength(40L);
-		companyName.setAllowNull(false);
-		companyName.setDataType("String");
-		companyName.setEntity(customersEntity);
-		this.entityRepository.save(customersEntity);
-		this.attributeRespository.save(companyName);
-		
-	}
+
 
 }

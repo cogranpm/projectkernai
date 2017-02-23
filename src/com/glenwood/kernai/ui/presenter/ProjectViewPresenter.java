@@ -1,41 +1,23 @@
 package com.glenwood.kernai.ui.presenter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.glenwood.kernai.data.entity.Project;
-import com.glenwood.kernai.ui.abstraction.IProjectView;
-import com.glenwood.kernai.ui.viewmodel.ProjectViewModel;
+import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
+import com.glenwood.kernai.data.persistence.ProjectRepository;
+import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.abstraction.BaseEntityPresenter;
+import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.abstraction.IViewModel;
 
-public class ProjectViewPresenter {
+public class ProjectViewPresenter extends BaseEntityPresenter<Project> {
+
 	
-	IProjectView view;
-	ProjectViewModel model;
-	
-	public ProjectViewModel getModel()
-	{
-		return this.model;
+	public ProjectViewPresenter(IEntityView view, IViewModel<Project> model) {
+		super(view, model, Project.class, Project.TYPE_NAME);
+		this.repository = new ProjectRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
-	private ProjectViewPresenter(){};
+
 	
-	public ProjectViewPresenter(IProjectView view, ProjectViewModel model)
-	{
-		this.view = view;
-		this.model = model;
-	}
-	
-	public void loadProjects()
-	{
-		this.model.setProjects(new ArrayList<Project>());
-		for (int x = 0; x < 10; x++)
-		{
-			Project testProject = new Project();
-			testProject.setName(String.format("Project %d", x));
-			testProject.setId(String.format("%d", x));
-			this.model.getProjects().add(testProject);
-		}
-		view.renderProjectList();
-	}
+
 
 }

@@ -14,6 +14,5 @@ public interface IPersistenceManager {
 	public void delete(BaseEntity entity);
 	public <T> List<T> getAll(String queryName, Class<T> aClass);
 	public <T> T get(String id, Class<T> aClass);
-	public void test();
 
 }

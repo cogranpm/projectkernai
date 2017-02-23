@@ -44,13 +44,6 @@ public class BaseRepository<T extends BaseEntity> implements IEntityRepository<T
 
 	
 
-	
-
-
-	public void test() {
-		this.manager.test();
-
-	}
 
 	@Override
 	public T get(String id, Class<T> aClass) {

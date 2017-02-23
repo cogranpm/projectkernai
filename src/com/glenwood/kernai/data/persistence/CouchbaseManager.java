@@ -194,45 +194,7 @@ public class CouchbaseManager implements IPersistenceManager {
 		}
 	}
 
-	
-	/*
-	public <T> List<T> getAll(String queryName, Class<T> aClass)
-	{
-		List<T> entityList = new ArrayList<T>();
-		Query aquery = this.database.getView(queryName).createQuery();
-		QueryEnumerator result = null;
-		try {
-			result = aquery.run();
-		} catch (CouchbaseLiteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for(Iterator<QueryRow> it = result; it.hasNext();)
-		{
-			QueryRow row = it.next();
-			T entity = this.entityMapper.toEntity(row.getDocument(), aClass);
-			entityList.add(entity);
-		}
-		return entityList;
 
-	}
-	*/
-	
-	public void test()
-	{
-		Attribute attribute = new Attribute(null, "FirstName", "varchar", 35L, true);
-		this.save(attribute);
-		List<Attribute> list = this.getAll("attributes", Attribute.class);
-		for(Attribute listAttribute : list)
-		{
-			log.info(String.format("howday %s", listAttribute.toString()));
-			/* update */
-			listAttribute.setName("LastName");
-			listAttribute.setLength(50L);
-			this.save(listAttribute);
-		}
-		this.delete(attribute);    			
-	}
 	
 	private void generateViews()
 	{

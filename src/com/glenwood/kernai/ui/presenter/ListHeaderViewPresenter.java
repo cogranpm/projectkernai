@@ -40,10 +40,12 @@ public class ListHeaderViewPresenter extends BaseEntityPresenter<ListHeader> {
 	}
 	
 
+	/*
 	@Override
 	public void loadModel(ListHeader item) {
 		super.loadModel(item);
 	}
+	*/
 
 	
 	

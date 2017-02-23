@@ -9,10 +9,13 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -26,16 +29,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
-import com.glenwood.kernai.data.entity.Attribute;
-import com.glenwood.kernai.data.entity.Entity;
-import com.glenwood.kernai.data.persistence.BaseRepository;
-import com.glenwood.kernai.data.persistence.EntityRepository;
-import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
-import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
+import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
 
@@ -45,7 +43,7 @@ public class MainWindow extends ApplicationWindow {
 	
 	private Composite container;
 	private Composite masterPropertyPane;
-
+	private Composite projectPane;
 
 
 	
@@ -80,7 +78,7 @@ public class MainWindow extends ApplicationWindow {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText("&Getting Started");
 		CTabItem masterPropertyTabItem = new CTabItem(folder, SWT.NONE);
-		masterPropertyTabItem.setText("Master &Properties");
+		masterPropertyTabItem.setText("&Master Properties");
 		
 		Composite masterPropertyContainingPane = new Composite(folder, SWT.NONE);
 		ToolBar masterPropertyToolBar = this.addNavigationToolbar(masterPropertyContainingPane, masterPropertyTabItem);
@@ -117,40 +115,37 @@ public class MainWindow extends ApplicationWindow {
 		toolBarManager.add(tabItemAction);
 
 		toolBarManager.update(true);
-		/*
-		ToolItem listToolItem = this.addNavigationToolItem("Lists", masterPropertyToolBar);
-		ToolItem masterCategoryToolItem = this.addNavigationToolItem("Master Category", masterPropertyToolBar);
-		ToolItem propertyTypeToolItem = this.addNavigationToolItem("Property Type", masterPropertyToolBar);
-		ToolItem propertyGroupToolItem = this.addNavigationToolItem("Property Group", masterPropertyToolBar);
-		ToolItem masterPropertyToolItem = this.addNavigationToolItem("Master Property", masterPropertyToolBar);
-		*/
 		
-		item  = new CTabItem(folder, SWT.NONE);
-		item.setText("&Models");
+		CTabItem projectItem  = new CTabItem(folder, SWT.NONE);
+		projectItem.setText("&Projects");
+		projectPane = new Composite(folder, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(projectPane);
+		projectPane.setLayout(new FillLayout());
+		folder.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				CTabItem item = folder.getSelection();
+				if(item == projectItem)
+				{
+					if(projectPane.getChildren().length == 0)
+					{
+						ProjectView projectView = new ProjectView(projectPane, SWT.NONE);
+						ApplicationData.instance().setCurrentEntityView(projectView);
+						projectPane.layout();
+					}
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText("&Scripting");
 		
 
-		/*
-
-		ToolBar toolbar = this.getToolBarManager().getControl();
-		if (toolbar != null )
-		{
-			for(ToolItem toolItem : toolbar.getItems())
-			{
-				ApplicationData.instance().addToolItem(toolItem.getText(), toolItem);
-				System.out.println(toolItem.getText());
-			}
-		}
-		
-		
-		if (ApplicationData.instance().getToolItem("Save") != null)
-		{
-			ApplicationData.instance().getToolItem("Save").setEnabled(false);
-		}
-		*/
-		
-		
 		this.getShell().getDisplay().addFilter(SWT.KeyUp, new Listener() {
 			
 			@Override
@@ -177,30 +172,7 @@ public class MainWindow extends ApplicationWindow {
 	 * Create the actions.
 	 */
 	private void createActions() {
-		// Create the actions
-		 IAction testAction = new Action() {
-		        @Override
-		        public void run() {
-		        	EntityRepository entityRepository;
-		        	BaseRepository attributeRespository;
-		        	entityRepository = new EntityRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
-		    		attributeRespository = new BaseRepository(PersistenceManagerFactory.getPersistenceManager(PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE));
-		        	Entity customersEntity = new Entity();
-		    		customersEntity.setName("customers");
-		    		Attribute companyName = new Attribute();
-		    		companyName.setName("CompanyName");
-		    		companyName.setLength(40L);
-		    		companyName.setAllowNull(false);
-		    		companyName.setDataType("String");
-		    		companyName.setEntity(customersEntity);
-		    		entityRepository.save(customersEntity);
-		    		attributeRespository.save(companyName);
-		        }
-		    };
-		    testAction.setText("Test");
-		    testAction.setToolTipText("Run a test.");
-		    testAction.setEnabled(true);	
-		    ApplicationData.instance().addAction("Test", testAction);
+		
 		    
 		 IAction exitAction = new Action("E&xit\tCtrl+X"){
 			 @Override
@@ -393,10 +365,7 @@ public class MainWindow extends ApplicationWindow {
 		item = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
 		//item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBarManager.add(item);
-				
-		item = new ActionContributionItem(ApplicationData.instance().getAction("Test"));
-		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-		toolBarManager.add(item);
+
 
 		toolBarManager.update(true);
 		return toolBarManager;
@@ -454,7 +423,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(689, 479);
+		return new Point(900, 800);
 	}
 	
 
