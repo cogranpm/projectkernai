@@ -118,9 +118,27 @@ public class MainWindow extends ApplicationWindow {
 		
 		CTabItem projectItem  = new CTabItem(folder, SWT.NONE);
 		projectItem.setText("&Projects");
-		projectPane = new Composite(folder, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(projectPane);
+		Composite projectContainerPane = new Composite(folder, SWT.NONE);
+		ToolBar projectToolBar = this.addNavigationToolbar(projectContainerPane, projectItem);
+		ToolBarManager projectBarManager = new ToolBarManager(projectToolBar);
+
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_PROJECT));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODELS));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_BUILD));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+
+		projectPane = new Composite(projectContainerPane, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(projectPane);
 		projectPane.setLayout(new FillLayout());
+		projectBarManager.update(true);
+		
 		folder.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -315,6 +333,37 @@ public class MainWindow extends ApplicationWindow {
 		 goToMasterPropertyType.setEnabled(true);
 		 //newAction.setAccelerator(SWT.CTRL | 'N');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_TYPE, goToMasterPropertyType);
+		 
+		 
+		 
+		 
+		 
+		 IAction goToProjectProject = new Action("Project", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectProject.setEnabled(false);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_PROJECT, goToProjectProject);
+		 
+		 IAction goToProjectModels = new Action("Models", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectModels.setEnabled(false);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_MODELS, goToProjectModels);
+				
+		 IAction goToProjectBuilds = new Action("Builds", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectBuilds.setEnabled(false);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_BUILD, goToProjectBuilds);
 	}
 
 	/**
@@ -446,7 +495,7 @@ public class MainWindow extends ApplicationWindow {
 		GridLayout layout = new GridLayout(1, true);
 		parent.setLayout(layout);
 		parentTabItem.setControl(parent);
-		ToolBar t = new ToolBar(parent, SWT.WRAP);
+		ToolBar t = new ToolBar(parent, SWT.WRAP | SWT.BORDER | SWT.BOLD);
 		GridData gd = new GridData();
 		gd.grabExcessHorizontalSpace=false;
 		gd.grabExcessVerticalSpace = false;

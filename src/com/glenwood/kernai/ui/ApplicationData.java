@@ -176,6 +176,10 @@ public class ApplicationData {
 	public static final String GOTO_MASTERPROPERTY_PROPERTY = "GoToMasterPropertyProperty";
 	public static final String GOTO_MASTERPROPERTY_TYPE = "GoToMasterPropertyType";
 	
+	public static final String GOTO_PROJECT_PROJECT = "GoToProjectProject";
+	public static final String GOTO_PROJECT_MODELS = "GoToProjectModels";
+	public static final String GOTO_PROJECT_BUILD = "GoToProjectBuilds";
+	
 	protected ApplicationData()
 	{
 		actionsMap = new HashMap<String, IAction>();
