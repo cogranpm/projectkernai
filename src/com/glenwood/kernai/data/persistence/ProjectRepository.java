@@ -9,5 +9,15 @@ public class ProjectRepository extends BaseRepository<Project> {
 		super(manager);
 		
 	}
+	
+	@Override
+	public void delete(Project entity) {
+		super.delete(entity);
+		
+		/* delete all child associations 
+		 * model
+		 * 
+		 */
+	}
 
 }

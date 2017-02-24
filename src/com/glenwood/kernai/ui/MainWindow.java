@@ -351,9 +351,14 @@ public class MainWindow extends ApplicationWindow {
 		 
 		 
 		 /* project menus */
+		 String[] projectActionKeys = new String[]{ApplicationData.GOTO_PROJECT_PROJECT, ApplicationData.GOTO_PROJECT_MODEL,
+				 ApplicationData.GOTO_PROJECT_ENTITY, ApplicationData.GOTO_PROJECT_ATTRIBUTE, ApplicationData.GOTO_PROJECT_ASSOCIATION,
+				 ApplicationData.GOTO_PROJECT_BUILD};
+
 		 IAction goToProjectProject = new Action("Project", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_PROJECT);
 				System.out.print("here");
 			}
 		 };
@@ -364,6 +369,7 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToProjectModel = new Action("Model", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_MODEL);
 				System.out.print("here");
 			}
 		 };
@@ -375,6 +381,7 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToProjectEntity = new Action("Entity", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_ENTITY);
 				System.out.print("here");
 			}
 		 };
