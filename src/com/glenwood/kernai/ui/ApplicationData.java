@@ -49,6 +49,16 @@ public class ApplicationData {
 		actionsMap.put(key, action);
 	}
 	
+	private Map<String, ToolBarManager> toolbarManagers;
+	public ToolBarManager getToolBarManager(String key)
+	{
+		return this.toolbarManagers.get(key);
+	}
+	
+	public void putToolBarManager(String key, ToolBarManager manager)
+	{
+		this.toolbarManagers.put(key, manager);
+	}
 	
 
 	public ToolItem getToolItem(String key)
@@ -56,6 +66,20 @@ public class ApplicationData {
 		try
 		{
 			ToolBarManager manager =this.mainWindow.getToolBarManager();
+			return this.getToolItem(manager, key);
+		}
+		catch(Exception ex)
+		{
+			//could be shutting down window, just close gracefully
+			return null;
+		}
+	}
+	
+	
+	public ToolItem getToolItem(ToolBarManager manager, String key)
+	{
+		try
+		{
 			if (manager == null){return null;}
 			ToolBar toolBar = manager.getControl();
 			if (toolBar == null) { return null;}
@@ -159,6 +183,9 @@ public class ApplicationData {
 	public static final String IMAGE_EDIT_DISABLED_SMALL = "editDisabledSmall";
 	public static final String IMAGE_SAVE_SMALL = "saveSmall";
 	public static final String IMAGE_SAVE_DISABLED_SMALL = "saveDisabledSmall";
+	
+	//toolbar managers
+	public static final String TOOLBAR_MANAGER_PROJECT = "project";
 
 	//global actions
 	public static final String EXIT_ACTION_KEY = "exit";
@@ -177,18 +204,22 @@ public class ApplicationData {
 	public static final String GOTO_MASTERPROPERTY_TYPE = "GoToMasterPropertyType";
 	
 	public static final String GOTO_PROJECT_PROJECT = "GoToProjectProject";
-	public static final String GOTO_PROJECT_MODELS = "GoToProjectModels";
-	public static final String GOTO_PROJECT_BUILD = "GoToProjectBuilds";
+	public static final String GOTO_PROJECT_MODEL = "GoToProjectModel";
+	public static final String GOTO_PROJECT_ENTITY = "GoToProjectEntity";
+	public static final String GOTO_PROJECT_ATTRIBUTE = "GoToProjectAttribute";
+	public static final String GOTO_PROJECT_ASSOCIATION = "GoToProjectAssociation";
+	public static final String GOTO_PROJECT_BUILD = "GoToProjectBuild";
 	
 	protected ApplicationData()
 	{
-		actionsMap = new HashMap<String, IAction>();
+		this.actionsMap = new HashMap<String, IAction>();
 	//	toolItemsMap = new HashMap<String, ToolItem>();
 		this.persistenceType = PersistenceManagerFactoryConstants.PERSISTENCE_FACTORY_TYPE_COUCHBASE_LITE;
 		persistenceManager  = new CouchbaseManager();
 		persistenceManager.init(APPLICATION_NAME);
 		this.currentEntityView = null;
 		this.imageRegistry = new ImageRegistry();
+		this.toolbarManagers = new HashMap<String, ToolBarManager>();
 	}
 	
 	public void addImagesToRegistry()

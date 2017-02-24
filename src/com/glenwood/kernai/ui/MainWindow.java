@@ -44,7 +44,7 @@ public class MainWindow extends ApplicationWindow {
 	private Composite container;
 	private Composite masterPropertyPane;
 	private Composite projectPane;
-
+	private ToolBarManager projectBarManager;
 
 	
 	/**
@@ -120,13 +120,26 @@ public class MainWindow extends ApplicationWindow {
 		projectItem.setText("&Projects");
 		Composite projectContainerPane = new Composite(folder, SWT.NONE);
 		ToolBar projectToolBar = this.addNavigationToolbar(projectContainerPane, projectItem);
-		ToolBarManager projectBarManager = new ToolBarManager(projectToolBar);
+		projectBarManager = new ToolBarManager(projectToolBar);
+		ApplicationData.instance().putToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT, projectBarManager);
 
 		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_PROJECT));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 		
-		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODELS));
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODEL));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ENTITY));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ATTRIBUTE));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		projectBarManager.add(tabItemAction);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ASSOCIATION));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 		
@@ -277,7 +290,7 @@ public class MainWindow extends ApplicationWindow {
 				masterPropertyPane.layout();
 			}
 		 };
-		 goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		 //goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
 		 goToMasterPropertyList.setEnabled(true);
 		 goToMasterPropertyList.setAccelerator(SWT.MOD1 | 'L');
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS, goToMasterPropertyList);
@@ -337,33 +350,66 @@ public class MainWindow extends ApplicationWindow {
 		 
 		 
 		 
-		 
+		 /* project menus */
 		 IAction goToProjectProject = new Action("Project", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				System.out.print("here");
 			}
 		 };
-		 goToProjectProject.setEnabled(false);
+		 goToProjectProject.setEnabled(true);
+		 goToProjectProject.setActionDefinitionId(ApplicationData.GOTO_PROJECT_PROJECT);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_PROJECT, goToProjectProject);
 		 
-		 IAction goToProjectModels = new Action("Models", IAction.AS_CHECK_BOX) {
+		 IAction goToProjectModel = new Action("Model", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				System.out.print("here");
 			}
 		 };
-		 goToProjectModels.setEnabled(false);
-		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_MODELS, goToProjectModels);
-				
-		 IAction goToProjectBuilds = new Action("Builds", IAction.AS_CHECK_BOX) {
+		 goToProjectModel.setEnabled(false);
+		 goToProjectModel.setActionDefinitionId(ApplicationData.GOTO_PROJECT_MODEL);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_MODEL, goToProjectModel);
+
+		 
+		 IAction goToProjectEntity = new Action("Entity", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				System.out.print("here");
 			}
 		 };
-		 goToProjectBuilds.setEnabled(false);
-		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_BUILD, goToProjectBuilds);
+		 goToProjectEntity.setEnabled(false);
+		 goToProjectEntity.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ENTITY);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ENTITY, goToProjectEntity);
+		 
+		 IAction goToProjectAttribute = new Action("Attribute", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectAttribute.setEnabled(false);
+		 goToProjectAttribute.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ATTRIBUTE);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ATTRIBUTE, goToProjectAttribute);
+		 
+		 IAction goToProjectAssociation = new Action("Association", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectAssociation.setEnabled(false);
+		 goToProjectAssociation.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ASSOCIATION);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ASSOCIATION, goToProjectAssociation);
+		 
+		 IAction goToProjectBuild = new Action("Build", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				System.out.print("here");
+			}
+		 };
+		 goToProjectBuild.setEnabled(false);
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_BUILD, goToProjectBuild);
 	}
 
 	/**

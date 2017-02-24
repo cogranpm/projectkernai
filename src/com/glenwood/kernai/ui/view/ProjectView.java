@@ -6,6 +6,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -14,9 +16,11 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,8 +29,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.entity.Project;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.ProjectViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ProjectViewModel;
@@ -114,7 +120,7 @@ public class ProjectView extends BaseEntityView<Project>{
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-
+        this.setupToolbarBinding();
 	}
 
 	@Override
@@ -123,4 +129,31 @@ public class ProjectView extends BaseEntityView<Project>{
 		this.txtName.setFocus();
 	}
 	
+	
+	protected void setupToolbarBinding()
+	{
+        /* set the enabled of the toolbar items */
+        ToolItem modelToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
+        		ApplicationData.GOTO_PROJECT_MODEL);
+        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
+        IObservableValue<ToolItem> modelItemTarget = WidgetProperties.enabled().observe(modelToolItem);
+        UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
+        	@Override
+        	protected IStatus doSet(IObservableValue observableValue, Object value) 
+        	{
+        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
+        	};
+        };
+		
+        //a binding that sets delete toolitem to disabled based on whether item in list is selected
+        Binding deleteBinding = ctx.bindValue(modelItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
+        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction gotoModelAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODEL);
+				gotoModelAction.setEnabled(modelToolItem.getEnabled());
+			}
+		});
+	}
 }
