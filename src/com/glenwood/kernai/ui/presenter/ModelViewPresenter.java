@@ -5,12 +5,13 @@ import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.persistence.ModelRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailPresenter;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditPresenter;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListModalPresenter;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.viewmodel.ModelViewModel;
 
-public class ModelViewPresenter extends BaseEntityMasterDetailPresenter<Model, Project> {
+public class ModelViewPresenter extends BaseEntityMasterDetailListEditPresenter<Model, Project> {
 
 	public ModelViewPresenter(ModelView view, ModelViewModel model) {
 		super(view, model, Model.class, Model.TYPE_NAME);
@@ -18,7 +19,8 @@ public class ModelViewPresenter extends BaseEntityMasterDetailPresenter<Model, P
 	}
 	
 	@Override
-	public void loadItems() {
+	public void loadModels(Project parentEntity) {
+		super.loadModels(parentEntity);
 		ModelRepository aRepository = (ModelRepository)this.repository;
 		this.model.setItems(aRepository.getAllByProject(this.model.getParent().getId()));
 		((IEntityView)this.view).refreshView();

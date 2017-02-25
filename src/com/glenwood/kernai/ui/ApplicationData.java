@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
+import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 
 public class ApplicationData {
@@ -249,6 +250,13 @@ public class ApplicationData {
 	{
 		this.getAction(NEW_ACTION_KEY).setEnabled(true);
 	}
+	
+	/*
+	public void loadEntityView(IEntityMasterDetailListEditView view)
+	{
+		this.getAction(NEW_ACTION_KEY).setEnabled(true);
+	}
+	*/
 	
 	public void unloadEntityView()
 	{

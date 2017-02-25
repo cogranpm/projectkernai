@@ -7,15 +7,16 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.entity.Project;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
+import com.glenwood.kernai.ui.abstraction.BaseMasterDetailViewModel;
 import com.glenwood.kernai.ui.abstraction.MasterDetailListEditViewEngine;
 import com.glenwood.kernai.ui.presenter.ModelViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ModelViewModel;
 
-public class ModelView extends BaseEntityMasterDetailView<Model, Project>{
+public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project>{
 
 	public ModelView(Composite parent, int style, Project parentEntity) {
-		super(parent, style, parentEntity, new MasterDetailListEditViewEngine());
+		super(parent, style, parentEntity);
 
 	}
 	

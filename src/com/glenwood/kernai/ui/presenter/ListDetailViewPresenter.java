@@ -5,13 +5,13 @@ import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.persistence.ListDetailRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailPresenter;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListModalPresenter;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListDetailMasterDetailView;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 
 
-public class ListDetailViewPresenter extends BaseEntityMasterDetailPresenter<ListDetail, ListHeader> {
+public class ListDetailViewPresenter extends BaseEntityMasterDetailListModalPresenter<ListDetail, ListHeader> {
 
 	//private ListDetailMasterDetailView view;
 	//private ListDetailViewModel model;
@@ -28,7 +28,7 @@ public class ListDetailViewPresenter extends BaseEntityMasterDetailPresenter<Lis
 	{
 		ListDetailRepository srepo = (ListDetailRepository)this.repository;
 		this.model.setItems(srepo.getAllByListHeader(this.model.getParent().getId()));
-		((IEntityView)this.view).refreshView();
+		this.view.refreshView();
 	}
 	
 	/*

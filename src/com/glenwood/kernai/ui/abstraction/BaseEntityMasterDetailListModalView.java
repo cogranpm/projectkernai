@@ -37,7 +37,8 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
-public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P>, IEntityView{
+public abstract class BaseEntityMasterDetailListModalView<T extends BaseEntity, P extends BaseEntity> 
+extends Composite implements IEntityMasterDetailListModalView<T, P> {
 
 	protected Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	protected Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
@@ -51,7 +52,7 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	protected Composite headerContainer;
 	protected Composite listContainer;
 	
-	protected IEntityMasterDetailPresenter<T, P> presenter;
+	protected IEntityMasterDetailListModalPresenter<T, P> presenter;
 	protected IMasterDetailViewModel<T, P> model;
 	protected WritableList<T> input;
 	protected ObservableListContentProvider detailContentProvider;
@@ -60,14 +61,14 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	protected ToolBar actionsBar;
 	protected ToolBarManager toolBarManager;
 	
-	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity, IMasterDetailViewEngine viewEngine) {
+	public BaseEntityMasterDetailListModalView(Composite parent, int style, P parentEntity, IMasterDetailViewEngine viewEngine) {
 		super(parent, style);
 		setupModelAndPresenter(parentEntity);
 		init();
 	}
 	
 	
-	public IEntityMasterDetailPresenter<T, P> getPresenter() {
+	public IEntityMasterDetailListModalPresenter<T, P> getPresenter() {
 		return presenter;
 	}
 
@@ -273,10 +274,6 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 
 
 
-	@Override
-	public void refreshView() {
-		
-	}
 
 	@Override
 	public void showAddEdit(Boolean adding) {
@@ -291,33 +288,9 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	}
 	
 	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-		
+	public void refreshView() {
 	}
+	
 
-	@Override
-	public void add() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void afterAdd() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void afterSelection() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

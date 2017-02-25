@@ -19,7 +19,7 @@ public class Project extends BaseEntity {
 	public void setName(String name) {
 		String oldName = this.name;
 		this.name = name;
-		firePropertyChange("project", oldName, this.name);
+		firePropertyChange("name", oldName, this.name);
 	}
 
 	public Project()

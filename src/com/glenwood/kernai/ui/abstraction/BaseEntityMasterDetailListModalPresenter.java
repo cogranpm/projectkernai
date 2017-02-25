@@ -1,5 +1,7 @@
 package com.glenwood.kernai.ui.abstraction;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -7,15 +9,16 @@ import com.glenwood.customExceptions.EntityInstantiationError;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 
-public abstract class BaseEntityMasterDetailPresenter<T extends BaseEntity, P extends BaseEntity> implements IEntityMasterDetailPresenter<T, P> {
+public abstract class BaseEntityMasterDetailListModalPresenter<T extends BaseEntity, P extends BaseEntity> 
+implements IEntityMasterDetailListModalPresenter<T, P> {
 
 	protected IEntityRepository<T> repository;
-	protected IEntityMasterDetailView<T, P> view;
+	protected IEntityMasterDetailListModalView<T, P> view;
 	protected IMasterDetailViewModel<T, P> model;
 	private Class<T> clazz;
 	private String entityTypeName;
 
-	public BaseEntityMasterDetailPresenter(IEntityMasterDetailView<T, P> view, IMasterDetailViewModel<T, P> model, Class entityClass, String entityTypeName) {
+	public BaseEntityMasterDetailListModalPresenter(IEntityMasterDetailListModalView<T, P> view, IMasterDetailViewModel<T, P> model, Class entityClass, String entityTypeName) {
 		super();
 		this.view = view;
 		this.model = model;
@@ -35,6 +38,8 @@ public abstract class BaseEntityMasterDetailPresenter<T extends BaseEntity, P ex
 		this.model.setParent(parent);
 		this.loadItems();
 	}
+	
+	
 
 	@Override
 	public void addModel() {

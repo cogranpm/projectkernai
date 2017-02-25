@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.glenwood.kernai.data.entity.MasterProperty;
 import com.glenwood.kernai.data.entity.MasterPropertyListItem;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListModalView;
 import com.glenwood.kernai.ui.abstraction.MasterDetailListViewEngine;
 import com.glenwood.kernai.ui.presenter.MasterPropertyListItemViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.MasterPropertyListItemViewModel;
 
-public class MasterPropertyListItemMasterDetailView extends BaseEntityMasterDetailView<MasterPropertyListItem, MasterProperty> {
+public class MasterPropertyListItemMasterDetailView extends BaseEntityMasterDetailListModalView<MasterPropertyListItem, MasterProperty> {
 
 	public MasterPropertyListItemMasterDetailView(Composite parent, int style, MasterProperty parentEntity) {
 		super(parent, style, parentEntity, new MasterDetailListViewEngine());

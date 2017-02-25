@@ -5,12 +5,12 @@ import com.glenwood.kernai.data.entity.MasterPropertyListItem;
 import com.glenwood.kernai.data.persistence.MasterPropertyListItemRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailPresenter;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListModalPresenter;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.MasterPropertyListItemMasterDetailView;
 import com.glenwood.kernai.ui.viewmodel.MasterPropertyListItemViewModel;
 
-public class MasterPropertyListItemViewPresenter extends BaseEntityMasterDetailPresenter<MasterPropertyListItem, MasterProperty> {
+public class MasterPropertyListItemViewPresenter extends BaseEntityMasterDetailListModalPresenter<MasterPropertyListItem, MasterProperty> {
 
 	public MasterPropertyListItemViewPresenter(MasterPropertyListItemMasterDetailView view, MasterPropertyListItemViewModel model)
 	{
@@ -23,7 +23,7 @@ public class MasterPropertyListItemViewPresenter extends BaseEntityMasterDetailP
 	{
 		MasterPropertyListItemRepository srepo = (MasterPropertyListItemRepository)this.repository;
 		this.model.setItems(srepo.getAllByMasterProperty(this.model.getParent().getId()));
-		((IEntityView)this.view).refreshView();
+		this.view.refreshView();
 	}
 	
 
