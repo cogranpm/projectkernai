@@ -1,45 +1,28 @@
 package com.glenwood.kernai.ui.presenter;
 
 import com.glenwood.kernai.data.entity.Model;
-import com.glenwood.kernai.ui.abstraction.IModelView;
+import com.glenwood.kernai.data.entity.Project;
+import com.glenwood.kernai.data.persistence.ModelRepository;
+import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
+import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailPresenter;
+import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.viewmodel.ModelViewModel;
 
-public class ModelViewPresenter {
-	
-	IModelView view;
-	ModelViewModel model;
-	
-	
-	
-	public IModelView getView() {
-		return view;
-	}
+public class ModelViewPresenter extends BaseEntityMasterDetailPresenter<Model, Project> {
 
-	public void setView(IModelView view) {
-		this.view = view;
-	}
-
-	public ModelViewModel getModel() {
-		return model;
-	}
-
-	public void setModel(ModelViewModel model) {
-		this.model = model;
-	}
-
-	public ModelViewPresenter(IModelView view, ModelViewModel model)
-	{
-		this.view = view;
-		this.model = model;
-
+	public ModelViewPresenter(ModelView view, ModelViewModel model) {
+		super(view, model, Model.class, Model.TYPE_NAME);
+		this.repository = new ModelRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 	}
 	
-	public void loadModels(String projectId)
-	{
-		/* model.currentModel = ??*/
-		Model currentModel = new Model();
-		currentModel.setName("Glensoft");
-		this.model.setCurrentModel(currentModel);
+	@Override
+	public void loadItems() {
+		ModelRepository aRepository = (ModelRepository)this.repository;
+		this.model.setItems(aRepository.getAllByProject(this.model.getParent().getId()));
+		((IEntityView)this.view).refreshView();
 	}
+	
 
 }

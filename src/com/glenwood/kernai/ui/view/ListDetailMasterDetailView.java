@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailView;
+import com.glenwood.kernai.ui.abstraction.MasterDetailListViewEngine;
 import com.glenwood.kernai.ui.presenter.ListDetailViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
@@ -31,7 +32,7 @@ public final class ListDetailMasterDetailView extends BaseEntityMasterDetailView
 	
 	public ListDetailMasterDetailView(Composite parent, int style, ListHeader listHeader)
 	{
-		super(parent, SWT.BORDER, listHeader);
+		super(parent, SWT.BORDER, listHeader, new MasterDetailListViewEngine());
 	}
 	
 	@Override

@@ -29,10 +29,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
+import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
+import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
@@ -359,7 +361,9 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_PROJECT);
-				System.out.print("here");
+				/* unload the project pane and load the project view */
+				ApplicationData.instance().setCurrentEntityView(new ProjectView(clearComposite(projectPane), SWT.NONE));
+				projectPane.layout();
 			}
 		 };
 		 goToProjectProject.setEnabled(true);
@@ -370,7 +374,9 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_MODEL);
-				System.out.print("here");
+				ModelView modelView = new ModelView(clearComposite(projectPane), SWT.NONE, new Project());
+				ApplicationData.instance().setCurrentEntityView((IEntityView)modelView);
+				projectPane.layout();
 			}
 		 };
 		 goToProjectModel.setEnabled(false);
@@ -409,6 +415,7 @@ public class MainWindow extends ApplicationWindow {
 		 goToProjectAssociation.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ASSOCIATION, goToProjectAssociation);
 		 
+		 /* NO, THIS SHOULD BE UNDER SCRIPTS, AND TAKES THE PLACE OF BUILD CONTROLLER */
 		 IAction goToProjectBuild = new Action("Build", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {

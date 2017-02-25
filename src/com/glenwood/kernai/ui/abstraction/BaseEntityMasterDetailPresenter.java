@@ -68,7 +68,7 @@ public abstract class BaseEntityMasterDetailPresenter<T extends BaseEntity, P ex
 			repository.delete(entity);
 			
 			this.model.getItems().remove(entity);
-			this.view.refreshView();
+			((IEntityView)this.view).refreshView();
 		}
 		
 	}

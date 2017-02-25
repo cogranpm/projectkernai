@@ -37,7 +37,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
-public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P> {
+public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends BaseEntity> extends Composite implements IEntityMasterDetailView<T, P>, IEntityView{
 
 	protected Map<String, IAction> actionMap = new HashMap<String, IAction>();
 	protected Map<String, ToolItem> toolItemMap = new HashMap<String, ToolItem>();
@@ -60,7 +60,7 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	protected ToolBar actionsBar;
 	protected ToolBarManager toolBarManager;
 	
-	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity) {
+	public BaseEntityMasterDetailView(Composite parent, int style, P parentEntity, IMasterDetailViewEngine viewEngine) {
 		super(parent, style);
 		setupModelAndPresenter(parentEntity);
 		init();
@@ -271,23 +271,7 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	     return selectionAdapter;
 	 }
 
-	/*
-	@Override
-	public void delete() {
-		
-	}
 
-	@Override
-	public void add() {
-
-		
-	}
-
-	@Override
-	public void save() {
-		
-	}
-	*/
 
 	@Override
 	public void refreshView() {
@@ -303,6 +287,36 @@ public abstract class BaseEntityMasterDetailView<T extends BaseEntity, P extends
 	@Override
 	public void setToolbarEnabled(Boolean enable) {
 		this.actionsBar.setEnabled(enable);
+		
+	}
+	
+	@Override
+	public void delete() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void add() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void save() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterAdd() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterSelection() {
+		// TODO Auto-generated method stub
 		
 	}
 

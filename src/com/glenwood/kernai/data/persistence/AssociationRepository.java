@@ -9,22 +9,22 @@ import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
-import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.Association;
 import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
-public class AttributeRepository extends BaseRepository<Attribute> {
-	
-	public AttributeRepository(IPersistenceManager manager)
-	{
+public class AssociationRepository extends BaseRepository<Association> {
+
+	public AssociationRepository(IPersistenceManager manager) {
 		super(manager);
 	}
+
 	
-	public List<Attribute> getAllByEntity(String entityId)
+	public List<Association> getAllByModel(String modelId)
 	{
-		List<Attribute> entityList = new ArrayList<Attribute>();
-		Query aquery = this.getManager().getDatabase().getView(ProjectViewBuilder.QUERY_ATTRIBUTE_BY_ENTITY).createQuery();
+		List<Association> entityList = new ArrayList<Association>();
+		Query aquery = this.getManager().getDatabase().getView(ProjectViewBuilder.QUERY_ASSOCIATION_BY_MODEL).createQuery();
 		List<Object> keys = new ArrayList<Object>();
-        keys.add(entityId);
+        keys.add(modelId);
 		aquery.setKeys(keys);
 		QueryEnumerator result = null;
 		try {
@@ -35,11 +35,10 @@ public class AttributeRepository extends BaseRepository<Attribute> {
 		for(Iterator<QueryRow> it = result; it.hasNext();)
 		{
 			QueryRow row = it.next();
-			Attribute entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), Attribute.class);
+			Association entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), Association.class);
 			entityList.add(entity);
 		}
 		return entityList;
 
 	}
-
 }
