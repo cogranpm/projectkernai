@@ -14,10 +14,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
+import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 
 public class ApplicationData {
@@ -168,18 +169,24 @@ public class ApplicationData {
 		this.currentProject = currentProject;
 	}
 	
-	/*
-	private MainShell mainShell;
+	private Model currentModel;
 
-	public MainShell getMainShell() {
-		return mainShell;
+	public Model getCurrentModel() {
+		return currentModel;
 	}
-	public void setMainShell(MainShell mainShell) {
-		this.mainShell = mainShell;
+	public void setCurrentModel(Model currentModel) {
+		this.currentModel = currentModel;
 	}
-	*/
+	
+	private Entity currentEntity;
+	
 
-
+	public Entity getCurrentEntity() {
+		return currentEntity;
+	}
+	public void setCurrentEntity(Entity currentEntity) {
+		this.currentEntity = currentEntity;
+	}
 
 	private static ApplicationData instance_;
 	public static final String COMPANY_NAME = "Glenwood";

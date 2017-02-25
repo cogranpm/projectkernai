@@ -35,59 +35,46 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 
+import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.Model;
-import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
-import com.glenwood.kernai.ui.presenter.ModelViewPresenter;
+import com.glenwood.kernai.ui.presenter.EntityViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
-import com.glenwood.kernai.ui.viewmodel.ModelViewModel;
+import com.glenwood.kernai.ui.viewmodel.EntityViewModel;
 
-public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project>{
+public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model> {
 
-	
 	private Label lblName;
 	private Text txtName;
 	
-	public ModelView(Composite parent, int style, Project parentEntity) {
+	public EntityView(Composite parent, int style, Model parentEntity) {
 		super(parent, style, parentEntity);
-
 	}
 	
 	@Override
-	protected void setupModelAndPresenter(Project parentEntity) {
+	protected void setupModelAndPresenter(Model parentEntity) {
 		super.setupModelAndPresenter(parentEntity);
-		this.model = new ModelViewModel(parentEntity);
-		this.presenter = new ModelViewPresenter(this, (ModelViewModel)this.model);
-	}
-	
-	@Override
-	protected void setupListColumns() {
-		super.setupListColumns();
-		this.listViewer.setComparator(new ViewerComparator());
-		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
-		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
-		TableColumnLayout tableLayout = new TableColumnLayout();
-		listContainer.setLayout(tableLayout);
-		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		this.model = new EntityViewModel(parentEntity);
+		this.presenter = new EntityViewPresenter(this, (EntityViewModel)this.model);         
 	}
 	
 	@Override
 	protected void initDataBindings() {
 		super.initDataBindings();
-        IObservableSet<Model> knownElements = contentProvider.getKnownElements();
-        final IObservableMap names = BeanProperties.value(Model.class, "name").observeDetail(knownElements);
+        IObservableSet<Entity> knownElements = contentProvider.getKnownElements();
+        final IObservableMap names = BeanProperties.value(Entity.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
-                	Model mc = (Model)element;
+                	Entity mc = (Entity)element;
                 	return mc.getName();
                 }
         };
         listViewer.setLabelProvider(labelProvider);
-        List<Model> el = model.getItems();
-        input = new WritableList(el, Model.class);
+        List<Entity> el = model.getItems();
+        input = new WritableList(el, Entity.class);
         listViewer.setInput(input);
         
         /* binding for the edit screen on name field */
@@ -128,12 +115,12 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 				IStructuredSelection selection = listViewer.getStructuredSelection();
 				if(selection == null)
 				{
-					ApplicationData.instance().setCurrentModel(null);
+					ApplicationData.instance().setCurrentEntity(null);
 				}
 				else
 				{
-					Model model = (Model)selection.getFirstElement();
-					ApplicationData.instance().setCurrentModel(model);
+					Entity entity = (Entity)selection.getFirstElement();
+					ApplicationData.instance().setCurrentEntity(entity);
 				}
 			}
 		});
@@ -144,7 +131,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 	{
         /* set the enabled of the toolbar items */
         ToolItem entityToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
-        		ApplicationData.GOTO_PROJECT_ENTITY);
+        		ApplicationData.GOTO_PROJECT_ATTRIBUTE);
         IObservableValue listViewerSelection= ViewersObservables.observeSingleSelection(listViewer);
         IObservableValue<ToolItem> entityItemTarget = WidgetProperties.enabled().observe(entityToolItem);
         UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
@@ -160,11 +147,12 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
         binding.getTarget().addChangeListener(new IChangeListener() {
 			@Override
 			public void handleChange(ChangeEvent event) {
-				IAction gotoEntityAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ENTITY);
+				IAction gotoEntityAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ATTRIBUTE);
 				gotoEntityAction.setEnabled(entityToolItem.getEnabled());
 			}
 		});
 	}
+	
 	
 	@Override
 	protected void setupEditingContainer() {
@@ -175,6 +163,18 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 		viewHelper.layoutEditLabel(lblName);
 		viewHelper.layoutEditEditor(txtName);
 	}
+	
+	@Override
+	protected void setupListColumns() {
+		super.setupListColumns();
+		this.listViewer.setComparator(new ViewerComparator());
+		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
+		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		listContainer.setLayout(tableLayout);
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+	}
+	
 	
 	@Override
 	public void add() {
@@ -191,8 +191,8 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 			{
 				return 0;
 			}
-			Model p1 = (Model)e1;
-			Model p2 = (Model)e2;
+			Entity p1 = (Entity)e1;
+			Entity p2 = (Entity)e2;
 			int rc = 0;
 			switch(this.propertyIndex)
 			{
@@ -210,7 +210,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 			return rc;
 		}
 		
-		private int compareName(Model p1, Model p2)
+		private int compareName(Entity p1, Entity p2)
 		{
 			if (p1 == null || p2 == null)
 			{
@@ -225,4 +225,5 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 		
 		
 	}
+
 }

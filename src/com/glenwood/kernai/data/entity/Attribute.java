@@ -6,16 +6,21 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Attribute extends BaseEntity {
-	
-
 
 	public static final String TYPE_NAME = "ATTRIBUTE";
 	
 	public Attribute()
 	{
-		this(null, null, null, true);
+		this.type = TYPE_NAME;
 	}
 	
+	public Attribute(Entity parent)
+	{
+		this();
+		this.entityId = parent.getId();
+	}
+	
+	/*
 	public Attribute(String name, String dataType, Long length, Boolean allowNull)
 	{
 		//this.entity = entity;
@@ -25,84 +30,58 @@ public class Attribute extends BaseEntity {
 		this.allowNull = allowNull;
 		this.type = TYPE_NAME;
 	}
+	*/
 	
-	
-	@JsonProperty
 	private String name;
-	@JsonProperty
+
 	private String dataType;
-	@JsonProperty
+
 	private Long length;
-	@JsonProperty
+
 	private Boolean allowNull;
 	
-	/* foreign keys */
-	@JsonProperty
 	private String entityId;
 	
-	//private Entity entity;
-
-	
-
+	@JsonProperty
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
+		String oldValue = this.name;
 		this.name = name;
+		firePropertyChange("name", oldValue, this.name);
 	}
+	
+	@JsonProperty
 	public String getDataType() {
 		return dataType;
 	}
 	public void setDataType(String dataType) {
+		String oldValue = this.dataType;
 		this.dataType = dataType;
+		firePropertyChange("dataType", oldValue, this.dataType);
 	}
+	
+	@JsonProperty
 	public Long getLength() {
 		return length;
 	}
 	public void setLength(Long length) {
+		Long oldValue = this.length;
 		this.length = length;
+		firePropertyChange("length", oldValue, this.length);
 	}
+	
+	@JsonProperty
 	public Boolean getAllowNull() {
 		return allowNull;
 	}
 	public void setAllowNull(Boolean allowNull) {
+		Boolean oldValue = this.allowNull;
 		this.allowNull = allowNull;
+		firePropertyChange("allowNull", oldValue, this.allowNull);
 	}
 	
-	/*
-	public String getEntityId()
-	{
-		return this.entityId;
-	}
-	
-	public void setEntityId(String entityId)
-	{
-		this.entityId = entityId;
-	}
-	*/
-	
-	/*
-	public Entity getEntity()
-	{
-		return this.entity;
-	}
-
-	public void setEntity(Entity entity)
-	{
-		if (entity != null)
-		{
-			this.entity = entity;
-			this.entityId = entity.getId();
-		}
-		else
-		{
-			this.entity = null;
-			this.entityId = null;
-		}
-	}
-	*/
-
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -123,8 +102,6 @@ public class Attribute extends BaseEntity {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
 
 
 }

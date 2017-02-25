@@ -1,22 +1,19 @@
 package com.glenwood.kernai.data.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
 
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Entity extends BaseEntity {
 	
 	public static final String TYPE_NAME = "ENTITY";
 	
-	@JsonProperty
 	private String name;
+	private String modelId;
 	
-	//private List<Attribute> attributes;
-	
+	@JsonProperty
 	public String getName()
 	{
 		return this.name;
@@ -24,37 +21,35 @@ public class Entity extends BaseEntity {
 	
 	public void setName(String name)
 	{
+		String oldValue = this.name;
 		this.name = name;
+		firePropertyChange("name", oldValue, this.name);
 	}
 	
-	/*
-	public List<Attribute> getAttributes()
-	{
-		return this.attributes;
-	}
 	
-	public void addAttribute(Attribute attribute)
-	{
-		if(!this.attributes.contains(attribute))
-		{
-			
-			this.attributes.add(attribute);
-		}
-	}
 	
-	public void removeAttribute(Attribute attribute)
-	{
-		if(this.attributes.contains(attribute))
-		{
-			this.attributes.remove(attribute);
-		}
+	@JsonProperty
+	public String getModelId() {
+		return modelId;
 	}
-	*/
+
 	
+	public void setModelId(String modelId) {
+		String oldValue = this.modelId;
+		this.modelId = modelId;
+		firePropertyChange("modelId", oldValue, this.modelId);
+	}
+
 	public Entity()
 	{
 		this.type = TYPE_NAME;
-		//this.attributes = new ArrayList<Attribute>();
+	}
+	
+	
+	public Entity(Model parent)
+	{
+		this();
+		this.modelId = parent.getId();
 	}
 
 }

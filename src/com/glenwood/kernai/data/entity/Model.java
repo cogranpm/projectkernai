@@ -47,16 +47,7 @@ public class Model extends BaseEntity {
 		this.projectId = projectId;
 	}
 	
-	/*
-	public Project getProject() {
-		return project;
-	}
-	public void setProject(Project project) {
-		Project oldProject = this.project;
-		this.project = project;
-		firePropertyChange("project", oldProject, this.project);
-	}
-	*/
+
 	
 	public Model()
 	{

@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.EntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
@@ -388,7 +389,9 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_ENTITY);
-				System.out.print("here");
+				EntityView entityView = new EntityView(clearComposite(projectPane), SWT.NONE, ApplicationData.instance().getCurrentModel());
+				ApplicationData.instance().setCurrentEntityView(entityView);
+				projectPane.layout();
 			}
 		 };
 		 goToProjectEntity.setEnabled(false);
