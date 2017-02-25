@@ -7,7 +7,7 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
  * @param <T> the type of the entity
  * @param <P> the parent type of the entity
  */
-public interface IEntityMasterDetailPresenter<T extends BaseEntity, P extends BaseEntity> {
+public interface IEntityMasterDetailListModalPresenter<T extends BaseEntity, P extends BaseEntity> {
 
 	public void loadItems();
 	public void loadItems(P parent);
