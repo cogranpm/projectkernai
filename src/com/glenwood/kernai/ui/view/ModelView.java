@@ -24,6 +24,7 @@ public class ModelView extends BaseEntityMasterDetailView<Model, Project>{
 		super.setupModelAndPresenter(parentEntity);
 		this.model = new ModelViewModel(parentEntity);
 		this.presenter = new ModelViewPresenter(this, (ModelViewModel)this.model);
+		System.out.println(parentEntity.getId());
 	}
 	
 	@Override

@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
+import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
@@ -157,6 +158,15 @@ public class ApplicationData {
 		}
 	}
 	
+	private Project currentProject;
+	
+	public Project getCurrentProject() {
+		return currentProject;
+	}
+	public void setCurrentProject(Project currentProject) {
+		this.currentProject = currentProject;
+	}
+	
 	/*
 	private MainShell mainShell;
 
@@ -167,6 +177,8 @@ public class ApplicationData {
 		this.mainShell = mainShell;
 	}
 	*/
+
+
 
 	private static ApplicationData instance_;
 	public static final String COMPANY_NAME = "Glenwood";

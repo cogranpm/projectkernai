@@ -24,6 +24,10 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -121,6 +125,7 @@ public class ProjectView extends BaseEntityView<Project>{
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
         this.setupToolbarBinding();
+        this.setupCurrentProjectBinding();
 	}
 
 	@Override
@@ -129,8 +134,28 @@ public class ProjectView extends BaseEntityView<Project>{
 		this.txtName.setFocus();
 	}
 	
+	private void setupCurrentProjectBinding()
+	{
+		this.listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = listViewer.getStructuredSelection();
+				if(selection == null)
+				{
+					ApplicationData.instance().setCurrentProject(null);
+				}
+				else
+				{
+					Project project = (Project)selection.getFirstElement();
+					ApplicationData.instance().setCurrentProject(project);
+				}
+			}
+		});
+	}
 	
-	protected void setupToolbarBinding()
+	
+	private void setupToolbarBinding()
 	{
         /* set the enabled of the toolbar items */
         ToolItem modelToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),

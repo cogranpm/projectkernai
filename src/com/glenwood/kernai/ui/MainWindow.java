@@ -374,7 +374,7 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_MODEL);
-				ModelView modelView = new ModelView(clearComposite(projectPane), SWT.NONE, new Project());
+				ModelView modelView = new ModelView(clearComposite(projectPane), SWT.NONE, ApplicationData.instance().getCurrentProject());
 				ApplicationData.instance().setCurrentEntityView((IEntityView)modelView);
 				projectPane.layout();
 			}
