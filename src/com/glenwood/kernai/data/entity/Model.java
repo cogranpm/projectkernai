@@ -63,6 +63,13 @@ public class Model extends BaseEntity {
 		this.type = TYPE_NAME;
 	}
 	
+	public Model(Project parent)
+	{
+		this();
+		this.projectId = parent.getId();
+		
+	}
+	
 	
 
 }

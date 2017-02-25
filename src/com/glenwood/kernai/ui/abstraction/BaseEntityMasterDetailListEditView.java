@@ -62,7 +62,8 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	
 	public BaseEntityMasterDetailListEditView(Composite parent, int style, P parentEntity) {
 		super(parent, style);
-		this.setupModelAndPresenter(parentEntity);		
+		this.setupModelAndPresenter(parentEntity);	
+		this.init();
 	}
 	
 	protected void init()
