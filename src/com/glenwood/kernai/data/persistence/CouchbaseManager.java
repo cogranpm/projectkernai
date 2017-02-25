@@ -1,9 +1,6 @@
 package com.glenwood.kernai.data.persistence;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,13 +20,12 @@ import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.View;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
-import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.ListDetail;
-import com.glenwood.kernai.data.entity.ListHeader;
-import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.data.entity.MasterPropertyListItem;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
+import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.mapping.EntityMapper;
+import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class CouchbaseManager implements IPersistenceManager {
 	
@@ -211,19 +207,8 @@ public class CouchbaseManager implements IPersistenceManager {
 			}
 		}, "1");
 		
-		View attributesView = this.database.getView("attributes");
-		attributesView.setMap(new Mapper(){
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter) {
-				if (document.containsKey("type") && Attribute.TYPE_NAME.equals(document.get("type")))
-				{
-					emitter.emit(document.get("type"), null);
-				}
-				
-			}
-		}
-		, "3");
-		
+		ProjectViewBuilder.BuildViews(this.database);
+
 		
 		View listDetailByListHeaderView = this.database.getView(ListDetail.TYPE_NAME);
 		listDetailByListHeaderView.setMap(new Mapper(){
