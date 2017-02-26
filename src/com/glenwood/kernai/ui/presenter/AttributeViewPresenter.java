@@ -20,7 +20,8 @@ public class AttributeViewPresenter extends BaseEntityMasterDetailListEditPresen
 		super(view, model, Attribute.class, Attribute.TYPE_NAME);
 		this.repository = new AttributeRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 		this.listHeaderRepository = new ListHeaderRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
-		
+		AttributeViewModel aModel = (AttributeViewModel)this.model;
+		aModel.setDataTypeLookup(this.listHeaderRepository.getListItemsByName(ApplicationData.LIST_DATATYPE_NAME));
 	}
 	
 	@Override

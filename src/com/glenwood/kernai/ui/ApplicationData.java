@@ -230,6 +230,9 @@ public class ApplicationData {
 	public static final String GOTO_PROJECT_ASSOCIATION = "GoToProjectAssociation";
 	public static final String GOTO_PROJECT_BUILD = "GoToProjectBuild";
 	
+	
+	public static final String LIST_DATATYPE_NAME = "Data Type";
+	
 	protected ApplicationData()
 	{
 		this.actionsMap = new HashMap<String, IAction>();

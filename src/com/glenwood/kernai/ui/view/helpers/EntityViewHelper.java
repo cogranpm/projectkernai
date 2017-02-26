@@ -51,9 +51,18 @@ public class EntityViewHelper {
 		//GridDataFactory.fillDefaults().grab(true, true).span(2, 4).applyTo(text);
 	}
 	
+	
+	
 	public void layoutComboViewer(ComboViewer control)
 	{
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(control.getControl());
+	}
+	
+	public Label getEditLabel(Composite parent, String text)
+	{
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(text);
+		return label;
 	}
 	
 	public Text getTextEditor(Composite parent)

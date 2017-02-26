@@ -6,6 +6,7 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -17,10 +18,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -31,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.AttributeViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
@@ -79,10 +84,38 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
-		
+
 		lblDataType = new Label(editMaster, SWT.NONE);
+		lblDataType.setText("Data Type");
+		cboDataType = new ComboViewer(editMaster);
+		cboDataType.setContentProvider(ArrayContentProvider.getInstance());
+		cboDataType.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element)
+			{
+				ListDetail item = (ListDetail)element;
+				return item.getLabel();
+			}
+		});
+		AttributeViewModel aModel = (AttributeViewModel)this.model;
+		cboDataType.setInput(aModel.getDataTypeLookup());
+		
+		lblAllowNull = new Label(editMaster, SWT.NONE);
+		lblAllowNull.setText("Allow Null");
+		btnAllowNull = new Button(editMaster, SWT.CHECK);
+		
+		lblLength = viewHelper.getEditLabel(editMaster, "Length");
+		txtLength = viewHelper.getTextEditor(editMaster);
+		
+		
 		viewHelper.layoutEditLabel(lblName);
 		viewHelper.layoutEditEditor(txtName);
+		viewHelper.layoutEditLabel(lblDataType);
+		viewHelper.layoutComboViewer(cboDataType);
+		viewHelper.layoutEditLabel(lblAllowNull);
+		viewHelper.layoutEditEditor(btnAllowNull);
+		viewHelper.layoutEditLabel(lblLength);
+		viewHelper.layoutEditEditor(txtLength);
 	}
 	
 	@Override
@@ -106,7 +139,17 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
         /* binding for the edit screen on name field */
         IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
         IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
-       
+		
+        IObservableValue dataTypeTargetObservable = ViewerProperties.singleSelection().observe(cboDataType);
+        IObservableValue dataTypeModelObservable = BeanProperties.value("dataType").observeDetail(value);
+        
+        IObservableValue allowNullTargetObservable = WidgetProperties.selection().observe(btnAllowNull);
+        IObservableValue allowNullModelObservable = BeanProperties.value("allowNull").observeDetail(value);
+
+        IObservableValue lengthTargetObservable = WidgetProperties.text().observe(txtLength);
+        IObservableValue lengthModelObservable = BeanProperties.value("length").observeDetail(value);
+
+
         /* just the validators and decorators in the name field */
         IValidator nameValidator = new IValidator() {
             @Override
@@ -123,11 +166,27 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
         UpdateValueStrategy nameUpdateStrategy = new UpdateValueStrategy();
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
+
+//        Binding dataTypeBinding = ctx.bindValue(dataTypeTargetObservable, dataTypeModelObservable);
+        Binding allowNullBinding = ctx.bindValue(allowNullTargetObservable, allowNullModelObservable);
+        
+
+        IConverter convertStringToInteger = IConverter.create(Object.class, Integer.class, (val) ->  (val == null || val == "") ? null : Integer.parseInt(val.toString()) );
+       // IConverter convertStringToInteger = IConverter.create(Object.class, Integer.class, (val) ->  (val == null ) ? null : (Integer)val);
+        IConverter convertIntegerToString = IConverter.create(Integer.class, String.class, (val) -> val == null ? null : val.toString());
+        Binding lengthBinding = ctx.bindValue(lengthTargetObservable, lengthModelObservable, UpdateValueStrategy.create(convertStringToInteger), UpdateValueStrategy.create(convertIntegerToString));
+        
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
+	}
+	
+	@Override
+	public void add() {
+		super.add();
+		this.txtName.setFocus();
 	}
 	
 	private class ViewerComparator extends ListSorterHelper

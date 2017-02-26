@@ -1,5 +1,6 @@
 package com.glenwood.kernai.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -42,6 +43,8 @@ public class Attribute extends BaseEntity {
 	
 	private String entityId;
 	
+
+	
 	@JsonProperty
 	public String getName() {
 		return name;
@@ -82,6 +85,20 @@ public class Attribute extends BaseEntity {
 		firePropertyChange("allowNull", oldValue, this.allowNull);
 	}
 	
+	
+	private ListDetail dataTypeLookup;
+	
+	@JsonIgnore
+	public ListDetail getDataTypeLookup() {
+		return dataTypeLookup;
+	}
+
+	public void setDataTypeLookup(ListDetail dataTypeLookup) {
+		ListDetail oldValue = this.dataTypeLookup;
+		this.dataTypeLookup = dataTypeLookup;
+		firePropertyChange("dataTypeLookup", oldValue, this.dataTypeLookup);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
