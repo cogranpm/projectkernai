@@ -3,7 +3,6 @@ package com.glenwood.kernai.ui.presenter;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.persistence.AttributeRepository;
-import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
@@ -29,5 +28,17 @@ public class AttributeViewPresenter extends BaseEntityMasterDetailListEditPresen
 		super.loadModels(parent);
 		AttributeRepository aRepository = (AttributeRepository)this.repository;
 		this.model.setItems(aRepository.getAllByEntity(parent.getId()));
+		for(Attribute attribute : this.model.getItems())
+		{
+			System.out.println(attribute.getName());
+		}
 	}
+	
+	@Override
+	public void saveModel() {
+		System.out.println(this.model.getParent().getId());
+		super.saveModel();
+	}
+	
+	
 }

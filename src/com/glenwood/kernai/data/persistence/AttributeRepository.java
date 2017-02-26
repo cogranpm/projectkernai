@@ -10,13 +10,17 @@ import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class AttributeRepository extends BaseRepository<Attribute> {
 	
+	ListDetailRepository listDetailRepository;
+	
 	public AttributeRepository(IPersistenceManager manager)
 	{
 		super(manager);
+		this.listDetailRepository = new ListDetailRepository(manager);
 	}
 	
 	public List<Attribute> getAllByEntity(String entityId)
@@ -36,10 +40,28 @@ public class AttributeRepository extends BaseRepository<Attribute> {
 		{
 			QueryRow row = it.next();
 			Attribute entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), Attribute.class);
+			if(entity.getDataType() != null)
+			{
+				entity.setDataTypeLookup(this.listDetailRepository.get(entity.getDataType(), ListDetail.class));
+			}
 			entityList.add(entity);
 		}
 		return entityList;
 
+	}
+	
+	@Override
+	public void save(Attribute entity) {
+	
+		if(entity.getDataTypeLookup() != null)
+		{
+			entity.setDataType(entity.getDataTypeLookup().getId());
+		}
+		else
+		{
+			entity.setDataType(null);
+		}
+		super.save(entity);
 	}
 
 }

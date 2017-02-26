@@ -7,6 +7,8 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.conversion.NumberToStringConverter;
+import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -72,10 +74,16 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 		super.setupListColumns();
 		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
+		TableViewerColumn dataTypeColumn = this.viewHelper.getListColumn(listViewer, "Data Type");
+		TableViewerColumn allowNullColumn = this.viewHelper.getListColumn(listViewer, "Allow Null");
+		TableViewerColumn lengthColumn = this.viewHelper.getListColumn(listViewer, "Length");
 		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(dataTypeColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(allowNullColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(lengthColumn.getColumn(), new ColumnWeightData(100));
 	}
 	
 	@Override
@@ -123,12 +131,42 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 		super.initDataBindings();
         IObservableSet<Attribute> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Attribute.class, "name").observeDetail(knownElements);
-        IObservableMap[] labelMaps = {names};
+        final IObservableMap dataTypes = BeanProperties.value(Attribute.class, "dataType").observeDetail(knownElements);
+        final IObservableMap allowNulls = BeanProperties.value(Attribute.class, "allowNull").observeDetail(knownElements);
+        final IObservableMap lengths = BeanProperties.value(Attribute.class, "length").observeDetail(knownElements);
+        IObservableMap[] labelMaps = {names, dataTypes, allowNulls, lengths};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
                 	Attribute mc = (Attribute)element;
-                	return mc.getName();
+                	switch(columnIndex)
+                	{
+                	case 0:
+                    	return mc.getName();
+                	case 1:
+                		if(mc.getDataTypeLookup() != null)
+                		{
+                			return mc.getDataTypeLookup().getLabel();
+                		}
+                		else
+                		{
+                			return null;
+                		}
+                	case 2:
+                		if(mc.getAllowNull() == null || mc.getAllowNull() == false)
+                		{
+                			return "No";
+                		}
+                		else
+                		{
+                			return "Yes";
+                		}
+                	case 3:
+                		return mc.getLength().toString();
+                    default:
+                    	return "";
+                	}
+
                 }
         };
         listViewer.setLabelProvider(labelProvider);
@@ -141,12 +179,12 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
         IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
 		
         IObservableValue dataTypeTargetObservable = ViewerProperties.singleSelection().observe(cboDataType);
-        IObservableValue dataTypeModelObservable = BeanProperties.value("dataType").observeDetail(value);
+        IObservableValue dataTypeModelObservable = BeanProperties.value("dataTypeLookup").observeDetail(value);
         
         IObservableValue allowNullTargetObservable = WidgetProperties.selection().observe(btnAllowNull);
         IObservableValue allowNullModelObservable = BeanProperties.value("allowNull").observeDetail(value);
 
-        IObservableValue lengthTargetObservable = WidgetProperties.text().observe(txtLength);
+        IObservableValue lengthTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtLength);
         IObservableValue lengthModelObservable = BeanProperties.value("length").observeDetail(value);
 
 
@@ -167,14 +205,13 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
 
-//        Binding dataTypeBinding = ctx.bindValue(dataTypeTargetObservable, dataTypeModelObservable);
+        Binding dataTypeBinding = ctx.bindValue(dataTypeTargetObservable, dataTypeModelObservable);
         Binding allowNullBinding = ctx.bindValue(allowNullTargetObservable, allowNullModelObservable);
-        
 
-        IConverter convertStringToInteger = IConverter.create(Object.class, Integer.class, (val) ->  (val == null || val == "") ? null : Integer.parseInt(val.toString()) );
-       // IConverter convertStringToInteger = IConverter.create(Object.class, Integer.class, (val) ->  (val == null ) ? null : (Integer)val);
-        IConverter convertIntegerToString = IConverter.create(Integer.class, String.class, (val) -> val == null ? null : val.toString());
-        Binding lengthBinding = ctx.bindValue(lengthTargetObservable, lengthModelObservable, UpdateValueStrategy.create(convertStringToInteger), UpdateValueStrategy.create(convertIntegerToString));
+
+        Binding lengthBinding = ctx.bindValue(lengthTargetObservable, lengthModelObservable, 
+        		UpdateValueStrategy.create(viewHelper.convertStringToInteger), 
+        		UpdateValueStrategy.create(viewHelper.convertIntegerToString));
         
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);

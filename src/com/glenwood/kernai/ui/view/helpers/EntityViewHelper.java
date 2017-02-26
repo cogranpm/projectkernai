@@ -1,5 +1,8 @@
 package com.glenwood.kernai.ui.view.helpers;
 
+import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.conversion.NumberToStringConverter;
+import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -13,6 +16,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class EntityViewHelper {
+	
+    public IConverter convertStringToInteger = StringToNumberConverter.toInteger(false);
+    public IConverter convertIntegerToString = NumberToStringConverter.fromInteger(false);
+    
 	
 	public GridLayout getViewLayout(int numColumns)
 	{

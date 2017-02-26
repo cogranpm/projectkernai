@@ -35,9 +35,10 @@ public class Attribute extends BaseEntity {
 	
 	private String name;
 
+	/* this is a lookup, stores a listdetail id key */
 	private String dataType;
 
-	private Long length;
+	private Integer length;
 
 	private Boolean allowNull;
 	
@@ -66,11 +67,11 @@ public class Attribute extends BaseEntity {
 	}
 	
 	@JsonProperty
-	public Long getLength() {
+	public Integer getLength() {
 		return length;
 	}
-	public void setLength(Long length) {
-		Long oldValue = this.length;
+	public void setLength(Integer length) {
+		Integer oldValue = this.length;
 		this.length = length;
 		firePropertyChange("length", oldValue, this.length);
 	}
@@ -86,6 +87,18 @@ public class Attribute extends BaseEntity {
 	}
 	
 	
+	
+	@JsonProperty
+	public String getEntityId() {
+		return entityId;
+	}
+
+	public void setEntityId(String entityId) {
+		String oldValue = this.entityId;
+		this.entityId = entityId;
+		firePropertyChange("entityId", oldValue, this.entityId);
+	}
+
 	private ListDetail dataTypeLookup;
 	
 	@JsonIgnore
