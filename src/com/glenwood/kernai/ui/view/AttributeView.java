@@ -23,11 +23,16 @@ import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -38,6 +43,7 @@ import org.eclipse.swt.widgets.Text;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.AttributeViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
@@ -72,6 +78,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	@Override
 	protected void setupListColumns() {
 		super.setupListColumns();
+		AttributeViewModel aModel = (AttributeViewModel)this.model;
 		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
 		TableViewerColumn dataTypeColumn = this.viewHelper.getListColumn(listViewer, "Data Type");
@@ -84,6 +91,90 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 		tableLayout.setColumnData(dataTypeColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(allowNullColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(lengthColumn.getColumn(), new ColumnWeightData(100));
+		
+		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((Attribute)element).setName(String.valueOf(value));
+				listViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((Attribute)element).getName();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(listViewer.getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
+		dataTypeColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+
+				if (element == null)
+				{
+					return;
+				}
+				if (value == null)
+				{
+					return;
+				}
+				Attribute attribute = (Attribute)element;
+				ListDetail listDetail = (ListDetail)value;
+				attribute.setDataType(listDetail.getId());
+				listViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				Attribute attribute = (Attribute)element;
+				String dataType = attribute.getDataType();
+				for(ListDetail listDetail : aModel.getDataTypeLookup())
+				{
+					if(listDetail.getId().equalsIgnoreCase(dataType))
+					{
+						return listDetail;
+					}
+						
+				}
+				return null;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				//return new TextCellEditor(listViewer.getTable());
+				ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(listViewer.getTable(), SWT.READ_ONLY);
+				IStructuredContentProvider contentProvider = new ArrayContentProvider();
+				editor.setContentProvider( contentProvider );
+				editor.setLabelProvider(new LabelProvider(){
+					@Override
+					public String getText(Object element)
+					{
+						ListDetail item = (ListDetail)element;
+						return item.getLabel();
+
+					}
+				});
+				editor.setInput(aModel.getDataTypeLookup());
+				return editor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+
 	}
 	
 	@Override
