@@ -19,7 +19,7 @@ public class ProjectViewBuilder {
 	public final static String QUERY_ASSOCIATION_BY_MODEL = "QUERYASSOCIATIONBYMODEL";
 	public final static String QUERY_ATTRIBUTE_BY_ENTITY = "QUERYATTRIBUTEBYENTITY";
 	
-	public static void BuildViews(Database database)
+	public static void buildViews(Database database)
 	{
 		View modelByProjectView = database.getView(QUERY_MODEL_BY_PROJECT);
 		modelByProjectView.setMap(new Mapper(){

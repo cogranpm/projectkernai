@@ -25,6 +25,7 @@ import com.glenwood.kernai.data.entity.MasterPropertyListItem;
 import com.glenwood.kernai.data.entity.MasterPropertyToMasterCategory;
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.mapping.EntityMapper;
+import com.glenwood.kernai.data.persistence.views.MasterPropertyViewBuilder;
 import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class CouchbaseManager implements IPersistenceManager {
@@ -207,58 +208,9 @@ public class CouchbaseManager implements IPersistenceManager {
 			}
 		}, "1");
 		
-		ProjectViewBuilder.BuildViews(this.database);
+		ProjectViewBuilder.buildViews(this.database);
+		MasterPropertyViewBuilder.buildViews(database);
 
-		
-		View listDetailByListHeaderView = this.database.getView(ListDetail.TYPE_NAME);
-		listDetailByListHeaderView.setMap(new Mapper(){
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter)
-			{
-				if(document.containsKey("type") && ListDetail.TYPE_NAME.equals(document.get("type")))
-				{
-					emitter.emit(document.get("listHeaderId"), null);
-				}
-			}
-		}, "1");
-		
-		View masterPropertyListItemByMasterPropertyView = this.database.getView(MasterPropertyListItem.TYPE_NAME);
-		masterPropertyListItemByMasterPropertyView.setMap(new Mapper(){
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter)
-			{
-				if(document.containsKey("type") && MasterPropertyListItem.TYPE_NAME.equals(document.get("type")))
-				{
-					emitter.emit(document.get("masterPropertyId"), null);
-				}
-			}
-		}, "1");
-	
-		View masterPropertyToCategoryView = this.database.getView(MasterPropertyToMasterCategory.TYPE_NAME);
-		masterPropertyToCategoryView.setMap(new Mapper() {
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter) {
-				if(document.containsKey("type") && MasterPropertyToMasterCategory.TYPE_NAME.equals(document.get("type")))
-				{
-					emitter.emit(document.get("masterPropertyId"), null);
-				}	
-			}
-			
-		}, "1");
-		
-		View masterPropertyToCategoryGetView = this.database.getView(MasterPropertyToMasterCategoryRepository.GET_BY_PROPERTY_AND_CATEGORY_VIEWNAME);
-		masterPropertyToCategoryGetView.setMap(new Mapper() {
-			@Override
-			public void map(Map<String, Object> document, Emitter emitter) {
-				if(document.containsKey("type") && MasterPropertyToMasterCategory.TYPE_NAME.equals(document.get("type")))
-				{
-					List<Object> keys = new ArrayList<Object>();
-		            keys.add(document.get("masterPropertyId"));
-		            keys.add(document.get("masterCategoryId"));
-		            emitter.emit(keys, null);
-				}	
-			}
-		}, "1");
 		
 		/* THIS IS OLD STUFF, DON'T NEED IT ANY MORE, REPLACED BY ENTITYBYTYPE VIEW
 		View masterCategoryView = this.database.getView(MasterCategory.TYPE_NAME);

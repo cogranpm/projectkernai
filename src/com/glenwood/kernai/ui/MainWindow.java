@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
-import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.AttributeView;
 import com.glenwood.kernai.ui.view.EntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
@@ -401,7 +401,10 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToProjectAttribute = new Action("Attribute", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
-				System.out.print("here");
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_ATTRIBUTE);
+				AttributeView attributeView = new AttributeView(clearComposite(projectPane), SWT.NONE, ApplicationData.instance().getCurrentEntity());
+				ApplicationData.instance().setCurrentEntityView(attributeView);
+				projectPane.layout();
 			}
 		 };
 		 goToProjectAttribute.setEnabled(false);
@@ -411,7 +414,7 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToProjectAssociation = new Action("Association", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
-				System.out.print("here");
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_ASSOCIATION);
 			}
 		 };
 		 goToProjectAssociation.setEnabled(false);

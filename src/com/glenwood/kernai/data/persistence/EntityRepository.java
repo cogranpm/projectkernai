@@ -8,18 +8,19 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
-import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
-import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class EntityRepository extends BaseRepository<Entity> {
 
-	/* refactor this to have instance that is singleton */
+	
+	AttributeRepository attributeRepository;
+	
 	public EntityRepository(IPersistenceManager manager) {
 		super(manager);
+		attributeRepository = new AttributeRepository(manager);
 	}
 	
 	
@@ -48,10 +49,12 @@ public class EntityRepository extends BaseRepository<Entity> {
 
 	
 	@Override
-	public void save(Entity entity) {
-		
-		/* delete the attributes */
-		
-		super.save(entity);
+	public void delete(Entity entity) {
+		List<Attribute> attributes = this.attributeRepository.getAllByEntity(entity.getId());
+		for(Attribute attribute : attributes)
+		{
+			this.attributeRepository.delete(attribute);
+		}
+		super.delete(entity);
 	}
 }

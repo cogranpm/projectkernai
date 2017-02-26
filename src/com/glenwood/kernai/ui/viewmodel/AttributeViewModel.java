@@ -4,30 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glenwood.kernai.data.entity.Attribute;
+import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.ui.abstraction.BaseMasterDetailViewModel;
 
-public class AttributeViewModel {
-	
-	private List<Attribute> attributes;
-	private Attribute currentAttribute;
-	
-	
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
-	public Attribute getCurrentAttribute() {
-		return currentAttribute;
-	}
-	public void setCurrentAttribute(Attribute currentAttribute) {
-		this.currentAttribute = currentAttribute;
+public class AttributeViewModel extends BaseMasterDetailViewModel<Attribute, Entity>{
+
+	public AttributeViewModel(Entity parent) {
+		super(parent);
+		this.dataTypeLookup = new ArrayList<ListDetail>();
 	}
 	
-	public AttributeViewModel()
-	{
-		this.attributes = new ArrayList<Attribute>();
+	private List<ListDetail> dataTypeLookup;
+
+	public List<ListDetail> getDataTypeLookup() {
+		return dataTypeLookup;
 	}
+
+	public void setDataTypeLookup(List<ListDetail> dataTypeLookup) {
+		this.dataTypeLookup = dataTypeLookup;
+	}
+	
+	
+
 	
 
 }

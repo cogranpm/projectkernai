@@ -145,8 +145,12 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
         /* set the enabled of the toolbar items */
         ToolItem entityToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
         		ApplicationData.GOTO_PROJECT_ENTITY);
+        
+        ToolItem associationToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
+        		ApplicationData.GOTO_PROJECT_ASSOCIATION);
         IObservableValue listViewerSelection= ViewersObservables.observeSingleSelection(listViewer);
         IObservableValue<ToolItem> entityItemTarget = WidgetProperties.enabled().observe(entityToolItem);
+        IObservableValue<ToolItem> associationItemTarget = WidgetProperties.enabled().observe(associationToolItem);
         UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
         	@Override
         	protected IStatus doSet(IObservableValue observableValue, Object value) 
@@ -156,12 +160,15 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
         };
 		
         Binding binding = ctx.bindValue(entityItemTarget, listViewerSelection,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding associationBinding = ctx.bindValue(associationItemTarget, listViewerSelection,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
         //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
         binding.getTarget().addChangeListener(new IChangeListener() {
 			@Override
 			public void handleChange(ChangeEvent event) {
 				IAction gotoEntityAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ENTITY);
+				IAction gotoAssociationAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 				gotoEntityAction.setEnabled(entityToolItem.getEnabled());
+				gotoAssociationAction.setEnabled(associationToolItem.getEnabled());
 			}
 		});
 	}
