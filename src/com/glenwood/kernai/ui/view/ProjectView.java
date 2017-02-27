@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -126,6 +127,7 @@ public class ProjectView extends BaseEntityView<Project>{
         IObservableList bindings = ctx.getValidationStatusProviders();
         this.setupToolbarBinding();
         this.setupCurrentProjectBinding();
+
 	}
 
 	@Override

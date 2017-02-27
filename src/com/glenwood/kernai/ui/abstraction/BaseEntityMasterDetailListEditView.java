@@ -113,6 +113,12 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		ApplicationData.instance().loadEntityView(this);
 		this.disableEditControls();
 		
+        if(this.model.getItems().size() > 0)
+        {
+        	this.model.setCurrentItem(this.model.getItems().get(0));
+        	this.listViewer.setSelection(new StructuredSelection(this.model.getCurrentItem()));
+        }
+		
 	}
 	
 	public void unloadEntityView()

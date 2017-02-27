@@ -368,6 +368,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 goToProjectProject.setEnabled(true);
+		 goToProjectProject.setAccelerator(SWT.MOD1 | 'J');
 		 goToProjectProject.setActionDefinitionId(ApplicationData.GOTO_PROJECT_PROJECT);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_PROJECT, goToProjectProject);
 		 
@@ -381,6 +382,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 goToProjectModel.setEnabled(false);
+		 goToProjectModel.setAccelerator(SWT.MOD1 | 'M');
 		 goToProjectModel.setActionDefinitionId(ApplicationData.GOTO_PROJECT_MODEL);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_MODEL, goToProjectModel);
 
@@ -395,6 +397,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 goToProjectEntity.setEnabled(false);
+		 goToProjectEntity.setAccelerator(SWT.MOD1 | 'E');
 		 goToProjectEntity.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ENTITY);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ENTITY, goToProjectEntity);
 		 
@@ -408,6 +411,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		 };
 		 goToProjectAttribute.setEnabled(false);
+		 goToProjectAttribute.setAccelerator(SWT.MOD1 | 'A');
 		 goToProjectAttribute.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ATTRIBUTE);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ATTRIBUTE, goToProjectAttribute);
 		 
@@ -450,6 +454,14 @@ public class MainWindow extends ApplicationWindow {
 		MenuManager editMenu = new MenuManager("&Edit");
 		editMenu.add(ApplicationData.instance().getAction(ApplicationData.DELETE_ACTION_KEY));
 		menuManager.add(editMenu);
+		
+		MenuManager goMenu = new MenuManager("&Go");
+		goMenu.add(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_PROJECT));
+		goMenu.add(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODEL));
+		goMenu.add(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ENTITY));
+		goMenu.add(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ASSOCIATION));
+		goMenu.add(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ATTRIBUTE));
+		menuManager.add(goMenu);
 		
 		MenuManager helpMenu = new MenuManager("&Help");
 		helpMenu.add(ApplicationData.instance().getAction(ApplicationData.ABOUT_ACTION_KEY));
