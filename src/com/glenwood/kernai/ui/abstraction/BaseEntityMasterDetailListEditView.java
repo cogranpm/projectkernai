@@ -37,6 +37,24 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
+/**
+ * @author root
+ *
+ * @param <T>
+ * @param <P>
+ */
+/**
+ * @author root
+ *
+ * @param <T>
+ * @param <P>
+ */
+/**
+ * @author root
+ *
+ * @param <T>
+ * @param <P>
+ */
 public abstract class BaseEntityMasterDetailListEditView<T extends BaseEntity, P extends BaseEntity> 
 extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView{
 
@@ -66,11 +84,9 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		this.init();
 	}
 	
-	protected void init()
+	private void init()
 	{
 		this.viewHelper = new EntityViewHelper();
-
-		
 		dividerMain = new SashForm(this, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
@@ -117,20 +133,33 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
         {
         	this.model.setCurrentItem(this.model.getItems().get(0));
         	this.listViewer.setSelection(new StructuredSelection(this.model.getCurrentItem()));
+        	this.listViewer.getTable().setFocus();
         }
+		onInit();
+	}
+	
+	
+	/**
+	 * hook method, allowing subclasses to add logic after the init method has finished
+	 */
+	protected void onInit()
+	{
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public void unloadEntityView()
 	{
 		ApplicationData.instance().unloadEntityView();
 	}
 	
-	protected T listSelectionChangedHandler(SelectionChangedEvent event)
+	protected final void listSelectionChangedHandler(SelectionChangedEvent event)
 	{
 		if(event.getSelection().isEmpty())
 		{
-			return null;
+			this.onListSelectionChangedHandler(null);;
 		}
 		if(event.getSelection() instanceof IStructuredSelection)
 		{
@@ -142,13 +171,18 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 			T item = (T)selection.getFirstElement();
 			presenter.loadModel(item);
-			return item;
+			this.onListSelectionChangedHandler(item);
 
 		}
-		return null;
+		this.onListSelectionChangedHandler(null);
 	}
 	
-	protected TableViewer getListViewer(Composite container)
+	protected void onListSelectionChangedHandler(T entity)
+	{
+		
+	}
+	
+	protected final TableViewer getListViewer(Composite container)
 	{
 		TableViewer listViewer = new TableViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		listTable = listViewer.getTable();
@@ -172,7 +206,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		
 	}
 	
-	protected void setupEditingContainer()
+	protected final void setupEditingContainer()
 	{
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
@@ -182,17 +216,28 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		editDetail.setLayout(new FillLayout());
 		errorLabel = new CLabel(editMaster, SWT.NONE);
 		viewHelper.setViewLayoutData(errorLabel, 2);
+		onSetupEditingContainer();
 	}
 	
-	protected void initDataBindings()
+	protected void onSetupEditingContainer()
+	{
+		
+	}
+	
+	protected final void initDataBindings()
 	{
 		ctx.dispose();
         contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
-
+        onInitDataBindings();
 	}
 	
-	protected void setupSaveBinding()
+	protected void onInitDataBindings()
+	{
+		
+	}
+	
+	private void setupSaveBinding()
 	{
         ToolItem saveToolItem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
         if (saveToolItem != null)
@@ -210,7 +255,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
         }	
 	}
 	
-	protected void setupDeleteBinding()
+	private void setupDeleteBinding()
 	{
         /* set the enabled of the toolbar items */
         ToolItem deleteToolItem = ApplicationData.instance().getToolItem(ApplicationData.DELETE_ACTION_KEY);
@@ -236,7 +281,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		});
 	}
 	
-	 protected SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+	 protected final SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
 	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
 	             @Override
 	             public void widgetSelected(SelectionEvent e) {
@@ -252,58 +297,83 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	 }
 
 	@Override
-	public void delete() {
+	public final void delete() {
 		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
 		if (!confirm){return;}
 		input.remove(this.model.getCurrentItem());
 		this.presenter.deleteModel();
+		onDelete();
+	}
+	
+	protected void onDelete()
+	{
+		
 	}
 
 	@Override
-	public void add() {
+	public final void add() {
 		this.presenter.addModel();
-
+		onAdd();
 	}
 
+	protected void onAdd()
+	{
+		
+	}
+	
 	@Override
-	public void save() {
+	public final void save() {
 		this.presenter.saveModel();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
 		this.listViewer.setSelection(selection);
+		onSave();
+	}
+	
+	protected void onSave()
+	{
+		
 	}
 
 	@Override
-	public void refreshView() {
+	public final void refreshView() {
 		value.setValue(model.getCurrentItem());
 	}
 	
 	
-	public void disableEditControls()
+	public final void disableEditControls()
 	{
 		this.viewHelper.setEnabled(editContainer, false);
 	}
 	
-	public void enableEditControls()
+	public final void enableEditControls()
 	{
 		this.viewHelper.setEnabled(editContainer, true);
 	}
 
 	@Override
-	public void afterAdd() {
+	public final void afterAdd() {
 		value.setValue(this.model.getCurrentItem());
 		input.add(this.model.getCurrentItem());
 		this.enableEditControls();
+		onAfterAdd();
+	}
+	
+	protected void onAfterAdd()
+	{
 		
 	}
 
 	@Override
-	public void afterSelection() {
+	public final void afterSelection() {
 		this.enableEditControls();
-		
+		onAfterSelection();
 	}
 	
-
+	protected void onAfterSelection()
+	{
+		
+	}
 
 
 

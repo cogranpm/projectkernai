@@ -61,7 +61,6 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 	@Override
 	protected void setupListColumns()
 	{
-		super.setupListColumns();
 		this.listViewer.setComparator(new ViewerComparator());
 		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
 		nameColumn.getColumn().setText("Name");
@@ -99,9 +98,8 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 	}
 	
 	@Override
-	protected void setupEditingContainer()
+	protected void onSetupEditingContainer()
 	{
-		super.setupEditingContainer();
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -113,15 +111,13 @@ public class MasterCategoryView extends BaseEntityView<MasterCategory> {
 
 
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 	}
 
 
 
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
 
         IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);

@@ -178,8 +178,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	}
 	
 	@Override
-	protected void setupEditingContainer() {
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -218,8 +217,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
         IObservableSet<Attribute> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Attribute.class, "name").observeDetail(knownElements);
         final IObservableMap dataTypes = BeanProperties.value(Attribute.class, "dataType").observeDetail(knownElements);
@@ -253,7 +251,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
                 			return "Yes";
                 		}
                 	case 3:
-                		return mc.getLength().toString();
+                		return (mc.getLength() != null) ? mc.getLength().toString() : "";
                     default:
                     	return "";
                 	}
@@ -299,7 +297,6 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
         Binding dataTypeBinding = ctx.bindValue(dataTypeTargetObservable, dataTypeModelObservable);
         Binding allowNullBinding = ctx.bindValue(allowNullTargetObservable, allowNullModelObservable);
 
-
         Binding lengthBinding = ctx.bindValue(lengthTargetObservable, lengthModelObservable, 
         		UpdateValueStrategy.create(viewHelper.convertStringToInteger), 
         		UpdateValueStrategy.create(viewHelper.convertIntegerToString));
@@ -312,8 +309,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	}
 	
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 	}
 	

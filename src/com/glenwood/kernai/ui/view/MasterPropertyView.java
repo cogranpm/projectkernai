@@ -103,8 +103,7 @@ public final class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	}
 	
 	@Override
-	protected void setupEditingContainer() {
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -236,8 +235,7 @@ public final class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
 		
 		IObservableSet<MasterProperty> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(MasterProperty.class, "name").observeDetail(knownElements);
@@ -325,26 +323,22 @@ public final class MasterPropertyView extends BaseEntityView<MasterProperty> {
 	}
 	
 	@Override
-	protected MasterProperty listSelectionChangedHandler(SelectionChangedEvent event)
+	protected void onListSelectionChangedHandler(MasterProperty item)
 	{
-		MasterProperty item = super.listSelectionChangedHandler(event);
 		if(item != null)
 		{
 			refreshListItemView(item);
 		}
-		return item;
 	}
 	
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
 	}
 	
 	@Override
-	public void afterSelection() {
-		super.afterSelection();
+	public void onAfterSelection() {
 		this.masterCategoryViewer.setInput(this.model.getCurrentItem().getMasterCategories());
 	}
 	

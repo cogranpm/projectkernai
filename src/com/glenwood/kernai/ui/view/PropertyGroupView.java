@@ -54,9 +54,7 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
-
+	protected void onInitDataBindings() {
         IObservableSet<PropertyGroup> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(PropertyGroup.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
@@ -139,8 +137,7 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	}
 	
 	@Override
-	protected void setupEditingContainer() {
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -149,8 +146,7 @@ public class PropertyGroupView extends BaseEntityView<PropertyGroup> {
 	}
 	
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 
 	}

@@ -66,14 +66,12 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	}
 	
 	@Override
-	protected ListHeader listSelectionChangedHandler(SelectionChangedEvent event)
+	protected void onListSelectionChangedHandler(ListHeader item)
 	{
-		ListHeader item = super.listSelectionChangedHandler(event);
 		if(item != null)
 		{
 			refreshListDetailView(item);
 		}
-		return item;
 	}
 
 	@Override
@@ -116,9 +114,8 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	}
 	
 	@Override
-	protected void setupEditingContainer()
+	protected void onSetupEditingContainer()
 	{
-		super.setupEditingContainer();
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -132,8 +129,8 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
+
 		
         IObservableSet<ListHeader> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(ListHeader.class, "name").observeDetail(knownElements);
@@ -194,8 +191,7 @@ public class ListHeaderView extends BaseEntityView<ListHeader> {
 
 
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 		//input.add(this.model.getCurrentItem());
 		if (this.listDetailView != null)

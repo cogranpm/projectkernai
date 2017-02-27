@@ -60,9 +60,8 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
-
+	protected void onInitDataBindings() {
+		
         IObservableSet<PropertyType> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(PropertyType.class, "name").observeDetail(knownElements);
         final IObservableMap notes = BeanProperties.value(PropertyType.class, "notes").observeDetail(knownElements);
@@ -163,9 +162,8 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 
 	
 	@Override
-	protected void setupEditingContainer() {
-		fillEditingSpace = true;
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
+		//fillEditingSpace = true;
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -180,10 +178,8 @@ public class PropertyTypeView extends BaseEntityView<PropertyType> {
 	}
 	
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
-
 	}
 	
 	private class ViewerComparator extends ListSorterHelper

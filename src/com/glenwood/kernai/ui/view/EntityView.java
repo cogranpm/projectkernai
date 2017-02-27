@@ -60,8 +60,7 @@ public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model
 	}
 	
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
         IObservableSet<Entity> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Entity.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
@@ -155,8 +154,7 @@ public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model
 	
 	
 	@Override
-	protected void setupEditingContainer() {
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -177,8 +175,7 @@ public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model
 	
 	
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 	}
 	

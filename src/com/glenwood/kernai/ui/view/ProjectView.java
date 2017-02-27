@@ -73,8 +73,7 @@ public class ProjectView extends BaseEntityView<Project>{
 
 	
 	@Override
-	protected void setupEditingContainer() {
-		super.setupEditingContainer();
+	protected void onSetupEditingContainer() {
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -83,8 +82,7 @@ public class ProjectView extends BaseEntityView<Project>{
 	}
 
 	@Override
-	protected void initDataBindings() {
-		super.initDataBindings();
+	protected void onInitDataBindings() {
         IObservableSet<Project> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Project.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
@@ -131,8 +129,7 @@ public class ProjectView extends BaseEntityView<Project>{
 	}
 
 	@Override
-	public void add() {
-		super.add();
+	public void onAdd() {
 		this.txtName.setFocus();
 	}
 	

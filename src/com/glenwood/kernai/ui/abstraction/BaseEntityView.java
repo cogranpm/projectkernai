@@ -67,7 +67,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		this.init();
 	}
 	
-	protected void init()
+	private final void init()
 	{
 		this.viewHelper = new EntityViewHelper();
 		this.setupModelAndPresenter();
@@ -113,20 +113,26 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
         {
         	this.model.setCurrentItem(this.model.getItems().get(0));
         	this.listViewer.setSelection(new StructuredSelection(this.model.getCurrentItem()));
+        	this.listViewer.getTable().setFocus();
         }
+        this.onInit();
+	}
+	
+	protected void onInit()
+	{
 		
 	}
 	
-	public void unloadEntityView()
+	public final void unloadEntityView()
 	{
 		ApplicationData.instance().unloadEntityView();
 	}
 	
-	protected T listSelectionChangedHandler(SelectionChangedEvent event)
+	protected void listSelectionChangedHandler(SelectionChangedEvent event)
 	{
 		if(event.getSelection().isEmpty())
 		{
-			return null;
+			onListSelectionChangedHandler(null);
 		}
 		if(event.getSelection() instanceof IStructuredSelection)
 		{
@@ -138,13 +144,19 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 			T item = (T)selection.getFirstElement();
 			presenter.loadModel(item);
-			return item;
+			onListSelectionChangedHandler(item);
+			
 
 		}
-		return null;
+		onListSelectionChangedHandler(null);
 	}
 	
-	protected TableViewer getListViewer(Composite container)
+	protected void onListSelectionChangedHandler(T entity)
+	{
+		
+	}
+	
+	protected final TableViewer getListViewer(Composite container)
 	{
 		TableViewer listViewer = new TableViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		listTable = listViewer.getTable();
@@ -168,7 +180,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		
 	}
 	
-	protected void setupEditingContainer()
+	protected final void setupEditingContainer()
 	{
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
@@ -178,17 +190,28 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		editDetail.setLayout(new FillLayout());
 		errorLabel = new CLabel(editMaster, SWT.NONE);
 		viewHelper.setViewLayoutData(errorLabel, 2);
+		onSetupEditingContainer();
 	}
 	
-	protected void initDataBindings()
+	protected void onSetupEditingContainer()
+	{
+		
+	}
+	
+	protected final void initDataBindings()
 	{
 		ctx.dispose();
         contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
-
+        onInitDataBindings();
 	}
 	
-	protected void setupSaveBinding()
+	protected void onInitDataBindings()
+	{
+		
+	}
+	
+	protected final void setupSaveBinding()
 	{
         ToolItem saveToolItem = ApplicationData.instance().getToolItem(ApplicationData.SAVE_ACTION_KEY);
         if (saveToolItem != null)
@@ -206,7 +229,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
         }	
 	}
 	
-	protected void setupDeleteBinding()
+	protected final void setupDeleteBinding()
 	{
         /* set the enabled of the toolbar items */
         ToolItem deleteToolItem = ApplicationData.instance().getToolItem(ApplicationData.DELETE_ACTION_KEY);
@@ -232,7 +255,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		});
 	}
 	
-	 protected SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+	 protected final SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
 	     SelectionAdapter selectionAdapter = new SelectionAdapter() {
 	             @Override
 	             public void widgetSelected(SelectionEvent e) {
@@ -248,7 +271,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	 }
 
 	@Override
-	public void delete() {
+	public final void delete() {
 		boolean confirm = ApplicationData.instance().confirmDelete(getShell());
 		if (!confirm){return;}
 		input.remove(this.model.getCurrentItem());
@@ -256,37 +279,48 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	}
 
 	@Override
-	public void add() {
+	public final void add() {
 		this.presenter.addModel();
-
+		this.onAdd();
+	}
+	
+	protected void onAdd()
+	{
+		
 	}
 
 	@Override
-	public void save() {
+	public final void save() {
 		this.presenter.saveModel();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
 		this.listViewer.setSelection(selection);
+		onSave();
+	}
+	
+	protected void onSave()
+	{
+		
 	}
 
 	@Override
-	public void refreshView() {
+	public final void refreshView() {
 		value.setValue(model.getCurrentItem());
 	}
 	
 	
-	public void disableEditControls()
+	public final void disableEditControls()
 	{
 		this.viewHelper.setEnabled(editContainer, false);
 	}
 	
-	public void enableEditControls()
+	public final void enableEditControls()
 	{
 		this.viewHelper.setEnabled(editContainer, true);
 	}
 
 	@Override
-	public void afterAdd() {
+	public final void afterAdd() {
 		value.setValue(this.model.getCurrentItem());
 		input.add(this.model.getCurrentItem());
 		this.enableEditControls();
@@ -294,10 +328,14 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	}
 
 	@Override
-	public void afterSelection() {
+	public final void afterSelection() {
 		this.enableEditControls();
+		onAfterSelection();
+	}
+
+	protected void onAfterSelection()
+	{
 		
 	}
-	
 
 }
