@@ -1,5 +1,6 @@
 package com.glenwood.kernai.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -11,11 +12,17 @@ public class Association extends BaseEntity {
 	
 	private String name;
 	
+	private String modelId;
+	
 	private String ownerEntityId;
 	
 	private String ownedEntityId;
 	
 	private String associationType;
+	
+	private Entity ownerEntity;
+	
+	private Entity ownedEntity;
 	
 	@JsonProperty
 	public String getName() {
@@ -26,6 +33,18 @@ public class Association extends BaseEntity {
 		String oldValue = this.name;
 		this.name = name;
 		firePropertyChange("name", oldValue, this.name);
+	}
+	
+	
+	
+
+	public String getModelId() {
+		return modelId;
+	}
+
+	@JsonProperty
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
 	}
 
 	@JsonProperty
@@ -62,10 +81,34 @@ public class Association extends BaseEntity {
 	}
 	
 	
+	@JsonIgnore
+	public Entity getOwnerEntity() {
+		return ownerEntity;
+	}
+
+	public void setOwnerEntity(Entity ownerEntity) {
+		this.ownerEntity = ownerEntity;
+	}
+
+	@JsonIgnore
+	public Entity getOwnedEntity() {
+		return ownedEntity;
+	}
+
+	public void setOwnedEntity(Entity ownedEntity) {
+		this.ownedEntity = ownedEntity;
+	}
+
 	public Association()
 	{
 		super();
 		this.type = Association.TYPE_NAME;
+	}
+	
+	public Association(Model model)
+	{
+		super();
+		this.setModelId(model.getId());
 	}
 	
 }
