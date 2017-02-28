@@ -61,7 +61,7 @@ public class MainWindow extends ApplicationWindow {
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
-		
+		ApplicationData.instance().createDefaultData();
 	}
 	
 	

@@ -19,6 +19,7 @@ import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.persistence.CouchbaseManager;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
+import com.glenwood.kernai.data.persistence.defaultData.MasterPropertyDefault;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 
 public class ApplicationData {
@@ -232,6 +233,7 @@ public class ApplicationData {
 	
 	
 	public static final String LIST_DATATYPE_NAME = "Data Type";
+	public static final String LIST_ASSOCIATION_TYPE_NAME = "Association Type";
 	
 	protected ApplicationData()
 	{
@@ -243,6 +245,12 @@ public class ApplicationData {
 		this.currentEntityView = null;
 		this.imageRegistry = new ImageRegistry();
 		this.toolbarManagers = new HashMap<String, ToolBarManager>();
+	}
+	
+	public void createDefaultData()
+	{
+		MasterPropertyDefault masterPropertyData = new MasterPropertyDefault();
+		masterPropertyData.createLookupData();
 	}
 	
 	public void addImagesToRegistry()
