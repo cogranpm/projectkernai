@@ -4,6 +4,7 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -99,6 +100,13 @@ public class EntityViewHelper {
 		column.getColumn().setResizable(true);
 		column.getColumn().setMoveable(false);
 		return column; 
+	}
+	
+	public ComboViewer getComboViewer(Composite parent)
+	{
+		ComboViewer combo = new ComboViewer(parent);
+		combo.setContentProvider(ArrayContentProvider.getInstance());
+		return combo;
 	}
 	
 	public void setEnabled(Composite parent, boolean enable)

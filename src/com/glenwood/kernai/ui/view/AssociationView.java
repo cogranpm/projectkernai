@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -29,6 +31,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.Association;
+import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.AssociationViewPresenter;
@@ -93,6 +97,10 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         /* binding for the edit screen on name field */
         IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
         IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
+        
+		
+        IObservableValue associationTypeTargetObservable = ViewerProperties.singleSelection().observe(cboAssociationType);
+        IObservableValue associationTypeModelObservable = BeanProperties.value("associationTypeLookup").observeDetail(value);
        
         /* just the validators and decorators in the name field */
         IValidator nameValidator = new IValidator() {
@@ -110,6 +118,7 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         UpdateValueStrategy nameUpdateStrategy = new UpdateValueStrategy();
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
+        Binding associationTypeBinding = ctx.bindValue(associationTypeTargetObservable, associationTypeModelObservable, null, null);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
@@ -119,10 +128,54 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 	
 	@Override
 	protected void onSetupEditingContainer() {
+		AssociationViewModel aModel = (AssociationViewModel)this.model;
 		lblName = this.viewHelper.getEditLabel(editMaster, "Name");
 		txtName = this.viewHelper.getTextEditor(editMaster);
+		
+		lblAssociationType = this.viewHelper.getEditLabel(editMaster, "Type");
+		cboAssociationType = this.viewHelper.getComboViewer(editMaster);
+		cboAssociationType.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element)
+			{
+				ListDetail item= (ListDetail)element;
+				return item.getLabel();
+			}
+		});
+		cboAssociationType.setInput(aModel.getAssociationTypeLoookup());
+		
+		lblOwnerEntity = this.viewHelper.getEditLabel(editMaster, "Owner Entity");
+		cboOwnerEntity = this.viewHelper.getComboViewer(editMaster);
+		cboOwnerEntity.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element)
+			{
+				Entity item= (Entity)element;
+				return item.getName();
+			}
+		});
+		cboOwnerEntity.setInput(aModel.getEntityLookup());
+		
+		lblOwnedEntity = this.viewHelper.getEditLabel(editMaster, "Owned Entity");
+		cboOwnedEntity = this.viewHelper.getComboViewer(editMaster);
+		cboOwnedEntity.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element)
+			{
+				Entity item= (Entity)element;
+				return item.getName();
+			}
+		});
+		cboOwnedEntity.setInput(aModel.getEntityLookup());
+		
 		this.viewHelper.layoutEditLabel(lblName);
 		this.viewHelper.layoutEditEditor(txtName);
+		this.viewHelper.layoutEditLabel(lblAssociationType);
+		this.viewHelper.layoutComboViewer(cboAssociationType);
+		this.viewHelper.layoutEditLabel(lblOwnerEntity);
+		this.viewHelper.layoutComboViewer(cboOwnerEntity);
+		this.viewHelper.layoutEditLabel(lblOwnedEntity);
+		this.viewHelper.layoutComboViewer(cboOwnedEntity);
 	}
 	
 	@Override
