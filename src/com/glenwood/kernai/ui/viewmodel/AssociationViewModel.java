@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.glenwood.kernai.data.entity.Association;
 import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.ui.abstraction.BaseMasterDetailViewModel;
 
 public class AssociationViewModel extends BaseMasterDetailViewModel<Association, Model> {
 
 	private List<Entity> entityLookup;
+	private List<ListDetail> associationTypeLoookup;
 	
 	public AssociationViewModel(Model parent) {
 		super(parent);
@@ -22,6 +24,14 @@ public class AssociationViewModel extends BaseMasterDetailViewModel<Association,
 
 	public void setEntityLookup(List<Entity> entityLookup) {
 		this.entityLookup = entityLookup;
+	}
+
+	public List<ListDetail> getAssociationTypeLoookup() {
+		return associationTypeLoookup;
+	}
+
+	public void setAssociationTypeLoookup(List<ListDetail> associationTypeLoookup) {
+		this.associationTypeLoookup = associationTypeLoookup;
 	}
 	
 	

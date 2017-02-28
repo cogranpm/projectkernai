@@ -19,6 +19,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -38,6 +39,17 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 
 	Label lblName;
 	Text txtName;
+	
+	Label lblAssociationType;
+	ComboViewer cboAssociationType;
+	
+	Label lblOwnerEntity;
+	ComboViewer cboOwnerEntity;
+	
+	Label lblOwnedEntity;
+	ComboViewer cboOwnedEntity;
+	
+	
 	
 	public AssociationView(Composite parent, int style, Model parentEntity) {
 		super(parent, style, parentEntity);
@@ -107,7 +119,10 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 	
 	@Override
 	protected void onSetupEditingContainer() {
-		
+		lblName = this.viewHelper.getEditLabel(editMaster, "Name");
+		txtName = this.viewHelper.getTextEditor(editMaster);
+		this.viewHelper.layoutEditLabel(lblName);
+		this.viewHelper.layoutEditEditor(txtName);
 	}
 	
 	@Override

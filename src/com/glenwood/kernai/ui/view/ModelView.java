@@ -165,8 +165,15 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 			@Override
 			public void handleChange(ChangeEvent event) {
 				IAction gotoEntityAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ENTITY);
-				IAction gotoAssociationAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 				gotoEntityAction.setEnabled(entityToolItem.getEnabled());
+
+			}
+		});
+        
+        associationBinding.getTarget().addChangeListener(new IChangeListener() {
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction gotoAssociationAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 				gotoAssociationAction.setEnabled(associationToolItem.getEnabled());
 			}
 		});

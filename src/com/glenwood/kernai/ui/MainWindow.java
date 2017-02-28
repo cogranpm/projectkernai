@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.view.AssociationView;
 import com.glenwood.kernai.ui.view.AttributeView;
 import com.glenwood.kernai.ui.view.EntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
@@ -419,9 +420,13 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_ASSOCIATION);
+				AssociationView associationView = new AssociationView(clearComposite(projectPane), SWT.NONE, ApplicationData.instance().getCurrentModel());
+				ApplicationData.instance().setCurrentEntityView(associationView);
+				projectPane.layout();
 			}
 		 };
 		 goToProjectAssociation.setEnabled(false);
+		 goToProjectAssociation.setAccelerator(SWT.MOD1 | 'T');
 		 goToProjectAssociation.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ASSOCIATION, goToProjectAssociation);
 		 

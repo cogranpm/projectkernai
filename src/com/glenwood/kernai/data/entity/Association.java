@@ -24,6 +24,8 @@ public class Association extends BaseEntity {
 	
 	private Entity ownedEntity;
 	
+	private ListDetail associationTypeLookup;
+	
 	@JsonProperty
 	public String getName() {
 		return name;
@@ -97,6 +99,17 @@ public class Association extends BaseEntity {
 
 	public void setOwnedEntity(Entity ownedEntity) {
 		this.ownedEntity = ownedEntity;
+	}
+	
+	
+	
+	@JsonIgnore
+	public ListDetail getAssociationTypeLookup() {
+		return associationTypeLookup;
+	}
+
+	public void setAssociationTypeLookup(ListDetail associationTypeLookup) {
+		this.associationTypeLookup = associationTypeLookup;
 	}
 
 	public Association()
