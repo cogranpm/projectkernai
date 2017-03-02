@@ -104,7 +104,7 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         IObservableValue ownerTargetObservable = ViewerProperties.singleSelection().observe(cboOwnerEntity);
         IObservableValue ownerModelObservable = BeanProperties.value("ownerEntity").observeDetail(value);
 
-        IObservableValue ownedTargetObservable = ViewerProperties.singleSelection().observe(cboOwnerEntity);
+        IObservableValue ownedTargetObservable = ViewerProperties.singleSelection().observe(cboOwnedEntity);
         IObservableValue ownedModelObservable = BeanProperties.value("ownedEntity").observeDetail(value);
 
        

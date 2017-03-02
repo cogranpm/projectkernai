@@ -42,6 +42,8 @@ public class EntityRepository extends BaseRepository<Entity> {
 			QueryRow row = it.next();
 			Entity entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), Entity.class);
 			entityList.add(entity);
+			
+//			System.out.println(entity.getId());
 		}
 		return entityList;
 

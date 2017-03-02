@@ -82,6 +82,18 @@ public class Association extends BaseEntity {
 		firePropertyChange("associationType", oldValue, this.associationType);
 	}
 	
+	@JsonIgnore
+	public ListDetail getAssociationTypeLookup() {
+		return associationTypeLookup;
+	}
+
+	public void setAssociationTypeLookup(ListDetail associationTypeLookup) {
+		ListDetail oldValue = this.associationTypeLookup;
+		this.associationTypeLookup = associationTypeLookup;
+		this.firePropertyChange("associationTypeLookup", oldValue, this.associationTypeLookup);
+	}
+
+	
 	
 	@JsonIgnore
 	public Entity getOwnerEntity() {
@@ -89,7 +101,9 @@ public class Association extends BaseEntity {
 	}
 
 	public void setOwnerEntity(Entity ownerEntity) {
+		Entity oldValue = this.ownerEntity;
 		this.ownerEntity = ownerEntity;
+		this.firePropertyChange("ownerEntity", oldValue, this.ownerEntity);
 	}
 
 	@JsonIgnore
@@ -98,37 +112,44 @@ public class Association extends BaseEntity {
 	}
 
 	public void setOwnedEntity(Entity ownedEntity) {
+		Entity oldValue = this.ownedEntity;
 		this.ownedEntity = ownedEntity;
+		firePropertyChange("ownedEntity", oldValue, this.ownedEntity);
 	}
 	
 	
 	
-	@JsonIgnore
-	public ListDetail getAssociationTypeLookup() {
-		return associationTypeLookup;
-	}
-
-	public void setAssociationTypeLookup(ListDetail associationTypeLookup) {
-		this.associationTypeLookup = associationTypeLookup;
-	}
 
 	public Association()
 	{
-		super();
 		this.type = Association.TYPE_NAME;
 	}
 	
 	public Association(Model model)
 	{
-		super();
+		this();
 		this.setModelId(model.getId());
 	}
 	
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append("id:");
 		sb.append(this.id);
+		sb.append("\n");
+		sb.append("name:");
 		sb.append(this.name);
+		sb.append("\n");
+		sb.append("type:");
+		sb.append(this.associationType);
+		sb.append("\n");
+		sb.append("Owner Entity:");
+		sb.append(this.ownerEntityId);
+		sb.append("\n");
+		sb.append("Owned Entity:");
+		sb.append(this.ownedEntityId);
+		sb.append("\n");
+
 		return sb.toString();
 	}
 }

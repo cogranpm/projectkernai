@@ -28,12 +28,12 @@ public class AssociationRepository extends BaseRepository<Association> {
 	
 	public List<Association> getAllByModel(String modelId)
 	{
-		List<Association> all = this.getAll(Association.TYPE_NAME, Association.class);
-		for(Association a : all)
-		{
-			System.out.println(a.toString());
-		}
-		
+//		List<Association> all = this.getAll(Association.TYPE_NAME, Association.class);
+//		for(Association a : all)
+//		{
+//			System.out.println(a.toString());
+//		}
+//		
 		List<Association> entityList = new ArrayList<Association>();
 		Query aquery = this.getManager().getDatabase().getView(ProjectViewBuilder.QUERY_ASSOCIATION_BY_MODEL).createQuery();
 		List<Object> keys = new ArrayList<Object>();

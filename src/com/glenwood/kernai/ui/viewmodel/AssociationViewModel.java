@@ -12,6 +12,7 @@ public class AssociationViewModel extends BaseMasterDetailViewModel<Association,
 
 	private List<Entity> entityLookup;
 	private List<ListDetail> associationTypeLoookup;
+//	private List<Entity> ownedEntityLookup;
 	
 	public AssociationViewModel(Model parent) {
 		super(parent);
@@ -25,6 +26,17 @@ public class AssociationViewModel extends BaseMasterDetailViewModel<Association,
 	public void setEntityLookup(List<Entity> entityLookup) {
 		this.entityLookup = entityLookup;
 	}
+	
+	
+	/*
+	public List<Entity> getOwnedEntityLookup() {
+		return ownedEntityLookup;
+	}
+
+	public void setOwnedEntityLookup(List<Entity> ownedEntityLookup) {
+		this.ownedEntityLookup = ownedEntityLookup;
+	}
+	*/
 
 	public List<ListDetail> getAssociationTypeLoookup() {
 		return associationTypeLoookup;
