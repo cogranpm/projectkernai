@@ -24,7 +24,9 @@ public class AssociationViewModel extends BaseMasterDetailViewModel<Association,
 	}
 
 	public void setEntityLookup(List<Entity> entityLookup) {
+		List<Entity> oldValue = this.entityLookup;
 		this.entityLookup = entityLookup;
+		firePropertyChange("entityLookup", oldValue, this.entityLookup);
 	}
 	
 	

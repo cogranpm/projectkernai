@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Document;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
@@ -48,7 +49,9 @@ public class AssociationRepository extends BaseRepository<Association> {
 		for(Iterator<QueryRow> it = result; it.hasNext();)
 		{
 			QueryRow row = it.next();
-			Association entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), Association.class);
+			Document rowDoc = row.getDocument();
+			//System.out.print(rowDoc.getProperties().toString());
+			Association entity = this.getManager().getEntityMapper().toEntity(rowDoc, Association.class);
 			if(entity.getAssociationType() != null)
 			{
 				entity.setAssociationTypeLookup(this.listDetailRepository.get(entity.getAssociationType(), ListDetail.class));
