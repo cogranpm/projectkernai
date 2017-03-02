@@ -32,7 +32,9 @@ public class ListDetail extends BaseEntity {
 	}
 
 	public void setKey(String key) {
+		String oldValue = this.key;
 		this.key = key;
+		firePropertyChange("key", oldValue, this.key);
 	}
 
 	@JsonProperty
@@ -41,7 +43,9 @@ public class ListDetail extends BaseEntity {
 	}
 
 	public void setLabel(String label) {
+		String oldValue = this.label;
 		this.label = label;
+		this.firePropertyChange("label", oldValue, this.label);
 	}
 	
 	public ListDetail()

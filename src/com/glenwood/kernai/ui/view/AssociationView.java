@@ -222,9 +222,7 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 			}
 		});
 		cboAssociationType.setInput(aModel.getAssociationTypeLoookup());
-		
 
-		
 		this.viewHelper.layoutEditLabel(lblName);
 		this.viewHelper.layoutEditEditor(txtName);
 		this.viewHelper.layoutEditLabel(lblOwnerEntity);
@@ -235,6 +233,7 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 		this.viewHelper.layoutComboViewer(cboAssociationType);
 
 	}
+	
 	
 	@Override
 	protected void onAdd() {
