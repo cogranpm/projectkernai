@@ -124,4 +124,11 @@ public class Association extends BaseEntity {
 		this.setModelId(model.getId());
 	}
 	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.id);
+		sb.append(this.name);
+		return sb.toString();
+	}
 }

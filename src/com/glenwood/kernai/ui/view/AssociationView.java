@@ -97,10 +97,16 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         /* binding for the edit screen on name field */
         IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
         IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
-        
 		
         IObservableValue associationTypeTargetObservable = ViewerProperties.singleSelection().observe(cboAssociationType);
         IObservableValue associationTypeModelObservable = BeanProperties.value("associationTypeLookup").observeDetail(value);
+        
+        IObservableValue ownerTargetObservable = ViewerProperties.singleSelection().observe(cboOwnerEntity);
+        IObservableValue ownerModelObservable = BeanProperties.value("ownerEntity").observeDetail(value);
+
+        IObservableValue ownedTargetObservable = ViewerProperties.singleSelection().observe(cboOwnerEntity);
+        IObservableValue ownedModelObservable = BeanProperties.value("ownedEntity").observeDetail(value);
+
        
         /* just the validators and decorators in the name field */
         IValidator nameValidator = new IValidator() {
@@ -119,6 +125,8 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         Binding associationTypeBinding = ctx.bindValue(associationTypeTargetObservable, associationTypeModelObservable, null, null);
+        Binding ownerEntityBinding = ctx.bindValue(ownerTargetObservable, ownerModelObservable, null, null);
+        Binding ownedEntityBinding = ctx.bindValue(ownedTargetObservable, ownedModelObservable, null, null);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
