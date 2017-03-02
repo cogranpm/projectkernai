@@ -1,5 +1,7 @@
 package com.glenwood.kernai.data.entity;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -52,4 +54,42 @@ public class Entity extends BaseEntity {
 		this.modelId = parent.getId();
 	}
 
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("id:");
+		sb.append(this.id);
+		sb.append("\n");
+		sb.append("name:");
+		sb.append(this.name);
+		sb.append("\n");
+		sb.append("modelId:");
+		sb.append(this.modelId);
+		return sb.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name, this.type, this.modelId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Entity other = (Entity) obj;
+                
+		if (this.id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!(this.id == other.id))
+			return false;
+
+		return true;
+	}
 }

@@ -169,6 +169,110 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 			}
 		});
 		
+		
+		ownerEntityColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+
+				if (element == null)
+				{
+					return;
+				}
+				if (value == null)
+				{
+					return;
+				}
+				Association entity = (Association)element;
+				Entity entityLookup = (Entity)value;
+				entity.setOwnerEntity(entityLookup);
+				listViewer.update(entity, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				Association entity = (Association)element;
+				Entity entityLookup = entity.getOwnerEntity();
+				return entityLookup;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				AssociationViewModel aModel = (AssociationViewModel)model;
+				ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(listViewer.getTable(), SWT.READ_ONLY);
+				IStructuredContentProvider contentProvider = new ArrayContentProvider();
+				editor.setContentProvider( contentProvider );
+				editor.setLabelProvider(new LabelProvider(){
+					@Override
+					public String getText(Object element)
+					{
+						Entity item = (Entity)element;
+						return item.getName();
+
+					}
+				});
+				editor.setInput(aModel.getEntityLookup());
+				return editor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
+		
+		ownedEntityColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+
+				if (element == null)
+				{
+					return;
+				}
+				if (value == null)
+				{
+					return;
+				}
+				Association entity = (Association)element;
+				Entity entityLookup = (Entity)value;
+				entity.setOwnedEntity(entityLookup);
+				listViewer.update(entity, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				Association entity = (Association)element;
+				Entity entityLookup = entity.getOwnedEntity();
+				return entityLookup;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				AssociationViewModel aModel = (AssociationViewModel)model;
+				ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(listViewer.getTable(), SWT.READ_ONLY);
+				IStructuredContentProvider contentProvider = new ArrayContentProvider();
+				editor.setContentProvider( contentProvider );
+				editor.setLabelProvider(new LabelProvider(){
+					@Override
+					public String getText(Object element)
+					{
+						Entity item = (Entity)element;
+						return item.getName();
+
+					}
+				});
+				editor.setInput(aModel.getEntityLookup());
+				return editor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
 	}
 	
 	@Override
