@@ -104,11 +104,32 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
                 		case 0:
                 			return mc.getName();
                 		case 1:
-                			return mc.getAssociationTypeLookup().getLabel();
+                			if(mc.getAssociationTypeLookup() != null)
+                			{
+                				return mc.getAssociationTypeLookup().getLabel();
+                			}
+                			else
+                			{
+                				return "";
+                			}
                 		case 2:
-                			return mc.getOwnerEntity().getName();
+                			if(mc.getOwnerEntity() != null)
+                			{
+                				return mc.getOwnerEntity().getName();
+                			}
+                			else
+                			{
+                				return "";
+                			}
                 		case 3:
-                			return mc.getOwnedEntity().getName();
+                			if(mc.getOwnedEntity() != null)
+                			{
+                				return mc.getOwnedEntity().getName();
+                			}
+                			else
+                			{
+                				return "";
+                			}
                 		default:
                 			return "";
                 	}

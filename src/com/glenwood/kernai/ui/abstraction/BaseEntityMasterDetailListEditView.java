@@ -78,10 +78,29 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	protected EntityViewHelper viewHelper;
 	protected boolean fillEditingSpace;
 	
+	ISelectionChangedListener listViewerChangeListener;
+	
 	public BaseEntityMasterDetailListEditView(Composite parent, int style, P parentEntity) {
 		super(parent, style);
 		this.setupModelAndPresenter(parentEntity);	
 		this.init();
+	}
+	
+	private ISelectionChangedListener getListViewerSelectionChangedListener()
+	{
+		if (this.listViewerChangeListener == null)
+		{
+			return  new ISelectionChangedListener() {
+				@Override
+				public void selectionChanged(SelectionChangedEvent event) {
+					listSelectionChangedHandler(event);
+				}
+			};
+		}
+		else
+		{
+			return this.listViewerChangeListener;
+		}
 	}
 	
 	private void init()
@@ -93,13 +112,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		editContainer.setLayout(viewHelper.getViewLayout(1));
 		this.setDividerWeights();
 		this.listViewer = this.getListViewer(listContainer);
-		
-		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				listSelectionChangedHandler(event);
-			}
-		});
+		listViewer.addSelectionChangedListener(this.getListViewerSelectionChangedListener());
 		setupListColumns();
 		setupEditingContainer();
 		this.setLayout(new FillLayout());
@@ -159,22 +172,30 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	{
 		if(event.getSelection().isEmpty())
 		{
-			this.onListSelectionChangedHandler(null);;
+			this.onListSelectionChangedHandler(null);
 		}
-		if(event.getSelection() instanceof IStructuredSelection)
+		else if(event.getSelection() instanceof IStructuredSelection)
 		{
 			if (model.getCurrentItem() != null)
 			{
 				presenter.saveModel();
 			}
-
 			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 			T item = (T)selection.getFirstElement();
-			presenter.loadModel(item);
-			this.onListSelectionChangedHandler(item);
-
+			if(item == null)
+			{
+				this.onListSelectionChangedHandler(null);
+			}
+			else
+			{
+				presenter.loadModel(item);
+				this.onListSelectionChangedHandler(item);
+			}
 		}
-		this.onListSelectionChangedHandler(null);
+		else
+		{
+			this.onListSelectionChangedHandler(null);
+		}
 	}
 	
 	protected void onListSelectionChangedHandler(T entity)
@@ -303,6 +324,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		input.remove(this.model.getCurrentItem());
 		this.presenter.deleteModel();
 		onDelete();
+		this.disableEditControls();
 	}
 	
 	protected void onDelete()

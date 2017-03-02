@@ -130,6 +130,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	
 	protected void listSelectionChangedHandler(SelectionChangedEvent event)
 	{
+		/*
 		if(event.getSelection().isEmpty())
 		{
 			onListSelectionChangedHandler(null);
@@ -149,6 +150,37 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 
 		}
 		onListSelectionChangedHandler(null);
+		*/
+		
+		
+		if(event.getSelection().isEmpty())
+		{
+			this.onListSelectionChangedHandler(null);
+		}
+		else if(event.getSelection() instanceof IStructuredSelection)
+		{
+			if (model.getCurrentItem() != null)
+			{
+				presenter.saveModel();
+			}
+			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+			T item = (T)selection.getFirstElement();
+			if(item == null)
+			{
+				this.onListSelectionChangedHandler(null);
+			}
+			else
+			{
+				presenter.loadModel(item);
+				this.onListSelectionChangedHandler(item);
+			}
+		}
+		else
+		{
+			this.onListSelectionChangedHandler(null);
+		}
+		
+		
 	}
 	
 	protected void onListSelectionChangedHandler(T entity)
@@ -276,6 +308,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		if (!confirm){return;}
 		input.remove(this.model.getCurrentItem());
 		this.presenter.deleteModel();
+		this.disableEditControls();
 	}
 
 	@Override

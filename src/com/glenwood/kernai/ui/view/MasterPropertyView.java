@@ -347,6 +347,7 @@ public final class MasterPropertyView extends BaseEntityView<MasterProperty> {
 		IStructuredSelection selection =  this.cboPropertyType.getStructuredSelection();
 		if (selection == null){return;}
 		PropertyType propertyType = (PropertyType)selection.getFirstElement();
+		if(propertyType == null){return;}
 		if(propertyType.getName().equalsIgnoreCase((PropertyType.LIST_ITEM_NAME)))
 		{
 			this.setEnabledListItems(true);
