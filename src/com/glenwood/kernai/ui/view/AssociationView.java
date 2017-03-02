@@ -18,11 +18,17 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.Association;
+import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.Model;
@@ -84,6 +91,83 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 		tableLayout.setColumnData(associationTypeColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(ownerEntityColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(ownedEntityColumn.getColumn(), new ColumnWeightData(100));
+		
+		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((Association)element).setName(String.valueOf(value));
+				listViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((Association)element).getName();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(listViewer.getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
+		
+		associationTypeColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+
+				if (element == null)
+				{
+					return;
+				}
+				if (value == null)
+				{
+					return;
+				}
+				Association entity = (Association)element;
+				ListDetail listDetail = (ListDetail)value;
+				entity.setAssociationTypeLookup(listDetail);
+				listViewer.update(entity, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				Association entity = (Association)element;
+				ListDetail associationType = entity.getAssociationTypeLookup();
+				return associationType;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				//return new TextCellEditor(listViewer.getTable());
+				AssociationViewModel aModel = (AssociationViewModel)model;
+				ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(listViewer.getTable(), SWT.READ_ONLY);
+				IStructuredContentProvider contentProvider = new ArrayContentProvider();
+				editor.setContentProvider( contentProvider );
+				editor.setLabelProvider(new LabelProvider(){
+					@Override
+					public String getText(Object element)
+					{
+						ListDetail item = (ListDetail)element;
+						return item.getLabel();
+
+					}
+				});
+				editor.setInput(aModel.getAssociationTypeLoookup());
+				return editor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
 		
 	}
 	
@@ -170,7 +254,7 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         Binding ownerEntityBinding = ctx.bindValue(ownerTargetObservable, ownerModelObservable, null, null);
-        Binding ownedEntityBinding = ctx.bindValue(ownedTargetObservable, ownedModelObservable, null, null);
+        Binding ownedEntityBinding = ctx.bindValue(ownedTargetObservable, ownedModelObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE));
         Binding associationTypeBinding = ctx.bindValue(associationTypeTargetObservable, associationTypeModelObservable, null, null);
         
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);

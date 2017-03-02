@@ -131,13 +131,15 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 				}
 				Attribute attribute = (Attribute)element;
 				ListDetail listDetail = (ListDetail)value;
-				attribute.setDataType(listDetail.getId());
+				attribute.setDataTypeLookup(listDetail);
 				listViewer.update(element, null);
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
 				Attribute attribute = (Attribute)element;
+				return attribute.getDataTypeLookup();
+				/*
 				String dataType = attribute.getDataType();
 				for(ListDetail listDetail : aModel.getDataTypeLookup())
 				{
@@ -148,6 +150,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 						
 				}
 				return null;
+				*/
 			}
 			
 			@Override

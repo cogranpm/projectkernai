@@ -1,6 +1,7 @@
 package com.glenwood.kernai.ui.presenter;
 
 import com.glenwood.kernai.data.entity.Association;
+import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.persistence.AssociationRepository;
 import com.glenwood.kernai.data.persistence.EntityRepository;
@@ -24,7 +25,6 @@ public class AssociationViewPresenter extends BaseEntityMasterDetailListEditPres
 		this.listHeaderRepository = new ListHeaderRepository(ApplicationData.instance().getPersistenceManager());
 		AssociationViewModel aModel = (AssociationViewModel)this.model;
 		aModel.setEntityLookup(entityRepository.getAllByModel(this.model.getParent().getId()));
-		//aModel.setOwnedEntityLookup(entityRepository.getAllByModel(this.model.getParent().getId()));
 		aModel.setAssociationTypeLoookup(this.listHeaderRepository.getListItemsByName(ApplicationData.LIST_ASSOCIATION_TYPE_NAME));
 	}
 
