@@ -181,6 +181,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 	
 	@Override
 	protected void onSetupEditingContainer() {
+		this.lblEditHeader.setText(String.format("Project:%s", ApplicationData.instance().getCurrentProject().getName()));
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);

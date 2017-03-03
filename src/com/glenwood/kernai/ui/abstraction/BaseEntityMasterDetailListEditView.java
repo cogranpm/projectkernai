@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -29,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
@@ -74,6 +76,8 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	protected SashForm dividerMain;
 	protected Composite editMaster;
 	protected Composite editDetail;
+	protected Composite editHeader;
+	protected CLabel lblEditHeader;
 	
 	protected EntityViewHelper viewHelper;
 	protected boolean fillEditingSpace;
@@ -109,7 +113,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		dividerMain = new SashForm(this, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
-		editContainer.setLayout(viewHelper.getViewLayout(1));
+		editContainer.setLayout(viewHelper.getViewLayout(1, 0));
 		this.setDividerWeights();
 		this.listViewer = this.getListViewer(listContainer);
 		listViewer.addSelectionChangedListener(this.getListViewerSelectionChangedListener());
@@ -229,6 +233,13 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	
 	protected final void setupEditingContainer()
 	{
+		editHeader = new Composite(editContainer, SWT.NONE);
+		editHeader.setLayout(viewHelper.getViewLayout(1, 0));;
+		lblEditHeader = new CLabel(editHeader, SWT.NONE);
+		lblEditHeader.setText("");
+		GridDataFactory.fillDefaults().applyTo(lblEditHeader);
+		
+		
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
 		viewHelper.setViewLayoutData(editMaster, true, fillEditingSpace);

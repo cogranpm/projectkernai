@@ -95,8 +95,7 @@ public class MainWindow extends ApplicationWindow {
 		tabControlPaneData.verticalAlignment = SWT.FILL;
 		masterPropertyPane.setLayoutData(tabControlPaneData);
 		masterPropertyPane.setLayout(new FillLayout());
-		//Color listBackground = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN);
-		//masterPropertyPane.setBackground(listBackground);
+
 
 		ActionContributionItem tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_MASTERPROPERTY_LISTS));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);

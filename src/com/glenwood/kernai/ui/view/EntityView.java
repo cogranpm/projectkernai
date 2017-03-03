@@ -155,6 +155,7 @@ public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model
 	
 	@Override
 	protected void onSetupEditingContainer() {
+		this.lblEditHeader.setText(String.format("Model:%s", ApplicationData.instance().getCurrentModel().getName()));
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);

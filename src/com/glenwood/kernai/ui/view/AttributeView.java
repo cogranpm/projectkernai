@@ -6,9 +6,6 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.NumberToStringConverter;
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -43,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.ListDetail;
-import com.glenwood.kernai.data.entity.MasterCategory;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.AttributeViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
@@ -182,6 +179,8 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	
 	@Override
 	protected void onSetupEditingContainer() {
+		
+		this.lblEditHeader.setText(String.format("Entity: %s", ApplicationData.instance().getCurrentEntity().getName()));
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);

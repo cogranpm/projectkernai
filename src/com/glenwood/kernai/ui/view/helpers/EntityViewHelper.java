@@ -24,8 +24,13 @@ public class EntityViewHelper {
 	
 	public GridLayout getViewLayout(int numColumns)
 	{
+		return this.getViewLayout(numColumns, 10);
+	}
+	
+	public GridLayout getViewLayout(int numColumns, int marginWidth)
+	{
 		GridLayout editContainerLayout = new GridLayout(numColumns, false);
-		editContainerLayout.marginWidth = 10;
+		editContainerLayout.marginWidth = marginWidth;
 		editContainerLayout.marginHeight = 0;
 		return editContainerLayout;
 	}

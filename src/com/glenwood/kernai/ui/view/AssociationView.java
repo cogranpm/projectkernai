@@ -36,10 +36,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.Association;
-import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.Model;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.AssociationViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
@@ -369,6 +369,9 @@ public class AssociationView extends BaseEntityMasterDetailListEditView<Associat
 	
 	@Override
 	protected void onSetupEditingContainer() {
+		
+		this.lblEditHeader.setText(String.format("Model: %s", ApplicationData.instance().getCurrentModel().getName()));
+		
 		AssociationViewModel aModel = (AssociationViewModel)this.model;
 		lblName = this.viewHelper.getEditLabel(editMaster, "Name");
 		txtName = this.viewHelper.getTextEditor(editMaster);
