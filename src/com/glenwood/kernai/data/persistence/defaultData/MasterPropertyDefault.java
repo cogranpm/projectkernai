@@ -23,30 +23,50 @@ public final class MasterPropertyDefault {
 	public void createLookupData()
 	{
 		List<ListDetail> details = new ArrayList<ListDetail>();
-		ListDetail aDataType = new ListDetail();
-		aDataType.setKey("String");
-		aDataType.setLabel("String");
-		details.add(aDataType);
+		ListDetail item = new ListDetail();
+		item.setKey("String");
+		item.setLabel("String");
+		details.add(item);
 		createLookupRecord(ApplicationData.LIST_DATATYPE_NAME, details);
 		
 		details.clear();
-		aDataType = new ListDetail();
-		aDataType.setKey("ManyToOne");
-		aDataType.setLabel("Many To One");
-		details.add(aDataType);
-		aDataType = new ListDetail();
-		aDataType.setKey("OneToOne");
-		aDataType.setLabel("One To One");
-		details.add(aDataType);
-		aDataType = new ListDetail();
-		aDataType.setKey("ManyToMany");
-		aDataType.setLabel("Many To Many");
-		details.add(aDataType);
-		aDataType = new ListDetail();
-		aDataType.setKey("Lookup");
-		aDataType.setLabel("Lookup");
-		details.add(aDataType);
+		item = new ListDetail();
+		item.setKey("ManyToOne");
+		item.setLabel("Many To One");
+		details.add(item);
+		item = new ListDetail();
+		item.setKey("OneToOne");
+		item.setLabel("One To One");
+		details.add(item);
+		item = new ListDetail();
+		item.setKey("ManyToMany");
+		item.setLabel("Many To Many");
+		details.add(item);
+		item = new ListDetail();
+		item.setKey("Lookup");
+		item.setLabel("Lookup");
+		details.add(item);
 		createLookupRecord(ApplicationData.LIST_ASSOCIATION_TYPE_NAME, details);
+		
+		// db vendors
+		details.clear();
+		item = new ListDetail();
+		item.setKey("oracle");
+		item.setLabel("Oracle");
+		details.add(item);
+
+		item = new ListDetail();
+		item.setKey("mssql");
+		item.setLabel("SQL Server");
+		details.add(item);
+
+		item = new ListDetail();
+		item.setKey("mysql");
+		item.setLabel("MYSQL");
+		details.add(item);
+
+		createLookupRecord(ApplicationData.LIST_DATABASE_VENDOR_NAME, details);
+		
 		
 		
 	}

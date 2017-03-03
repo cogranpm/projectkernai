@@ -234,6 +234,7 @@ public class ApplicationData {
 	
 	public static final String LIST_DATATYPE_NAME = "Data Type";
 	public static final String LIST_ASSOCIATION_TYPE_NAME = "Association Type";
+	public static final String LIST_DATABASE_VENDOR_NAME = "Database Vendor";
 	
 	protected ApplicationData()
 	{
