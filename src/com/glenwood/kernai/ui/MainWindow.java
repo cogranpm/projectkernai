@@ -29,6 +29,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
+import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.data.persistence.JDBCManager;
+import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.AssociationView;
 import com.glenwood.kernai.ui.view.AttributeView;
@@ -221,6 +224,11 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
+				 IConnection connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
+				 JDBCManager man = new JDBCManager(connection);
+				 man.connect();
+				 man.getImportEngine().getDatabases(connection);
+				 man.disconnect();
 			 }
 		 };
 		 ApplicationData.instance().addAction(ApplicationData.ABOUT_ACTION_KEY, aboutAction);
