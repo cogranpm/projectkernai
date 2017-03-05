@@ -1,5 +1,7 @@
 package com.glenwood.kernai.ui;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -12,6 +14,7 @@ import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
@@ -224,11 +228,38 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				 IConnection connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
-				 JDBCManager man = new JDBCManager(connection);
-				 man.connect();
-				 man.getImportEngine().getDatabases(connection);
-				 man.disconnect();
+				 BusyIndicator.showWhile(getShell().getDisplay(), new Thread(){
+					 @Override
+					public void run() {
+						 IConnection connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
+						 JDBCManager man = new JDBCManager(connection);
+						 man.connect();
+						 man.getImportEngine().init(connection);
+						 List<String> databases = man.getImportEngine().getDatabases();
+						 for(String database : databases)
+						 {
+							 System.out.println(database);
+							 int tableCounter = 0;
+							 List<String> tables = man.getImportEngine().getTables(database);
+							 for(String table : tables)
+							 {
+								 System.out.println(table);
+								 List<ColumnDefinition> columns = man.getImportEngine().getColumns(database, table);
+								 for(ColumnDefinition column : columns)
+								 {
+									 System.out.println(column.getName());
+								 }
+								 if(tableCounter > 50)
+								 {
+									 break;
+								 }
+								 tableCounter++;
+							 }
+						 }
+						 man.disconnect();
+					}
+				 });
+
 			 }
 		 };
 		 ApplicationData.instance().addAction(ApplicationData.ABOUT_ACTION_KEY, aboutAction);
