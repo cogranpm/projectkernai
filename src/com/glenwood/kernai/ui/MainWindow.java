@@ -47,6 +47,7 @@ import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
+import com.glenwood.kernai.ui.workers.ImportWorker;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
@@ -228,37 +229,8 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				 BusyIndicator.showWhile(getShell().getDisplay(), new Thread(){
-					 @Override
-					public void run() {
-						 IConnection connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
-						 JDBCManager man = new JDBCManager(connection);
-						 man.connect();
-						 man.getImportEngine().init(connection);
-						 List<String> databases = man.getImportEngine().getDatabases();
-						 for(String database : databases)
-						 {
-							 System.out.println(database);
-							 int tableCounter = 0;
-							 List<String> tables = man.getImportEngine().getTables(database);
-							 for(String table : tables)
-							 {
-								 System.out.println(table);
-								 List<ColumnDefinition> columns = man.getImportEngine().getColumns(database, table);
-								 for(ColumnDefinition column : columns)
-								 {
-									 System.out.println(column.getName());
-								 }
-								 if(tableCounter > 50)
-								 {
-									 break;
-								 }
-								 tableCounter++;
-							 }
-						 }
-						 man.disconnect();
-					}
-				 });
+				 ImportWorker importWorker = new ImportWorker();
+				 importWorker.getDatabases();
 
 			 }
 		 };

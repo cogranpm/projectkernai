@@ -133,6 +133,39 @@ public class Attribute extends BaseEntity {
 		return builder.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((allowNull == null) ? 0 : allowNull.hashCode());
+		result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
+		result = prime * result + ((dataTypeLookup == null) ? 0 : dataTypeLookup.hashCode());
+		result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
+		result = prime * result + ((length == null) ? 0 : length.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Attribute other = (Attribute) obj;
+		if (this.id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!(this.id == other.id))
+			return false;
+		return true;
+	}
+
+
+	
+	
 
 }
 

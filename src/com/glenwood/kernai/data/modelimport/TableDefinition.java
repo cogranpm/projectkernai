@@ -1,0 +1,67 @@
+package com.glenwood.kernai.data.modelimport;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TableDefinition {
+	
+	private final String name;
+	private final List<ColumnDefinition> columns;
+	private final DatabaseDefinition database;
+
+
+	public TableDefinition(String name, DatabaseDefinition database)
+	{
+		this.name = name;
+		columns = new ArrayList<ColumnDefinition>();
+		this.database = database;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<ColumnDefinition> getColumns() {
+		return columns;
+	}
+
+	public DatabaseDefinition getDatabase() {
+		return database;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((database == null) ? 0 : database.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TableDefinition other = (TableDefinition) obj;
+		if (database == null) {
+			if (other.database != null)
+				return false;
+		} else if (!database.equals(other.database))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+	
+	
+
+	
+}
