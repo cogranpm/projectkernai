@@ -7,17 +7,20 @@ public class DatabaseDefinition {
 	
 	private final String name;
 	private final List<TableDefinition> tables;
+	private final List<UserDefinedTypeDefinition> userDefinedTypes;
 	
 	protected DatabaseDefinition()
 	{
 		this.name = null;
 		this.tables = null;
+		this.userDefinedTypes = null;
 	}
 	
 	public DatabaseDefinition(String name)
 	{
 		this.name = name;
 		this.tables = new ArrayList<TableDefinition>();
+		this.userDefinedTypes = new ArrayList<UserDefinedTypeDefinition>();
 	}
 
 	public String getName() {
@@ -26,6 +29,12 @@ public class DatabaseDefinition {
 
 	public List<TableDefinition> getTables() {
 		return tables;
+	}
+	
+	
+
+	public List<UserDefinedTypeDefinition> getUserDefinedTypes() {
+		return userDefinedTypes;
 	}
 
 	@Override

@@ -35,6 +35,8 @@ public class ImportEngineBase implements IImportEngine{
  	private static final String COLUMN_NAME_KEY_NAME = "PK_NAME";
  	private static final String COLUMN_NAME_FOREIGN_TABLE_NAME = "FKTABLE_NAME";
  	private static final String COLUMN_NAME_FOREIGN_COLUMN_NAME = "FKCOLUMN_NAME";
+ 	private static final String COLUMN_NAME_CLASS_NAME = "CLASS_NAME";
+ 	private static final String COLUMN_NAME_BASE_TYPE = "BASE_TYPE";
 	
 	@Override
 	public void init(IConnection connection)
@@ -65,7 +67,9 @@ public class ImportEngineBase implements IImportEngine{
 				String catalog = catalogs.getString(1);
 				if(catalog != null)
 				{
-					list.add(new DatabaseDefinition(catalog));
+					DatabaseDefinition database = new DatabaseDefinition(catalog);
+					this.getUserDefinedTypes(database);
+					list.add(database);
 				}
 			}
 			
@@ -110,56 +114,6 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	
-	private void getPrimaryKeys(TableDefinition table)
-	{
-		ResultSet primaryKeyResults = null;
-		try
-		{
-			primaryKeyResults = metaData.getPrimaryKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
-			while(primaryKeyResults.next())
-			{
-				String columnName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_COLUMN_NAME);
-				short keySequence = primaryKeyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
-				String keyName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_KEY_NAME);
-				PrimaryKeyDefinition key = new PrimaryKeyDefinition(columnName, keyName, keySequence, table);
-				table.getPrimaryKeys().add(key);
-			}
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			this.closeResultSet(primaryKeyResults);
-		}
-	}
-	
-	
-	private void getForeignKeys(TableDefinition table)
-	{
-		ResultSet keyResults = null;
-		try
-		{
-			keyResults = metaData.getExportedKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
-			while(keyResults.next())
-			{
-				String tableName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_TABLE_NAME);
-				short keySequence = keyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
-				String columnName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_COLUMN_NAME);
-				ForeignKeyDefinition key = new ForeignKeyDefinition(tableName, columnName, keySequence, table);
-				table.getForeignKeys().add(key);
-			}
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			this.closeResultSet(keyResults);
-		}
-	}
 	
 	@Override
 	public List<ColumnDefinition> getColumns(DatabaseDefinition database, TableDefinition table) {
@@ -212,7 +166,84 @@ public class ImportEngineBase implements IImportEngine{
 		}
 		return table.getColumns();
 	}
+
+	private void getPrimaryKeys(TableDefinition table)
+	{
+		ResultSet primaryKeyResults = null;
+		try
+		{
+			primaryKeyResults = metaData.getPrimaryKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
+			while(primaryKeyResults.next())
+			{
+				String columnName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_COLUMN_NAME);
+				short keySequence = primaryKeyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
+				String keyName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_KEY_NAME);
+				PrimaryKeyDefinition key = new PrimaryKeyDefinition(columnName, keyName, keySequence, table);
+				table.getPrimaryKeys().add(key);
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(primaryKeyResults);
+		}
+	}
 	
+	
+	private void getForeignKeys(TableDefinition table)
+	{
+		ResultSet keyResults = null;
+		try
+		{
+			keyResults = metaData.getExportedKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
+			while(keyResults.next())
+			{
+				String tableName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_TABLE_NAME);
+				short keySequence = keyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
+				String columnName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_COLUMN_NAME);
+				ForeignKeyDefinition key = new ForeignKeyDefinition(tableName, columnName, keySequence, table);
+				table.getForeignKeys().add(key);
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(keyResults);
+		}
+	}
+
+	private void getUserDefinedTypes(DatabaseDefinition database)
+	{
+		ResultSet results = null;
+		try
+		{
+			results = metaData.getUDTs(database.getName(), null, null, null);
+			while(results.next())
+			{
+				String typeName = this.getTrimmedColumn(results, COLUMN_NAME_TYPE_NAME);
+				String className = this.getTrimmedColumn(results, COLUMN_NAME_CLASS_NAME);
+				int dataType = results.getInt(COLUMN_NAME_DATA_TYPE);
+				short baseType = results.getShort(COLUMN_NAME_BASE_TYPE);
+				UserDefinedTypeDefinition userDef = new UserDefinedTypeDefinition(typeName, className, dataType, baseType, database);
+				database.getUserDefinedTypes().add(userDef);
+
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(results);
+		}
+	}
 	
 	private String getTrimmedColumn(ResultSet result, String columnName)
 	{

@@ -5,7 +5,9 @@ import java.util.List;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.ImportEngineSchemaCrawler;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
+import com.glenwood.kernai.data.modelimport.UserDefinedTypeDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 
@@ -19,6 +21,7 @@ public class ImportWorker {
 		 connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
 		 man = new JDBCManager(connection);
 		 man.connect();
+		 man.setImportEngine(new ImportEngineSchemaCrawler());
 		 man.getImportEngine().init(connection);
 	}
 	
@@ -36,15 +39,20 @@ public class ImportWorker {
 				 for(DatabaseDefinition database : databases)
 				 {
 					 System.out.println(database.getName());
+					 for(UserDefinedTypeDefinition udt : database.getUserDefinedTypes())
+					 {
+						 System.out.println(udt.toString());
+					 }
 					 man.getImportEngine().getTables(database);
 					// if(database.getName().equalsIgnoreCase("AdventureWorks2012"))
 					 //{
 						 for(TableDefinition table : database.getTables())
 						 {
-							 System.out.println("TABLE: " + table.getName());
+							 //System.out.println("TABLE: " + table.getName());
 							 man.getImportEngine().getColumns(database, table);
 							 for(ColumnDefinition column : table.getColumns())
 							 {
+								 /*
 								 System.out.println("Column:" + column.getName());
 								 System.out.println("Type: " + column.getDataType());
 								 System.out.println("DataType:" + column.getDbTypeName());
@@ -55,6 +63,7 @@ public class ImportWorker {
 								 System.out.println("Nullable: " + column.getNullable());
 								 System.out.println("Remarks: " + column.getRemarks());
 								 System.out.println("SourceDataType: " + column.getSourceDataType());
+								 */
 							 }
 						 }
 					 //}
