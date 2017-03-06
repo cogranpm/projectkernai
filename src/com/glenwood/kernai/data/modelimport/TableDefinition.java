@@ -8,12 +8,15 @@ public class TableDefinition {
 	private final String name;
 	private final List<ColumnDefinition> columns;
 	private final DatabaseDefinition database;
-
+	private final List<PrimaryKeyDefinition> primaryKeys;
+	private final List<ForeignKeyDefinition> foreignKeys;
 
 	public TableDefinition(String name, DatabaseDefinition database)
 	{
 		this.name = name;
-		columns = new ArrayList<ColumnDefinition>();
+		this.columns = new ArrayList<ColumnDefinition>();
+		this.primaryKeys = new ArrayList<PrimaryKeyDefinition>();
+		this.foreignKeys = new ArrayList<ForeignKeyDefinition>();
 		this.database = database;
 	}
 
@@ -27,6 +30,19 @@ public class TableDefinition {
 
 	public DatabaseDefinition getDatabase() {
 		return database;
+	}
+	
+	
+
+	public List<PrimaryKeyDefinition> getPrimaryKeys() {
+		return primaryKeys;
+	}
+
+	
+	
+	
+	public List<ForeignKeyDefinition> getForeignKeys() {
+		return foreignKeys;
 	}
 
 	@Override

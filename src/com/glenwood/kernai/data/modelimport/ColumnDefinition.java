@@ -4,6 +4,7 @@ public class ColumnDefinition {
 	private final String name;
 	private final int dataType;
 	private final String dbTypeName;
+	private final short sourceDataType;
 	private final int size;
 	private final int nullable;
 	private final String remarks;
@@ -13,12 +14,13 @@ public class ColumnDefinition {
 	//private final String isGenerated;
 	private final TableDefinition table;
 	
-	public ColumnDefinition(String name, int dataType, String dbTypeName, int size, int nullable, String remarks,
+	public ColumnDefinition(String name, int dataType, String dbTypeName, short sourceDataType, int size, int nullable, String remarks,
 			String defaultValue, String isNullable, String isAutoIncrement, TableDefinition table) {
 		super();
 		this.name = name;
 		this.dataType = dataType;
 		this.dbTypeName = dbTypeName;
+		this.sourceDataType = sourceDataType;
 		this.size = size;
 		this.nullable = nullable;
 		this.remarks = remarks;
@@ -63,6 +65,12 @@ public class ColumnDefinition {
 
 	public String getIsAutoIncrement() {
 		return isAutoIncrement;
+	}
+	
+	
+
+	public short getSourceDataType() {
+		return sourceDataType;
 	}
 
 	public TableDefinition getTable() {

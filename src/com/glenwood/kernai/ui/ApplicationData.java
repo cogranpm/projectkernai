@@ -236,6 +236,10 @@ public class ApplicationData {
 	public static final String LIST_ASSOCIATION_TYPE_NAME = "Association Type";
 	public static final String LIST_DATABASE_VENDOR_NAME = "Database Vendor";
 	
+	public static final String CONNECTION_VENDOR_NAME_MSSQL = "MSSQL";
+	public static final String CONNECTION_VENDOR_NAME_ORACLE = "ORACLE";
+	public static final String CONNECTION_VENDOR_NAME_MYSQL = "MYSQL";
+	
 	protected ApplicationData()
 	{
 		this.actionsMap = new HashMap<String, IAction>();

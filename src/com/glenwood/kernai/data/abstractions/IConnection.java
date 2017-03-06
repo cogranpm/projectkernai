@@ -7,5 +7,6 @@ public interface IConnection {
 	public void connect();
 	public void disconnect();
 	public Connection getConnection();
+	public String getVendorName();
 
 }

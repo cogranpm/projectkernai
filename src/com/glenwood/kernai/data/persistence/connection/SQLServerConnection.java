@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.ui.ApplicationData;
 
 public class SQLServerConnection implements IConnection {
 	
@@ -93,5 +94,10 @@ public class SQLServerConnection implements IConnection {
 	private String password;
 	private Boolean isTrustedConnection;
 	private Boolean isExpress;
+
+	@Override
+	public String getVendorName() {
+		return ApplicationData.CONNECTION_VENDOR_NAME_MSSQL;
+	}
 
 }

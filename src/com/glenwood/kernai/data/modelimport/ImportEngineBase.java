@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.abstractions.IImportEngine;
+import com.glenwood.kernai.ui.ApplicationData;
 
 public class ImportEngineBase implements IImportEngine{
 	
@@ -20,6 +21,7 @@ public class ImportEngineBase implements IImportEngine{
 	private static final String COLUMN_NAME_TABLE_NAME = "TABLE_NAME";
 	private static final String COLUMN_NAME_COLUMN_NAME = "COLUMN_NAME";
 	private static final String COLUMN_NAME_DATA_TYPE = "DATA_TYPE";
+	private static final String COLUMN_NAME_SOURCE_DATA_TYPE = "SOURCE_DATA_TYPE";
  	private static final String COLUMN_NAME_TYPE_NAME = "TYPE_NAME";
  	private static final String COLUMN_NAME_COLUMN_SIZE = "COLUMN_SIZE";
  	private static final String COLUMN_NAME_NULLABLE = "NULLABLE";
@@ -29,7 +31,10 @@ public class ImportEngineBase implements IImportEngine{
  	private static final String COLUMN_NAME_IS_NULLABLE = "IS_NULLABLE";
  	private static final String COLUMN_NAME_IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
  	private static final String COLUMN_NAME_IS_GENERATED = "IS_GENERATEDCOLUMN";
-
+ 	private static final String COLUMN_NAME_KEY_SEQ_NAME = "KEY_SEQ";
+ 	private static final String COLUMN_NAME_KEY_NAME = "PK_NAME";
+ 	private static final String COLUMN_NAME_FOREIGN_TABLE_NAME = "FKTABLE_NAME";
+ 	private static final String COLUMN_NAME_FOREIGN_COLUMN_NAME = "FKCOLUMN_NAME";
 	
 	@Override
 	public void init(IConnection connection)
@@ -48,9 +53,9 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	@Override
-	public List<String> getDatabases()
+	public List<DatabaseDefinition> getDatabases()
 	{
-		List<String> list = new ArrayList<String>();
+		List<DatabaseDefinition> list = new ArrayList<DatabaseDefinition>();
 		ResultSet catalogs = null;
 		try {
 
@@ -60,7 +65,7 @@ public class ImportEngineBase implements IImportEngine{
 				String catalog = catalogs.getString(1);
 				if(catalog != null)
 				{
-					list.add(catalog);
+					list.add(new DatabaseDefinition(catalog));
 				}
 			}
 			
@@ -76,18 +81,20 @@ public class ImportEngineBase implements IImportEngine{
 	
 	
 	@Override
-	public List<String> getTables(String databaseName) {
-		List<String> list = new ArrayList<String>();
+	public List<TableDefinition> getTables(DatabaseDefinition database) {
 		ResultSet results = null;
 		try {
 
-			results = metaData.getTables(databaseName, null, null, DB_TABLE_TYPES);
+			results = metaData.getTables(database.getName(), null, null, DB_TABLE_TYPES);
 			while(results.next())
 			{
 				String name = this.getTrimmedColumn(results, COLUMN_NAME_TABLE_NAME);
 				if(name != null)
 				{
-					list.add(name);
+					TableDefinition table = new TableDefinition(name, database);
+					database.getTables().add(table);
+					this.getPrimaryKeys(table);
+					this.getForeignKeys(table);
 				}
 				
 			}
@@ -99,16 +106,67 @@ public class ImportEngineBase implements IImportEngine{
 		{
 			this.closeResultSet(results);
 		}
-		return list;
+		return database.getTables();
+	}
+	
+	
+	private void getPrimaryKeys(TableDefinition table)
+	{
+		ResultSet primaryKeyResults = null;
+		try
+		{
+			primaryKeyResults = metaData.getPrimaryKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
+			while(primaryKeyResults.next())
+			{
+				String columnName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_COLUMN_NAME);
+				short keySequence = primaryKeyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
+				String keyName = this.getTrimmedColumn(primaryKeyResults, COLUMN_NAME_KEY_NAME);
+				PrimaryKeyDefinition key = new PrimaryKeyDefinition(columnName, keyName, keySequence, table);
+				table.getPrimaryKeys().add(key);
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(primaryKeyResults);
+		}
+	}
+	
+	
+	private void getForeignKeys(TableDefinition table)
+	{
+		ResultSet keyResults = null;
+		try
+		{
+			keyResults = metaData.getExportedKeys(table.getDatabase().getName(), null, table.getName().toUpperCase());
+			while(keyResults.next())
+			{
+				String tableName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_TABLE_NAME);
+				short keySequence = keyResults.getShort(COLUMN_NAME_KEY_SEQ_NAME);
+				String columnName = this.getTrimmedColumn(keyResults, COLUMN_NAME_FOREIGN_COLUMN_NAME);
+				ForeignKeyDefinition key = new ForeignKeyDefinition(tableName, columnName, keySequence, table);
+				table.getForeignKeys().add(key);
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(keyResults);
+		}
 	}
 	
 	@Override
-	public List<ColumnDefinition> getColumns(String databaseName, String tableName) {
-		List<ColumnDefinition> list = new ArrayList<ColumnDefinition>();
+	public List<ColumnDefinition> getColumns(DatabaseDefinition database, TableDefinition table) {
 		ResultSet results = null;
 		try {
 
-			results = metaData.getColumns(databaseName, null, tableName.toUpperCase(), null );
+			results = metaData.getColumns(database.getName(), null, table.getName().toUpperCase(), null );
 			while(results.next())
 			{
 				String name = this.getTrimmedColumn(results, COLUMN_NAME_COLUMN_NAME);
@@ -122,19 +180,24 @@ public class ImportEngineBase implements IImportEngine{
 					String defaultValue = this.getTrimmedColumn(results, COLUMN_NAME_DEFAULT);
 					String isNullable = this.getTrimmedColumn(results, COLUMN_NAME_IS_NULLABLE);
 					String isAutoIncrement = this.getTrimmedColumn(results, COLUMN_NAME_IS_AUTOINCREMENT);
+					short sourceDataType = 0;
+					if(!this.connection.getVendorName().equalsIgnoreCase(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL))
+					{
+						sourceDataType = results.getShort(COLUMN_NAME_SOURCE_DATA_TYPE);
+					}
 					//String isGenerated = this.getTrimmedColumn(results, COLUMN_NAME_IS_GENERATED);
-					String isGenerated = "poo";
 					ColumnDefinition column = new ColumnDefinition(name, 
 							dataType, 
 							dbTypeName, 
+							sourceDataType,
 							size, 
 							nullable, 
 							remarks, 
 							defaultValue, 
 							isNullable, 
 							isAutoIncrement, 
-							isGenerated);
-					list.add(column);
+							table);
+					table.getColumns().add(column);
 				}
 				
 				
@@ -147,7 +210,7 @@ public class ImportEngineBase implements IImportEngine{
 		{
 			this.closeResultSet(results);
 		}
-		return list;
+		return table.getColumns();
 	}
 	
 	
