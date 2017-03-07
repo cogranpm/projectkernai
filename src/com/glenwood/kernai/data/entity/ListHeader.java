@@ -12,6 +12,7 @@ public class ListHeader extends BaseEntity {
 	public static final String TYPE_NAME = "LISTHEADER";
 	
 	private String name;
+	private Boolean isSystem;
 	
 	
 	@JsonProperty
@@ -26,6 +27,21 @@ public class ListHeader extends BaseEntity {
 		this.name = name;
 		this.firePropertyChange("name", oldName, this.name);
 	}
+	
+	
+	
+
+	@JsonProperty
+	public Boolean getIsSystem() {
+		return isSystem;
+	}
+
+
+
+	public void setIsSystem(Boolean isSystem) {
+		this.isSystem = isSystem;
+	}
+
 
 
 	public ListHeader()
@@ -34,6 +50,12 @@ public class ListHeader extends BaseEntity {
 		this.type = TYPE_NAME;
 	}
 	
+	public ListHeader(String name, Boolean isSystem)
+	{
+		this();
+		this.name = name;
+		this.isSystem = isSystem;
+	}
 
 	@Override
 	public String toString() {

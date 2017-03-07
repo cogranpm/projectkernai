@@ -126,6 +126,10 @@ public class ImportEngineBase implements IImportEngine{
 				String name = this.getTrimmedColumn(results, COLUMN_NAME_COLUMN_NAME);
 				if(name != null && name != "")
 				{
+					/* this value represents the java.sql.Type constant
+					 * https://docs.oracle.com/javase/6/docs/api/constant-values.html#java.sql.Types
+					 * note that it is accurate (tested sql server) for user defined types also
+					 */
 					int dataType = results.getInt(COLUMN_NAME_DATA_TYPE);
 					String dbTypeName = this.getTrimmedColumn(results, COLUMN_NAME_TYPE_NAME);
 					int size = results.getInt(COLUMN_NAME_COLUMN_SIZE);
@@ -223,7 +227,7 @@ public class ImportEngineBase implements IImportEngine{
 		ResultSet results = null;
 		try
 		{
-			results = metaData.getUDTs(database.getName(), null, null, null);
+			results = metaData.getUDTs(null, "", null, null);
 			while(results.next())
 			{
 				String typeName = this.getTrimmedColumn(results, COLUMN_NAME_TYPE_NAME);

@@ -44,18 +44,21 @@ public class ImportWorker {
 						 System.out.println(udt.toString());
 					 }
 					 man.getImportEngine().getTables(database);
-					// if(database.getName().equalsIgnoreCase("AdventureWorks2012"))
-					 //{
+					 if(database.getName().equalsIgnoreCase("AdventureWorks2012"))
+					 {
 						 for(TableDefinition table : database.getTables())
 						 {
 							 //System.out.println("TABLE: " + table.getName());
 							 man.getImportEngine().getColumns(database, table);
 							 for(ColumnDefinition column : table.getColumns())
 							 {
-								 /*
 								 System.out.println("Column:" + column.getName());
 								 System.out.println("Type: " + column.getDataType());
 								 System.out.println("DataType:" + column.getDbTypeName());
+								 System.out.println("Table was: " + table.getName() + "**************************************");
+
+								 /*
+								 
 								 System.out.println("Size: " + column.getSize());
 								 System.out.println("Default:" + column.getDefaultValue());
 								 System.out.println("AutoIncrement:" + column.getIsAutoIncrement());
@@ -66,7 +69,7 @@ public class ImportWorker {
 								 */
 							 }
 						 }
-					 //}
+					 }
 				 }
 				 man.disconnect();
 			}

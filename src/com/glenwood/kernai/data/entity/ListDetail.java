@@ -62,6 +62,13 @@ public class ListDetail extends BaseEntity {
 		}
 	}
 	
+	public ListDetail(String key, String label)
+	{
+		this(null);
+		this.key = key;
+		this.label = label;
+	}
+	
 	
 	@Override
 	public String toString() {
