@@ -7,6 +7,7 @@ import java.util.List;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.abstractions.IImportEngine;
 
+/* need to import this library if under consideration 
 import schemacrawler.schema.Catalog;
 import schemacrawler.schema.Schema;
 import schemacrawler.schema.Table;
@@ -16,25 +17,28 @@ import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevelBuilder;
 import schemacrawler.utility.SchemaCrawlerUtility;
+*/
 
 public class ImportEngineSchemaCrawler implements IImportEngine {
 	
 	IConnection connection;
-	SchemaCrawlerOptions options;
+	//SchemaCrawlerOptions options;
 
 	@Override
 	public void init(IConnection connection) {
 		this.connection = connection;
+		/*
 		this.options = new SchemaCrawlerOptions();
 		options.setSchemaInfoLevel(SchemaInfoLevelBuilder.standard());
 		options.setTableInclusionRule(new IncludeAll());
 		options.setSchemaInclusionRule(new IncludeAll());
 		options.setRoutineColumnInclusionRule(new ExcludeAll());
-		
+		*/
 	}
 
 	@Override
 	public List<DatabaseDefinition> getDatabases() {
+		/*
 		try {
 			final Catalog catalog = SchemaCrawlerUtility.getCatalog(this.connection.getConnection(), this.options);
 			Collection<Schema> schemas = catalog.getSchemas();
@@ -56,6 +60,7 @@ public class ImportEngineSchemaCrawler implements IImportEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		return new ArrayList<DatabaseDefinition>();
 	}
 

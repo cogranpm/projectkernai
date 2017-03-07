@@ -21,7 +21,7 @@ public class ImportWorker {
 		 connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
 		 man = new JDBCManager(connection);
 		 man.connect();
-		 man.setImportEngine(new ImportEngineSchemaCrawler());
+		 //man.setImportEngine(new ImportEngineSchemaCrawler());
 		 man.getImportEngine().init(connection);
 	}
 	
