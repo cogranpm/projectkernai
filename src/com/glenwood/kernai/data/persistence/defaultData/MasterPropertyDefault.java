@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.data.entity.ListDetailMapping;
 import com.glenwood.kernai.data.entity.ListHeader;
+import com.glenwood.kernai.data.entity.ListHeaderMapping;
+import com.glenwood.kernai.data.persistence.ListDetailMappingRepository;
 import com.glenwood.kernai.data.persistence.ListDetailRepository;
+import com.glenwood.kernai.data.persistence.ListHeaderMappingRepository;
 import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.ui.ApplicationData;
 
@@ -13,11 +17,15 @@ public final class MasterPropertyDefault {
 	
 	ListHeaderRepository listHeaderRepository;
 	ListDetailRepository listDetailRepository;
+	ListHeaderMappingRepository listHeaderMappingRepository;
+	ListDetailMappingRepository listDetailMappingRepository;
 	
 	public MasterPropertyDefault()
 	{
 		this.listHeaderRepository = new ListHeaderRepository(ApplicationData.instance().getPersistenceManager());
 		this.listDetailRepository = new ListDetailRepository(ApplicationData.instance().getPersistenceManager());
+		this.listHeaderMappingRepository = new ListHeaderMappingRepository(ApplicationData.instance().getPersistenceManager());
+		this.listDetailMappingRepository = new ListDetailMappingRepository(ApplicationData.instance().getPersistenceManager());
 	}
 	
 	public void createLookupData()
@@ -119,9 +127,14 @@ public final class MasterPropertyDefault {
 		details.add(item);
 		createLookupRecord(ApplicationData.LIST_DATABASE_VENDOR_NAME, details);
 
-		//todo : set up the default list mappings for jdbc to app data types
 		
-		
+	}
+	
+	public void createListMappings()
+	{
+		//need to pass in the data type lists, sql list mapped to application data type list
+		ListHeaderMapping item = new ListHeaderMapping();
+		//item.setFromHeaderId(fromHeaderId);
 	}
 	
 	private void createLookupRecord(String headerName, List<ListDetail> detailList)
@@ -137,6 +150,48 @@ public final class MasterPropertyDefault {
 				item.setListHeaderId(listHeaderData.getId());
 				this.listDetailRepository.save(item);
 			}
+		}
+	}
+	
+	private void createListMappingRecord(ListHeaderMapping headerMapping, List<ListDetailMapping> detailMappings)
+	{
+		//make sure does not already exist
+		List<ListHeaderMapping> headers = this.listHeaderMappingRepository.getAll(ListHeaderMapping.TYPE_NAME, ListHeaderMapping.class);
+		ListHeaderMapping existingItem = null;
+		for(ListHeaderMapping item : headers)
+		{
+			if(item.getFromHeaderId().equalsIgnoreCase(headerMapping.getFromHeaderId())
+				&& item.getToHeaderId().equalsIgnoreCase(headerMapping.getToHeaderId()))
+			{
+				existingItem = item;
+				break;
+			}
+			
+		}
+		if(existingItem == null)
+		{
+			this.listHeaderMappingRepository.save(headerMapping);
+			existingItem = headerMapping;
+		}
+		
+		for(ListDetailMapping item : detailMappings)
+		{
+			this.listDetailMappingRepository.save(item);
+		}
+		
+	}
+	
+	private Boolean compareListDetailMappings(ListDetailMapping a, ListDetailMapping b)
+	{
+		if(a.getId() == null || b.getId() == null)
+		{
+			return (a.getListHeaderMappingId() == b.getListHeaderMappingId() 
+				&& a.getFromDetailId() == b.getFromDetailId()
+				&& a.getToDetailId() == b.getToDetailId());
+		}
+		else
+		{
+			return a.getId() == b.getId();
 		}
 	}
 	

@@ -5,11 +5,10 @@ import java.util.List;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
-import com.glenwood.kernai.data.modelimport.ImportEngineSchemaCrawler;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.data.modelimport.UserDefinedTypeDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
-import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
+import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 
 public class ImportWorker {
 	
@@ -18,7 +17,8 @@ public class ImportWorker {
 	
 	public ImportWorker()
 	{
-		 connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
+		// connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
+		connection = new OracleConnection("localhost", "SYS", "reddingo", true);
 		 man = new JDBCManager(connection);
 		 man.connect();
 		 //man.setImportEngine(new ImportEngineSchemaCrawler());
