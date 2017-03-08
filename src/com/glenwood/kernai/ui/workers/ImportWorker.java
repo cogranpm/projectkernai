@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.PrimaryKeyDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.data.modelimport.UserDefinedTypeDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
@@ -22,12 +23,12 @@ public class ImportWorker {
 	
 	public ImportWorker()
 	{
-		connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
-		//connection = new OracleConnection("kron1", "paulm", "reddingo", "xe");
-		 man = new JDBCManager(connection);
-		 man.connect();
-		 //man.setImportEngine(new ImportEngineSchemaCrawler());
-		 man.getImportEngine().init(connection);
+		 //connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
+		connection = new OracleConnection("kron1", "paulm", "reddingo", "xe");
+		man = new JDBCManager(connection);
+		man.connect();
+		//man.setImportEngine(new ImportEngineSchemaCrawler());
+		man.getImportEngine().init(connection);
 	}
 	
 	
@@ -57,10 +58,6 @@ public class ImportWorker {
 								 System.out.println("Column:" + column.getName());
 								 System.out.println("Type: " + column.getDataType());
 								 System.out.println("DataType:" + column.getDbTypeName());
-								 System.out.println("Table was: " + table.getName() + "**************************************");
-
-								 /*
-								 
 								 System.out.println("Size: " + column.getSize());
 								 System.out.println("Default:" + column.getDefaultValue());
 								 System.out.println("AutoIncrement:" + column.getIsAutoIncrement());
@@ -68,7 +65,14 @@ public class ImportWorker {
 								 System.out.println("Nullable: " + column.getNullable());
 								 System.out.println("Remarks: " + column.getRemarks());
 								 System.out.println("SourceDataType: " + column.getSourceDataType());
-								 */
+
+							 }
+							 
+							 System.out.println("Primary Keys");
+							 for (PrimaryKeyDefinition key : table.getPrimaryKeys())
+							 {
+								 System.out.println(key.getColumnName());
+								 System.out.println(key.getKeyName());
 							 }
 						 }
 						 
