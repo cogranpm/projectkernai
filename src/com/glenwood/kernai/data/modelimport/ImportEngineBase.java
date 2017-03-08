@@ -1,8 +1,10 @@
 package com.glenwood.kernai.data.modelimport;
 
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,13 @@ public class ImportEngineBase implements IImportEngine{
  	private static final String COLUMN_NAME_FOREIGN_COLUMN_NAME = "FKCOLUMN_NAME";
  	private static final String COLUMN_NAME_CLASS_NAME = "CLASS_NAME";
  	private static final String COLUMN_NAME_BASE_TYPE = "BASE_TYPE";
+ 	
+ 	private static final String ORACLE_VIEWS =
+ 			"select object_name from ALL_OBJECTS  where object_type = 'TABLE' and owner = ? order by object_name";
+ 	private static final String ORACLE_TABLES =
+ 			"select object_name from ALL_OBJECTS  where object_type = 'TABLE' and owner = ? order by object_name";
+ 	private static final String ORACLE_TABLES_AND_VIEWS =
+ 			"select object_name from ALL_OBJECTS  where (object_type = 'TABLE' or object_type = 'VIEW' ) and owner = ? order by object_name";
 	
 	@Override
 	public void init(IConnection connection)
@@ -61,7 +70,14 @@ public class ImportEngineBase implements IImportEngine{
 		ResultSet catalogs = null;
 		try {
 
-			catalogs = this.metaData.getCatalogs();
+			if(this.connection.getVendorName().equals(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE))
+			{
+				catalogs = this.metaData.getSchemas();
+			}
+			else
+			{
+				catalogs = this.metaData.getCatalogs();
+			}
 			while(catalogs.next())
 			{
 				String catalog = catalogs.getString(1);
@@ -85,10 +101,37 @@ public class ImportEngineBase implements IImportEngine{
 	
 	
 	@Override
-	public List<TableDefinition> getTables(DatabaseDefinition database) {
+	public List<TableDefinition> getTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
+		if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(this.connection.getVendorName()))
+		{
+			return this.getOracleTables(database, getTables, getViews);
+		}
+		else
+		{
+			return this.getTablesFromStandard(database, getTables, getViews);
+		}
+	}
+	
+	private List<TableDefinition> getTablesFromStandard(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
 		ResultSet results = null;
 		try {
-
+			String[] types = null;
+			if(getTables && getViews)
+			{
+				types = DB_MIXED_TYPES;
+			}
+			else if(getTables)
+			{
+				types = DB_TABLE_TYPES;
+			}
+			else if(getViews)
+			{
+				types = DB_VIEW_TYPES;
+			}
+			else
+			{
+				return database.getTables();
+			}
 			results = metaData.getTables(database.getName(), null, null, DB_TABLE_TYPES);
 			while(results.next())
 			{
@@ -109,6 +152,58 @@ public class ImportEngineBase implements IImportEngine{
 		finally
 		{
 			this.closeResultSet(results);
+		}
+		return database.getTables();
+	}
+	
+	
+	private List<TableDefinition> getOracleTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
+		ResultSet results = null;
+		PreparedStatement stmt = null;
+		try {
+			String statementSql = ORACLE_TABLES;
+			if(getTables && getViews)
+			{
+				statementSql = ORACLE_TABLES_AND_VIEWS;
+			}
+			else if(getTables)
+			{
+				statementSql = ORACLE_TABLES;
+			}
+			else if(getViews)
+			{
+				statementSql = ORACLE_VIEWS;
+			}
+			else
+			{
+				return database.getTables();
+			}
+			stmt = this.connection.getConnection().prepareStatement(statementSql);
+			stmt.setString(1, database.getName());
+			results = stmt.executeQuery();
+			if(results != null)
+			{
+				while(results.next())
+				{
+					String name = this.getTrimmedColumn(results, "object_name");
+					if(name != null)
+					{
+						TableDefinition table = new TableDefinition(name, database);
+						database.getTables().add(table);
+						this.getPrimaryKeys(table);
+						this.getForeignKeys(table);
+					}
+					
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.closeResultSet(results);
+			this.closeStatement(stmt);
 		}
 		return database.getTables();
 	}
@@ -266,6 +361,18 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	private void closeResultSet(ResultSet item)
+	{
+		if(item != null)
+		{
+			try {
+				item.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void closeStatement(Statement item)
 	{
 		if(item != null)
 		{

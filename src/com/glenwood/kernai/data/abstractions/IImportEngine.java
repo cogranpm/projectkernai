@@ -9,7 +9,7 @@ import com.glenwood.kernai.data.modelimport.TableDefinition;
 public interface IImportEngine {
 	public void init(IConnection connection);
 	public List<DatabaseDefinition> getDatabases();
-	public List<TableDefinition> getTables(DatabaseDefinition database);
+	public List<TableDefinition> getTables(DatabaseDefinition database, Boolean getTables, Boolean getViews);
 	public List<ColumnDefinition> getColumns(DatabaseDefinition database, TableDefinition table);
 
 

@@ -65,7 +65,7 @@ public class ImportEngineSchemaCrawler implements IImportEngine {
 	}
 
 	@Override
-	public List<TableDefinition> getTables(DatabaseDefinition database) {
+	public List<TableDefinition> getTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
 		return null;
 	}
 

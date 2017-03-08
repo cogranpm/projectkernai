@@ -230,7 +230,7 @@ public class MainWindow extends ApplicationWindow {
 			 public void run() {
 				 System.out.println("About");
 				 ImportWorker importWorker = new ImportWorker();
-				 importWorker.getDatabases();
+				 importWorker.getDatabases(getShell().getDisplay());
 
 			 }
 		 };
