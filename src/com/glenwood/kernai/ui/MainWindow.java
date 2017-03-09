@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.data.entity.MSSQLDataConnection;
+import com.glenwood.kernai.data.entity.OracleDataConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
@@ -229,7 +231,11 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				 ImportWorker importWorker = new ImportWorker();
+				 MSSQLDataConnection msConn = new MSSQLDataConnection("kron1", "dotconnectservice", "reddingo", true, 1433);
+				 OracleDataConnection oConn = new OracleDataConnection("kron1", "paulm", "reddingo", "xe", 1521);
+				 ImportWorker importWorker = new ImportWorker(msConn);
+				 //ImportWorker importWorker = new ImportWorker(oConn);
+				 importWorker.openConnection(getShell().getDisplay());
 				 importWorker.getDatabases(getShell().getDisplay());
 
 			 }

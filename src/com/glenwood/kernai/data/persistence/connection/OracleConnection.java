@@ -5,49 +5,40 @@ import java.sql.SQLException;
 
 import com.glenwood.customExceptions.OracleConnectionException;
 import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.data.entity.OracleDataConnection;
 import com.glenwood.kernai.ui.ApplicationData;
 
 import oracle.jdbc.pool.OracleDataSource;
 
 public class OracleConnection implements IConnection {
 	
-	private String serverName;
-	private String userName;
-	private String password;
-	private String sid;
+
 	
 	OracleDataSource dataSource;
 	Connection connection;
+	OracleDataConnection dataConnection;
 	
-	
-	public OracleConnection(String serverName, String sid)
+	public OracleConnection(OracleDataConnection dataConnection)
 	{
-		this(serverName, null, null, sid);
+		this.dataConnection = dataConnection;
 	}
 	
-
 	
-	public OracleConnection(String serverName, String userName, String password, String sid)
-	{
-		this.userName = userName;
-		this.password = password;
-		this.serverName = serverName;
-		this.sid = sid;
-	}
 	
 	private String getURL()
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append("jdbc:oracle:thin:");
-		sb.append(this.userName);
+		sb.append(this.dataConnection.getUserName());
 		sb.append("/");
-		sb.append(this.password);
+		sb.append(this.dataConnection.getPassword());
 	
 		sb.append("@//");
-		sb.append(this.serverName);
-		sb.append(":1521");
+		sb.append(this.dataConnection.getServerName());
+		sb.append(":");
+		sb.append(this.dataConnection.getPort().toString());
 		sb.append("/");
-		sb.append(this.sid);
+		sb.append(this.dataConnection.getSid());
 		return sb.toString();
 	}
 
@@ -56,7 +47,6 @@ public class OracleConnection implements IConnection {
 		try {
 			this.dataSource = new OracleDataSource();
 			String url = this.getURL();
-			System.out.println(url);
 			this.dataSource.setURL(url);
 			this.connection = this.dataSource.getConnection();
 			

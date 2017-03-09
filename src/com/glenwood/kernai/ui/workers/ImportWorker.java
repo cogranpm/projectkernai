@@ -6,8 +6,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
+import com.glenwood.kernai.data.entity.MSSQLDataConnection;
+import com.glenwood.kernai.data.entity.MYSQLConnection;
+import com.glenwood.kernai.data.entity.OracleDataConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.ForeignKeyDefinition;
 import com.glenwood.kernai.data.modelimport.PrimaryKeyDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.data.modelimport.UserDefinedTypeDefinition;
@@ -21,17 +25,61 @@ public class ImportWorker {
 	private IConnection connection;
 	private JDBCManager man;
 	
+	public ImportWorker(MSSQLDataConnection dataConnection)
+	{
+		this();
+		this.connection = new SQLServerConnection(dataConnection);
+	}
+	
+	public ImportWorker(OracleDataConnection dataConnection)
+	{
+		this();
+		this.connection = new OracleConnection(dataConnection);
+	}
+	
+	public ImportWorker(MYSQLConnection dataConnection)
+	{
+		this();
+	}
+	
 	public ImportWorker()
 	{
-		 //connection = new SQLServerConnection("kron1", "dotconnectservice", "reddingo", true);
-		connection = new OracleConnection("kron1", "paulm", "reddingo", "xe");
+
+	}
+	
+	public void openConnection(Display display)
+	{
+		//this.getConnectionWorker(display).start();
 		man = new JDBCManager(connection);
 		man.connect();
 		//man.setImportEngine(new ImportEngineSchemaCrawler());
 		man.getImportEngine().init(connection);
 	}
 	
+	public void getDatabases(Display display)
+	{
+		this.getDatabasesWorker(display).start();
+	}
 	
+	private Thread getConnectionWorker(Display display)
+	{
+		return new Thread() {
+			@Override
+			public void run() {
+				man = new JDBCManager(connection);
+				man.connect();
+				//man.setImportEngine(new ImportEngineSchemaCrawler());
+				man.getImportEngine().init(connection);
+				display.syncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						/* nothign, just make it wait */
+					}
+				});
+			}
+		};
+	}
 	
 	private Thread getDatabasesWorker(Display display)
 	{
@@ -71,8 +119,14 @@ public class ImportWorker {
 							 System.out.println("Primary Keys");
 							 for (PrimaryKeyDefinition key : table.getPrimaryKeys())
 							 {
-								 System.out.println(key.getColumnName());
-								 System.out.println(key.getKeyName());
+								 System.out.println("Name: " + key.getKeyName() + " Column: " + key.getColumnName());
+							 }
+							 
+							 System.out.println("Foreign Keys - where I am referenced in another table");
+							 for (ForeignKeyDefinition key : table.getForeignKeys())
+							 {
+								 System.out.println("Table: " + key.getTableName() + " Column: " + key.getColumnName()
+								 + " Sequence: " + key.getKeySequence());
 							 }
 						 }
 						 
@@ -102,9 +156,6 @@ public class ImportWorker {
 
 
 	
-	public void getDatabases(Display display)
-	{
-		this.getDatabasesWorker(display).start();
-	}
+
 
 }
