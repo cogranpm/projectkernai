@@ -4,8 +4,16 @@
 
 package com.glenwood.kernai.data.entity;
 
+import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ImportDefinition extends BaseEntity {
 	
 	public static final String TYPE_NAME = "IMPORTDEFINITION";
@@ -26,6 +34,58 @@ public class ImportDefinition extends BaseEntity {
 	 * target model
 	 */
 	
-	//List<ImportTable> selectectImportTables;
+	List<ImportTable> selectedImportTables;
 
+	
+	
+	@JsonIgnore
+	public DataConnection getDataConnection() {
+		return dataConnection;
+	}
+
+	public void setDataConnection(DataConnection dataConnection) {
+		this.dataConnection = dataConnection;
+	}
+
+	@JsonProperty
+	public String getDataConnectionId() {
+		return dataConnectionId;
+	}
+
+	public void setDataConnectionId(String dataConnectionId) {
+		this.dataConnectionId = dataConnectionId;
+	}
+
+	@JsonIgnore
+	public List<ImportTable> getSelectedImportTables() {
+		return selectedImportTables;
+	}
+
+	public void setSelectedImportTables(List<ImportTable> selectedImportTables) {
+		this.selectedImportTables = selectedImportTables;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.dataConnectionId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ImportDefinition other = (ImportDefinition) obj;
+                
+		if (this.id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!(this.id == other.id))
+			return false;
+
+		return true;
+	}
 }

@@ -3,6 +3,8 @@ package com.glenwood.kernai.data.modelimport;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class TableDefinition {
 	
 	private final String name;

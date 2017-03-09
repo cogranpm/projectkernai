@@ -1,7 +1,5 @@
 package com.glenwood.kernai.ui;
 
-import java.util.List;
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -11,10 +9,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,17 +31,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
-import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.entity.MSSQLDataConnection;
 import com.glenwood.kernai.data.entity.OracleDataConnection;
-import com.glenwood.kernai.data.modelimport.ColumnDefinition;
-import com.glenwood.kernai.data.persistence.JDBCManager;
-import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.AssociationView;
 import com.glenwood.kernai.ui.view.AttributeView;
 import com.glenwood.kernai.ui.view.EntityView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
+import com.glenwood.kernai.ui.view.MSSQLDataConnectionView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
 import com.glenwood.kernai.ui.view.ModelView;
@@ -231,12 +227,16 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				 MSSQLDataConnection msConn = new MSSQLDataConnection("kron1", "dotconnectservice", "reddingo", true, 1433);
-				 OracleDataConnection oConn = new OracleDataConnection("kron1", "paulm", "reddingo", "xe", 1521);
-				 ImportWorker importWorker = new ImportWorker(msConn);
-				 //ImportWorker importWorker = new ImportWorker(oConn);
-				 importWorker.openConnection(getShell().getDisplay());
-				 importWorker.getDatabases(getShell().getDisplay());
+				 Dialog connectView = new MSSQLDataConnectionView(getShell());
+				 if(connectView.open() == Window.OK)
+				 {
+					 MSSQLDataConnection msConn = new MSSQLDataConnection("kron1", "dotconnectservice", "reddingo", true, 1433);
+					 OracleDataConnection oConn = new OracleDataConnection("kron1", "paulm", "reddingo", "xe", 1521);
+					 //ImportWorker importWorker = new ImportWorker(msConn);
+					 ImportWorker importWorker = new ImportWorker(oConn);
+					 importWorker.openConnection(getShell().getDisplay());
+					 importWorker.getDatabases(getShell().getDisplay());
+				 }
 
 			 }
 		 };
