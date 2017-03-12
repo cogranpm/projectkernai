@@ -90,9 +90,6 @@ public abstract class BaseEntityModalView <T extends BaseEntity> extends Dialog 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		dialogContainer = (Composite)super.createDialogArea(parent);
-		headerContainer = new Composite(dialogContainer, SWT.BORDER);
-		//headerContainer.setBackground();
-		
 		dividerMain = new SashForm(dialogContainer, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
