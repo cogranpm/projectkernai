@@ -6,15 +6,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
-import com.glenwood.kernai.data.entity.MSSQLDataConnection;
-import com.glenwood.kernai.data.entity.MYSQLConnection;
-import com.glenwood.kernai.data.entity.OracleDataConnection;
+import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.ForeignKeyDefinition;
 import com.glenwood.kernai.data.modelimport.PrimaryKeyDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
-import com.glenwood.kernai.data.modelimport.UserDefinedTypeDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
@@ -25,23 +22,29 @@ public class ImportWorker {
 	private IConnection connection;
 	private JDBCManager man;
 	
-	public ImportWorker(MSSQLDataConnection dataConnection)
+	public ImportWorker(DataConnection dataConnection)
 	{
 		this();
-		this.connection = new SQLServerConnection(dataConnection);
+		if(dataConnection.getVendorName() == null)
+		{
+			throw new NullPointerException("DataConnection, vendor name was null");
+		}
+		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(dataConnection.getVendorName()))
+		{
+			this.connection = new SQLServerConnection(dataConnection);
+		}
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(dataConnection.getVendorName()))
+		{
+			this.connection = new OracleConnection(dataConnection);
+		}
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_MYSQL.equalsIgnoreCase(dataConnection.getVendorName()))
+		{
+			//this.connection = new my
+		}
+		
 	}
 	
-	public ImportWorker(OracleDataConnection dataConnection)
-	{
-		this();
-		this.connection = new OracleConnection(dataConnection);
-	}
-	
-	public ImportWorker(MYSQLConnection dataConnection)
-	{
-		this();
-	}
-	
+
 	public ImportWorker()
 	{
 

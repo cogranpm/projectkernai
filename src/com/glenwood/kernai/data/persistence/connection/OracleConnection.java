@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.glenwood.customExceptions.OracleConnectionException;
 import com.glenwood.kernai.data.abstractions.IConnection;
-import com.glenwood.kernai.data.entity.OracleDataConnection;
+import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.ui.ApplicationData;
 
 import oracle.jdbc.pool.OracleDataSource;
@@ -16,9 +16,9 @@ public class OracleConnection implements IConnection {
 	
 	OracleDataSource dataSource;
 	Connection connection;
-	OracleDataConnection dataConnection;
+	DataConnection dataConnection;
 	
-	public OracleConnection(OracleDataConnection dataConnection)
+	public OracleConnection(DataConnection dataConnection)
 	{
 		this.dataConnection = dataConnection;
 	}

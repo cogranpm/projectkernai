@@ -17,6 +17,7 @@ import com.glenwood.kernai.data.persistence.MasterPropertyToMasterCategoryReposi
 public class MasterPropertyViewBuilder {
 	
 	public final static String QUERY_LISTHEADER_BY_NAME = "QUERYLISTHEADERBYNAME";
+
 	
 	public static void buildViews(Database database)
 	{
@@ -82,6 +83,7 @@ public class MasterPropertyViewBuilder {
 			}
 		}, "1");
 		
+
 
 	}
 

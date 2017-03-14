@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
-import com.glenwood.kernai.data.entity.MSSQLDataConnection;
+import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.ui.ApplicationData;
 
 public class SQLServerConnection implements IConnection {
 	
-	private MSSQLDataConnection dataConnection;
+	private DataConnection dataConnection;
 	private Connection connection;
 	
 	public Connection getConnection()
@@ -18,7 +18,7 @@ public class SQLServerConnection implements IConnection {
 		return this.connection;
 	}
 	
-	public SQLServerConnection(MSSQLDataConnection dataConnection)
+	public SQLServerConnection(DataConnection dataConnection)
 	{
 		this.dataConnection = dataConnection;
 	}

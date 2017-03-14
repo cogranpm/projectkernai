@@ -9,6 +9,7 @@ import com.couchbase.lite.View;
 import com.glenwood.kernai.data.entity.Association;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.entity.Model;
 
 public class ProjectViewBuilder {
@@ -18,6 +19,7 @@ public class ProjectViewBuilder {
 	public final static String QUERY_ENTITY_BY_MODEL = "QUERYENTITYBYMODEL";
 	public final static String QUERY_ASSOCIATION_BY_MODEL = "QUERYASSOCIATIONBYMODEL";
 	public final static String QUERY_ATTRIBUTE_BY_ENTITY = "QUERYATTRIBUTEBYENTITY";
+	public final static String QUERY_IMPORTTABLLE_BY_IMPORTDEFINITION = "QUERYIMPORTTABLEBYIMPORTDEFINITION";
 	
 	public static void buildViews(Database database)
 	{
@@ -69,6 +71,19 @@ public class ProjectViewBuilder {
 				}
 			}
 		}, "1");
-	}
 
+	
+	
+		View importTableByImportDefinition = database.getView(QUERY_IMPORTTABLLE_BY_IMPORTDEFINITION);
+		importTableByImportDefinition.setMap(new Mapper(){
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if(document.containsKey("type") && ImportTable.TYPE_NAME.equals(document.get("type")))
+				{
+					emitter.emit(document.get("importDefinitionId"), null);
+				}
+			}
+		}, "1");
+	}
 }
