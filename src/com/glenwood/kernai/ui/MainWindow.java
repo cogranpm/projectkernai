@@ -152,7 +152,7 @@ public class MainWindow extends ApplicationWindow {
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 		
-		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_BUILD));
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_IMPORT));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 
@@ -227,16 +227,16 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				 Dialog connectView = new MSSQLDataConnectionView(getShell());
-				 if(connectView.open() == Window.OK)
-				 {
+				// Dialog connectView = new MSSQLDataConnectionView(getShell());
+				 //if(connectView.open() == Window.OK)
+				 //{
 					 MSSQLDataConnection msConn = new MSSQLDataConnection("kron1", "dotconnectservice", "reddingo", true, 1433);
 					 OracleDataConnection oConn = new OracleDataConnection("kron1", "paulm", "reddingo", "xe", 1521);
 					 //ImportWorker importWorker = new ImportWorker(msConn);
 					 ImportWorker importWorker = new ImportWorker(oConn);
 					 importWorker.openConnection(getShell().getDisplay());
 					 importWorker.getDatabases(getShell().getDisplay());
-				 }
+				 //}
 
 			 }
 		 };
@@ -373,7 +373,7 @@ public class MainWindow extends ApplicationWindow {
 		 /* project menus */
 		 String[] projectActionKeys = new String[]{ApplicationData.GOTO_PROJECT_PROJECT, ApplicationData.GOTO_PROJECT_MODEL,
 				 ApplicationData.GOTO_PROJECT_ENTITY, ApplicationData.GOTO_PROJECT_ATTRIBUTE, ApplicationData.GOTO_PROJECT_ASSOCIATION,
-				 ApplicationData.GOTO_PROJECT_BUILD};
+				 ApplicationData.GOTO_PROJECT_IMPORT};
 
 		 IAction goToProjectProject = new Action("Project", IAction.AS_CHECK_BOX) {
 			@Override 
@@ -446,15 +446,17 @@ public class MainWindow extends ApplicationWindow {
 		 goToProjectAssociation.setActionDefinitionId(ApplicationData.GOTO_PROJECT_ASSOCIATION);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_ASSOCIATION, goToProjectAssociation);
 		 
-		 /* NO, THIS SHOULD BE UNDER SCRIPTS, AND TAKES THE PLACE OF BUILD CONTROLLER */
-		 IAction goToProjectBuild = new Action("Build", IAction.AS_CHECK_BOX) {
+
+		 IAction goToProjectImport = new Action("Import", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				System.out.print("here");
+				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_IMPORT);
 			}
 		 };
-		 goToProjectBuild.setEnabled(false);
-		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_BUILD, goToProjectBuild);
+		 goToProjectImport.setEnabled(true);
+		 goToProjectImport.setAccelerator(SWT.MOD1 | 'I');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_IMPORT, goToProjectImport);
 	}
 
 	/**

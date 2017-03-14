@@ -229,7 +229,7 @@ public class ApplicationData {
 	public static final String GOTO_PROJECT_ENTITY = "GoToProjectEntity";
 	public static final String GOTO_PROJECT_ATTRIBUTE = "GoToProjectAttribute";
 	public static final String GOTO_PROJECT_ASSOCIATION = "GoToProjectAssociation";
-	public static final String GOTO_PROJECT_BUILD = "GoToProjectBuild";
+	public static final String GOTO_PROJECT_IMPORT = "GoToProjectImport";
 	
 	
 	public static final String LIST_DATATYPE_NAME = "Data Type";
