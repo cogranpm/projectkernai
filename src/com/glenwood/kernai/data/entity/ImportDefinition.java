@@ -36,7 +36,10 @@ public class ImportDefinition extends BaseEntity {
 	
 	List<ImportTable> selectedImportTables;
 
+	/* imports are defined per project */
+	private String projectId;
 	
+
 	
 	@JsonIgnore
 	public DataConnection getDataConnection() {
@@ -44,7 +47,9 @@ public class ImportDefinition extends BaseEntity {
 	}
 
 	public void setDataConnection(DataConnection dataConnection) {
+		DataConnection oldValue = this.dataConnection;
 		this.dataConnection = dataConnection;
+		this.firePropertyChange("dataConnection", oldValue, this.dataConnection);
 	}
 
 	@JsonProperty
@@ -53,7 +58,9 @@ public class ImportDefinition extends BaseEntity {
 	}
 
 	public void setDataConnectionId(String dataConnectionId) {
+		String oldValue = this.dataConnectionId;
 		this.dataConnectionId = dataConnectionId;
+		this.firePropertyChange("dataConnectionId", oldValue, this.dataConnectionId);
 	}
 
 	@JsonIgnore
@@ -62,12 +69,27 @@ public class ImportDefinition extends BaseEntity {
 	}
 
 	public void setSelectedImportTables(List<ImportTable> selectedImportTables) {
+		List<ImportTable> oldValue = this.selectedImportTables;
 		this.selectedImportTables = selectedImportTables;
+		this.firePropertyChange("selectedImportTables", oldValue, this.selectedImportTables);
+	}
+	
+	
+	
+	@JsonProperty
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		String oldValue = this.projectId;
+		this.projectId = projectId;
+		this.firePropertyChange("projectId", oldValue, this.projectId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.dataConnectionId);
+		return Objects.hash(this.dataConnectionId, this.projectId);
 	}
 
 	@Override

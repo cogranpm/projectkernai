@@ -6,11 +6,11 @@ import com.glenwood.kernai.data.persistence.DataConnectionRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
-import com.glenwood.kernai.ui.view.DataConnectionView;
+import com.glenwood.kernai.ui.view.DataConnectionInlineView;
 
-public class DataConnectionViewPresenter <T extends BaseEntity> {
+public class DataConnectionViewPresenter {
 
-	public DataConnectionViewPresenter(DataConnectionView<T> view, IViewModel<DataConnection> model) {
+	public DataConnectionViewPresenter(DataConnectionInlineView view, IViewModel<DataConnection> model) {
 
 		/*
 		super(view, model, DataConnection.class, DataConnection.TYPE_NAME);
