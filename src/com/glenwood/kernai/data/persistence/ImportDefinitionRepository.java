@@ -1,11 +1,19 @@
 package com.glenwood.kernai.data.persistence;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryEnumerator;
+import com.couchbase.lite.QueryRow;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
+import com.glenwood.kernai.data.entity.Model;
+import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class ImportDefinitionRepository extends BaseRepository<ImportDefinition> {
 
@@ -29,6 +37,30 @@ public class ImportDefinitionRepository extends BaseRepository<ImportDefinition>
 			importTableRepository.delete(importTable);
 		}
 		super.delete(entity);
+	}
+	
+	public List<ImportDefinition> getAllByProject(String projectId)
+	{
+		List<ImportDefinition> entityList = new ArrayList<ImportDefinition>();
+		Query aquery = this.getManager().getDatabase().getView(ProjectViewBuilder.QUERY_IMPORTDEFINITION_BY_PROJECT).createQuery();
+		List<Object> keys = new ArrayList<Object>();
+        keys.add(projectId);
+		aquery.setKeys(keys);
+		QueryEnumerator result = null;
+		try {
+			result = aquery.run();
+		} catch (CouchbaseLiteException e) {
+			e.printStackTrace();
+		}
+		for(Iterator<QueryRow> it = result; it.hasNext();)
+		{
+			QueryRow row = it.next();
+			ImportDefinition entity = this.getManager().getEntityMapper().toEntity(row.getDocument(), ImportDefinition.class);
+			entity.setDataConnection(this.getDataConnection(entity.getDataConnectionId()));
+			entityList.add(entity);
+		}
+		return entityList;
+
 	}
 	
 	@Override

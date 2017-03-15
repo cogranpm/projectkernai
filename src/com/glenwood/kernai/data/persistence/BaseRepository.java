@@ -27,6 +27,10 @@ public class BaseRepository<T extends BaseEntity> implements IEntityRepository<T
 
 	@Override
 	public void save(T entity) {
+		if(entity.getType() == null || entity.getType().trim() == "")
+		{
+			throw new IllegalArgumentException("The entity could not be saved, type was null or empty");
+		}
 		this.manager.save((BaseEntity)entity);
 	}
 

@@ -7,6 +7,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.IStatus;
@@ -30,7 +31,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
@@ -67,6 +67,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	protected Binding dirtyBinding;
 	protected Binding allValidationBinding;
 	protected ObservableListContentProvider contentProvider;
+	protected IObservableSet<T> knownElements;
 	protected DataBindingContext ctx;
 	protected IEntityMasterDetailListEditPresenter<T, P> presenter;
 	protected IMasterDetailViewModel<T, P> model;
@@ -233,8 +234,9 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	
 	protected final void setupEditingContainer()
 	{
+		
 		editHeader = new Composite(editContainer, SWT.NONE);
-		editHeader.setLayout(viewHelper.getViewLayout(1, 0));;
+		editHeader.setLayout(viewHelper.getViewLayout(1, 0));
 		lblEditHeader = new CLabel(editHeader, SWT.NONE);
 		lblEditHeader.setText("");
 		GridDataFactory.fillDefaults().applyTo(lblEditHeader);
@@ -261,6 +263,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		ctx.dispose();
         contentProvider = new ObservableListContentProvider();
         listViewer.setContentProvider(contentProvider);
+        knownElements = contentProvider.getKnownElements();
         onInitDataBindings();
 	}
 	

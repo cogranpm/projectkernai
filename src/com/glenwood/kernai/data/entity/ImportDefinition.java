@@ -4,6 +4,7 @@
 
 package com.glenwood.kernai.data.entity;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,23 @@ public class ImportDefinition extends BaseEntity {
 	/* imports are defined per project */
 	private String projectId;
 	
+	private Time lastRun;
+	
 
+	public ImportDefinition()
+	{
+		super();
+		this.type = TYPE_NAME;
+	}
+	
+	public ImportDefinition(Project parent)
+	{
+		if(parent == null || parent.getId() == null)
+		{
+			throw new IllegalArgumentException("Supplied Project was null or did not have valid id");
+		}
+		this.projectId = parent.getId();
+	}
 	
 	@JsonIgnore
 	public DataConnection getDataConnection() {

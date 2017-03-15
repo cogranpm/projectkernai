@@ -159,8 +159,14 @@ public class ProjectView extends BaseEntityView<Project>{
         /* set the enabled of the toolbar items */
         ToolItem modelToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
         		ApplicationData.GOTO_PROJECT_MODEL);
-        IObservableValue listViewerSelectionForDelete = ViewersObservables.observeSingleSelection(listViewer);
+        
+        ToolItem importToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
+        		ApplicationData.GOTO_PROJECT_IMPORT);
+        
+        IObservableValue listViewerSelection = ViewersObservables.observeSingleSelection(listViewer);
         IObservableValue<ToolItem> modelItemTarget = WidgetProperties.enabled().observe(modelToolItem);
+        IObservableValue<ToolItem> importItemTarget = WidgetProperties.enabled().observe(importToolItem);
+        
         UpdateValueStrategy convertSelectedToBoolean = new UpdateValueStrategy(){
         	@Override
         	protected IStatus doSet(IObservableValue observableValue, Object value) 
@@ -170,13 +176,22 @@ public class ProjectView extends BaseEntityView<Project>{
         };
 		
         //a binding that sets delete toolitem to disabled based on whether item in list is selected
-        Binding deleteBinding = ctx.bindValue(modelItemTarget, listViewerSelectionForDelete,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding modelBinding = ctx.bindValue(modelItemTarget, listViewerSelection,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
+        Binding importBinding = ctx.bindValue(importItemTarget, listViewerSelection,  new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), convertSelectedToBoolean);
         //a listener on above binding that makes sure action enabled is set set toolitem changes, ie can't databind the enbabled of an action
-        deleteBinding.getTarget().addChangeListener(new IChangeListener() {
+        modelBinding.getTarget().addChangeListener(new IChangeListener() {
 			@Override
 			public void handleChange(ChangeEvent event) {
 				IAction gotoModelAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODEL);
 				gotoModelAction.setEnabled(modelToolItem.getEnabled());
+			}
+		});
+        
+        importBinding.getTarget().addChangeListener(new IChangeListener() {
+			@Override
+			public void handleChange(ChangeEvent event) {
+				IAction gotoImportAction = ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_IMPORT);
+				gotoImportAction.setEnabled(importToolItem.getEnabled());
 			}
 		});
 	}

@@ -34,6 +34,7 @@ import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.AssociationView;
 import com.glenwood.kernai.ui.view.AttributeView;
 import com.glenwood.kernai.ui.view.EntityView;
+import com.glenwood.kernai.ui.view.ImportDefinitionView;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
@@ -446,12 +447,15 @@ public class MainWindow extends ApplicationWindow {
 		 IAction goToProjectImport = new Action("Import", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
-				System.out.print("here");
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_IMPORT);
+				ImportDefinitionView view = new ImportDefinitionView(clearComposite(projectPane), SWT.NONE, ApplicationData.instance().getCurrentProject());
+				ApplicationData.instance().setCurrentEntityView(view);
+				projectPane.layout();
 			}
 		 };
-		 goToProjectImport.setEnabled(true);
+		 goToProjectImport.setEnabled(false);
 		 goToProjectImport.setAccelerator(SWT.MOD1 | 'I');
+		 goToProjectImport.setActionDefinitionId(ApplicationData.GOTO_PROJECT_IMPORT);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_IMPORT, goToProjectImport);
 	}
 

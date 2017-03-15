@@ -220,7 +220,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 	
 	@Override
 	protected void onInitDataBindings() {
-        IObservableSet<Attribute> knownElements = contentProvider.getKnownElements();
+       // IObservableSet<Attribute> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Attribute.class, "name").observeDetail(knownElements);
         final IObservableMap dataTypes = BeanProperties.value(Attribute.class, "dataType").observeDetail(knownElements);
         final IObservableMap allowNulls = BeanProperties.value(Attribute.class, "allowNull").observeDetail(knownElements);

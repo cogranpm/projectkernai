@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 public class EntityViewHelper {
@@ -69,6 +70,11 @@ public class EntityViewHelper {
 	public void layoutComboViewer(ComboViewer control)
 	{
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(control.getControl());
+	}
+	
+	public void layoutSpinner(Spinner control)
+	{
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(control);
 	}
 	
 	public Label getEditLabel(Composite parent, String text)

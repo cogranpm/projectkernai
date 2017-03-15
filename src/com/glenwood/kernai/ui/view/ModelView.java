@@ -74,7 +74,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 	
 	@Override
 	protected void onInitDataBindings() {
-        IObservableSet<Model> knownElements = contentProvider.getKnownElements();
+        //IObservableSet<Model> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Model.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {

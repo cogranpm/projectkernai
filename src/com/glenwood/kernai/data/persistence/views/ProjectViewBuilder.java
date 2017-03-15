@@ -9,6 +9,7 @@ import com.couchbase.lite.View;
 import com.glenwood.kernai.data.entity.Association;
 import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.Entity;
+import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.entity.Model;
 
@@ -16,6 +17,7 @@ public class ProjectViewBuilder {
 	
 	
 	public final static String QUERY_MODEL_BY_PROJECT = "QUERYMODELBYPROJECT";
+	public final static String QUERY_IMPORTDEFINITION_BY_PROJECT = "QUERYIMPORTDEFINITIONBYPROJECT";
 	public final static String QUERY_ENTITY_BY_MODEL = "QUERYENTITYBYMODEL";
 	public final static String QUERY_ASSOCIATION_BY_MODEL = "QUERYASSOCIATIONBYMODEL";
 	public final static String QUERY_ATTRIBUTE_BY_ENTITY = "QUERYATTRIBUTEBYENTITY";
@@ -29,6 +31,18 @@ public class ProjectViewBuilder {
 			public void map(Map<String, Object> document, Emitter emitter)
 			{
 				if(document.containsKey("type") && Model.TYPE_NAME.equals(document.get("type")))
+				{
+					emitter.emit(document.get("projectId"), null);
+				}
+			}
+		}, "1");
+		
+		View importDefinitionByProjectView = database.getView(QUERY_IMPORTDEFINITION_BY_PROJECT);
+		importDefinitionByProjectView.setMap(new Mapper(){
+			@Override
+			public void map(Map<String, Object> document, Emitter emitter)
+			{
+				if(document.containsKey("type") && ImportDefinition.TYPE_NAME.equals(document.get("type")))
 				{
 					emitter.emit(document.get("projectId"), null);
 				}
