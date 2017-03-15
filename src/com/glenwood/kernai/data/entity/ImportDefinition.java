@@ -103,6 +103,20 @@ public class ImportDefinition extends BaseEntity {
 		this.projectId = projectId;
 		this.firePropertyChange("projectId", oldValue, this.projectId);
 	}
+	
+	
+	@JsonProperty
+	public Time getLastRun()
+	{
+		return this.lastRun;
+	}
+	
+	public void setLastRun(Time lastRun)
+	{
+		Time oldValue = this.lastRun;
+		this.lastRun = lastRun;
+		firePropertyChange("lastRun", oldValue, this.lastRun);
+	}
 
 	@Override
 	public int hashCode() {

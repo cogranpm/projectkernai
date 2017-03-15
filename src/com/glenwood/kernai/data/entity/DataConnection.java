@@ -2,6 +2,7 @@ package com.glenwood.kernai.data.entity;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -46,14 +47,14 @@ public  class DataConnection extends BaseEntity {
 	}
 
 
-
-
 	private String userName;
 	private String password;
 	private Integer port;
 	private String serverName;
 	private Boolean isExpress;
+	/* lookup to listdetail */
 	private String vendorName;
+	private ListDetail vendorNameLookup;
 	private String sid;
 	
 	@JsonProperty
@@ -106,7 +107,7 @@ public  class DataConnection extends BaseEntity {
 		firePropertyChange("isExpress", oldValue, this.isExpress);
 	}
 	
-	
+	@JsonProperty
 	public String getVendorName() {
 		return vendorName;
 	}
@@ -116,7 +117,22 @@ public  class DataConnection extends BaseEntity {
 		firePropertyChange("vendorName", oldValue, this.vendorName);
 	}
 	
-	
+
+	@JsonIgnore
+	public ListDetail getVendorNameLookup() {
+		return vendorNameLookup;
+	}
+
+	public void setVendorNameLookup(ListDetail vendorNameLookup) {
+		ListDetail oldValue = this.vendorNameLookup;
+		this.vendorNameLookup = vendorNameLookup;
+		firePropertyChange("vendorNameLookup", oldValue, this.vendorNameLookup);
+	}
+
+
+
+
+	@JsonProperty
 	public String getSid() {
 		return sid;
 	}
