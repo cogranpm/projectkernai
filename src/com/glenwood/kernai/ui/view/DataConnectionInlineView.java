@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.internal.SWTEventObject;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -209,10 +211,11 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         IObservableValue passwordTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.txtPassword);
         IObservableValue passwordModelObservable = BeanProperties.value("password").observeDetail(value);
         
-        /*
-        IObservableValue portTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.spPort);
+        
+        //IObservableValue portTargetObservable = ViewerProperties.singleSelection().observe(spPort);  // WidgetProperties.text(SWT.Modify).observe(this.spPort.get);
+        IObservableValue portTargetObservable = SWTObservables.observeSelection(spPort);
         IObservableValue portModelObservable = BeanProperties.value("port").observeDetail(value);
-        */
+        
         
         IObservableValue sidTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.txtSid);
         IObservableValue sidModelObservable = BeanProperties.value("sid").observeDetail(value);
@@ -235,9 +238,9 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         Binding passwordBinding = ctx.bindValue(passwordTargetObservable, passwordModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(passwordValidator), null);
         
-      /*  Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
+        Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(portValidator), null);
-        */
+       
         Binding sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
         
         Binding isExpressBinding = ctx.bindValue(isExpressTargetObservable, isExpressModelObservable);
