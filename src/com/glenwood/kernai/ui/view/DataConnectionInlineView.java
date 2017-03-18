@@ -23,7 +23,6 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,6 +41,7 @@ import org.eclipse.swt.widgets.Text;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.abstraction.IEntityPresenter;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.presenter.DataConnectionViewPresenter;
@@ -88,6 +88,11 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	protected DataConnectionInlineView(Composite parent, int style) {
 		super(parent, style);
 		this.init();
+	}
+	
+	public IEntityPresenter<DataConnection> getPresenter()
+	{
+		return this.presenter;
 	}
 	
 	private final void init()
@@ -254,10 +259,11 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         Binding passwordBinding = ctx.bindValue(passwordTargetObservable, passwordModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(passwordValidator), null);
         
-        IConverter portConverter = IConverter.create(Integer.class, Integer.class, x -> x == null ? 0 : x);
-        new UpdateValueStrategy().setAfterConvertValidator(portValidator);
+        IConverter portConverter = IConverter.create(Integer.class, Integer.class, x -> (x == null) ? 0 : x);
+       // new UpdateValueStrategy().setAfterConvertValidator(portValidator);
 		Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
-        		UpdateValueStrategy.create(portConverter).setAfterConvertValidator(portValidator),
+        		//UpdateValueStrategy.create(portConverter).setAfterConvertValidator(portValidator),
+				new UpdateValueStrategy().setAfterConvertValidator(portValidator),
         		UpdateValueStrategy.create(portConverter));
        	
        
@@ -301,6 +307,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 
 	@Override
 	public void afterAdd() {
+		value.setValue(this.model.getCurrentItem());
 	}
 
 	@Override
@@ -310,6 +317,10 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 
 	private void processVendorNameSelectionChange()
 	{
+		if (model.getCurrentItem() == null)
+		{
+			return;
+		}
 		String key = null;
 		IStructuredSelection selected = (IStructuredSelection) cboVendorName.getSelection();
 		if(selected != null)
@@ -322,7 +333,15 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		}
 		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(key))
 		{
-			this.model.getCurrentItem().setPort(1521);
+			this.model.getCurrentItem().setPort(DataConnection.PORT_SQLSERVER);
+		}
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_MYSQL.equalsIgnoreCase(key))
+		{
+			this.model.getCurrentItem().setPort(DataConnection.PORT_MYSQL);
+		}
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(key))
+		{
+			this.model.getCurrentItem().setPort(DataConnection.PORT_ORACLE);
 		}
 	}
 

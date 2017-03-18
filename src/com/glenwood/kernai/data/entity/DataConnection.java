@@ -11,6 +11,9 @@ import com.glenwood.kernai.data.abstractions.BaseEntity;
 public  class DataConnection extends BaseEntity {
 	
 	public static final String TYPE_NAME = "DATACONNECTION";
+	public static final Integer PORT_SQLSERVER = 1433;
+	public static final Integer PORT_ORACLE = 1521;
+	public static final Integer PORT_MYSQL = 3306;
 	
 	public DataConnection()
 	{

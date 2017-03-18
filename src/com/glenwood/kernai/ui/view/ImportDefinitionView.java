@@ -85,5 +85,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	protected void onAdd() {
 		super.onAdd();
+		if(connectionView != null)
+		{
+			this.connectionView.presenter.addModel();
+		}
 	}
+	
+	
 }
