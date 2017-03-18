@@ -23,9 +23,13 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.FillLayout;
@@ -37,6 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.presenter.DataConnectionViewPresenter;
@@ -129,7 +134,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		editDetail.setLayout(new FillLayout());
 		*/
-		lblError = new CLabel(editMaster, SWT.NONE);
+		lblError = new CLabel(editMaster, SWT.MULTI);
 		viewHelper.setViewLayoutData(lblError, 2);
 
 		onSetupEditingContainer();
@@ -150,6 +155,13 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 			}
 		});
 		cboVendorName.setInput(((DataConnectionViewModel)this.model).getVendorNameLookup());
+		cboVendorName.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				processVendorNameSelectionChange();
+			}
+		});
 		
 		
 		lblServerName = viewHelper.getEditLabel(editMaster, "Hostname");
@@ -296,6 +308,23 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	}
 	
 
+	private void processVendorNameSelectionChange()
+	{
+		String key = null;
+		IStructuredSelection selected = (IStructuredSelection) cboVendorName.getSelection();
+		if(selected != null)
+		{
+			ListDetail item = (ListDetail)selected.getFirstElement();
+			if(item != null)
+			{
+				key = item.getKey();
+			}
+		}
+		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(key))
+		{
+			this.model.getCurrentItem().setPort(1521);
+		}
+	}
 
 
 }
