@@ -35,5 +35,15 @@ public class DataConnectionViewPresenter extends BaseEntityPresenter<DataConnect
 		DataConnectionViewModel aModel = (DataConnectionViewModel)this.model;
 		aModel.setVendorNameLookup(this.listHeaderRepository.getListItemsByName(ApplicationData.LIST_DATABASE_VENDOR_NAME));
 	}
+	
+	@Override
+	public void loadModels() {
+		super.loadModels();
+		// TODO Auto-generated method stub
+		/* temporary */ 
+		DataConnection sqlOne = new DataConnection("dotconnectservice", "reddingo", DataConnection.PORT_SQLSERVER, "kron1", true, ApplicationData.CONNECTION_VENDOR_NAME_MSSQL);
+		this.model.getItems().add(sqlOne);
+		this.model.setCurrentItem(sqlOne);
+	}
 
 }

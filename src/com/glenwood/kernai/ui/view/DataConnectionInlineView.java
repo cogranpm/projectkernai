@@ -23,14 +23,20 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.nebula.jface.tablecomboviewer.TableComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -84,15 +90,23 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	private ComboViewer cboVendorName;
 	
 	/* multi column list for connections */
+	Label lblConnections;
+	TableComboViewer list;
 	
 	protected DataConnectionInlineView(Composite parent, int style) {
 		super(parent, style);
 		this.init();
 	}
 	
+	/* expose so clients embedding this view have access to behaviour and data */
 	public IEntityPresenter<DataConnection> getPresenter()
 	{
 		return this.presenter;
+	}
+	
+	public IViewModel<DataConnection> getModel()
+	{
+		return this.model;
 	}
 	
 	private final void init()
@@ -107,11 +121,8 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		ctx = new DataBindingContext();
 		value = new WritableValue<DataConnection>();
 		presenter.loadModels();
-		
-		/* temporary 
-		this.model.setCurrentItem(new DataConnection());
-		this.value.setValue(this.model.getCurrentItem());
-		*/
+
+
     	
 		this.initDataBindings();
 		this.onInit();
@@ -127,6 +138,10 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	{
 		this.model = new DataConnectionViewModel();
 		this.presenter = new DataConnectionViewPresenter(this, (DataConnectionViewModel)model);
+		
+
+		
+		
 	}
 	
 	protected final void setupEditingContainer()
@@ -148,6 +163,25 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	protected void onSetupEditingContainer()
 	{
 		/* to do, add a multi column comboviewer from nebula to show the existing connections */
+		lblConnections = this.viewHelper.getEditLabel(editMaster, "Connections");
+		list = new TableComboViewer(editMaster, SWT.READ_ONLY | SWT.BORDER);
+		list.setContentProvider(ArrayContentProvider.getInstance());
+		list.setLabelProvider(new DataConnectionLabelProvider());
+		//list.getTableCombo().defineColumns(2);
+		list.getTableCombo().setTableWidthPercentage(100);
+		list.getTableCombo().setShowTableHeader(true);
+		list.getTableCombo().defineColumns(new String[] { "Vendor", "Hostname", "User", "Password", "Port"});
+		list.getTableCombo().setDisplayColumnIndex(1);
+		list.setInput(this.model.getItems());
+		list.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		lblVendorName = viewHelper.getEditLabel(editMaster, "Vendor");
 		cboVendorName = new ComboViewer(editMaster);
 		cboVendorName.setContentProvider(ArrayContentProvider.getInstance());
@@ -188,6 +222,8 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		lblIsExpress = viewHelper.getEditLabel(editMaster, "Is Express");
 		chkIsExpress = new Button(editMaster, SWT.CHECK);
 		
+		this.viewHelper.layoutEditLabel(lblConnections);
+		GridDataFactory.fillDefaults().applyTo(list.getControl());
 		this.viewHelper.layoutEditLabel(lblVendorName);
 		this.viewHelper.layoutComboViewer(cboVendorName);
 		this.viewHelper.layoutEditLabel(lblServerName);
@@ -308,6 +344,8 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	@Override
 	public void afterAdd() {
 		value.setValue(this.model.getCurrentItem());
+		list.setInput(this.model.getItems());
+		list.refresh();
 	}
 
 	@Override
@@ -345,5 +383,44 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		}
 	}
 
+	private static class DataConnectionLabelProvider extends LabelProvider implements ITableLabelProvider {
+		/**
+		 * We return null, because we don't support images yet.
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage (Object element, int columnIndex) {
+			return null;
+		}
 
+		/**
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText (Object element, int columnIndex) {
+			
+			DataConnection item = (DataConnection)element;
+			if(item == null){return "";}
+			
+			switch (columnIndex) {
+				case 0: return item.getVendorName();
+				case 1: return item.getServerName();
+				case 2: return item.getUserName();
+				case 3: return item.getPassword();
+				case 4: return item.getPort().toString();
+			}
+			return "";
+		}
+	}
+	
+	private static class DataConnectionLabelProviderA extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			return "howdy";
+		}
+		
+		@Override
+		public Image getImage(Object element) {
+		
+			return null;
+		}
+	}
 }

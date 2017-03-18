@@ -8,8 +8,8 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
@@ -20,6 +20,7 @@ import com.glenwood.kernai.ui.viewmodel.ImportDefinitionViewModel;
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project> {
 	
 	DataConnectionInlineView connectionView;
+	Button btnNext;
 
 	public ImportDefinitionView(Composite parent, int style, Project parentEntity) {
 		super(parent, style, parentEntity);
@@ -79,6 +80,9 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		super.onSetupEditingContainer();
 		connectionView = new DataConnectionInlineView(editMaster, SWT.NONE);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, true).indent(0, 0).applyTo(connectionView);
+		btnNext = new Button(editMaster, SWT.PUSH);
+		btnNext.setText("Next");
+		GridDataFactory.fillDefaults().span(2,1).align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnNext);
 		
 	}
 	
