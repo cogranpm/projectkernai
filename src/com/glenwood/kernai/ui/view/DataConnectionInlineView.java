@@ -36,6 +36,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.jface.tablecomboviewer.TableComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -90,9 +92,14 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	private ComboViewer cboVendorName;
 	
 	/* multi column list for connections */
-	Label lblConnections;
-	TableComboViewer list;
+	private Label lblConnections;
+	private TableComboViewer list;
 	
+	private Binding sidBinding;
+    private IObservableValue sidTargetObservable;
+    private IObservableValue sidModelObservable;
+    ControlDecorationSupport sidNameDecorator;
+    
 	protected DataConnectionInlineView(Composite parent, int style) {
 		super(parent, style);
 		this.init();
@@ -177,7 +184,15 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
+				IStructuredSelection selection = list.getStructuredSelection();
+				if(selection != null)
+				{
+					DataConnection connection = (DataConnection)selection.getFirstElement();
+					if(connection != null)
+					{
+						presenter.loadModel(connection);
+					}
+				}
 				
 			}
 		});
@@ -239,6 +254,24 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		this.viewHelper.layoutEditEditor(txtSid);
 		this.viewHelper.layoutEditLabel(lblIsExpress);
 		this.viewHelper.layoutEditEditor(chkIsExpress);
+		
+		Button btnCrap = new Button(editMaster, SWT.NONE);
+		btnCrap.setText("Save");
+		btnCrap.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				presenter.saveModel();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		GridDataFactory.fillDefaults().applyTo(btnCrap);
 	}
 	
 	protected final void initDataBindings()
@@ -274,8 +307,8 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         IObservableValue portModelObservable = BeanProperties.value("port").observeDetail(value);
         
         
-        IObservableValue sidTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.txtSid);
-        IObservableValue sidModelObservable = BeanProperties.value("sid").observeDetail(value);
+        sidTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.txtSid);
+        sidModelObservable = BeanProperties.value("sid").observeDetail(value);
         
         IValidator serverNameValidator = this.viewHelper.getRequiredStringValidator("Host Name must be entered");
         IValidator userNameValidator = this.viewHelper.getRequiredStringValidator("User name must be entered");
@@ -303,7 +336,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         		UpdateValueStrategy.create(portConverter));
        	
        
-        Binding sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
+        sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
         
         Binding isExpressBinding = ctx.bindValue(isExpressTargetObservable, isExpressModelObservable);
         
@@ -319,6 +352,26 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         IObservableList bindings = ctx.getValidationStatusProviders();
 	}
 	
+	private void initOracleDataBindings(Boolean enableValidation)
+	{
+		ctx.removeBinding(sidBinding);
+		if(enableValidation)
+		{
+			IValidator sidValidator = this.viewHelper.getRequiredStringValidator("sid must be entered");
+			sidBinding.dispose();
+			sidBinding = null;
+			sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable, new UpdateValueStrategy().setAfterConvertValidator(sidValidator), null);
+			sidNameDecorator = ControlDecorationSupport.create(sidBinding, SWT.TOP | SWT.LEFT);
+		}
+		else
+		{
+			sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
+			if(sidNameDecorator != null)
+			{
+				sidNameDecorator.dispose();
+			}
+		}
+	}
 	
 
 	protected void setupListColumns() {
@@ -339,6 +392,8 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 
 	@Override
 	public void refreshView() {
+		value.setValue(model.getCurrentItem());
+		processVendorNameSelectionChange();
 	}
 
 	@Override
@@ -346,6 +401,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		value.setValue(this.model.getCurrentItem());
 		list.setInput(this.model.getItems());
 		list.refresh();
+		this.cboVendorName.getCombo().setFocus();
 	}
 
 	@Override
@@ -372,14 +428,23 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(key))
 		{
 			this.model.getCurrentItem().setPort(DataConnection.PORT_SQLSERVER);
+			this.chkIsExpress.setEnabled(true);
+			this.txtSid.setEnabled(false);
+			this.initOracleDataBindings(false);
 		}
 		else if(ApplicationData.CONNECTION_VENDOR_NAME_MYSQL.equalsIgnoreCase(key))
 		{
 			this.model.getCurrentItem().setPort(DataConnection.PORT_MYSQL);
+			this.chkIsExpress.setEnabled(false);
+			this.txtSid.setEnabled(false);
+			this.initOracleDataBindings(false);
 		}
 		else if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(key))
 		{
 			this.model.getCurrentItem().setPort(DataConnection.PORT_ORACLE);
+			this.chkIsExpress.setEnabled(false);
+			this.txtSid.setEnabled(true);
+			this.initOracleDataBindings(true);
 		}
 	}
 
@@ -401,7 +466,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 			if(item == null){return "";}
 			
 			switch (columnIndex) {
-				case 0: return item.getVendorName();
+				case 0: return item.getVendorNameLookup().getLabel();
 				case 1: return item.getServerName();
 				case 2: return item.getUserName();
 				case 3: return item.getPassword();

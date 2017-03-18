@@ -19,13 +19,7 @@ public class DataConnectionViewPresenter extends BaseEntityPresenter<DataConnect
 	//DataConnectionInlineView view;
 	
 	public DataConnectionViewPresenter(IEntityView view, IViewModel<DataConnection> model) {
-
-		
 		super(view, model, DataConnection.class, DataConnection.TYPE_NAME);
-	
-	//	this.model = model;
-		//this.view = view;
-
 		this.repository = new DataConnectionRepository(
 				PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
 
@@ -36,14 +30,5 @@ public class DataConnectionViewPresenter extends BaseEntityPresenter<DataConnect
 		aModel.setVendorNameLookup(this.listHeaderRepository.getListItemsByName(ApplicationData.LIST_DATABASE_VENDOR_NAME));
 	}
 	
-	@Override
-	public void loadModels() {
-		super.loadModels();
-		// TODO Auto-generated method stub
-		/* temporary */ 
-		DataConnection sqlOne = new DataConnection("dotconnectservice", "reddingo", DataConnection.PORT_SQLSERVER, "kron1", true, ApplicationData.CONNECTION_VENDOR_NAME_MSSQL);
-		this.model.getItems().add(sqlOne);
-		this.model.setCurrentItem(sqlOne);
-	}
 
 }
