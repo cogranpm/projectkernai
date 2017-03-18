@@ -13,16 +13,13 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -31,7 +28,6 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.internal.SWTEventObject;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -39,7 +35,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import com.glenwood.kernai.data.entity.Attribute;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
@@ -63,7 +58,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	protected EntityViewHelper viewHelper;
 	private Composite editContainer;
 	private Composite editMaster;
-	private Composite editDetail;
+	//private Composite editDetail;
 	
 	private CLabel lblError;
 	private Label lblServerName;
@@ -99,9 +94,15 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		this.setupListColumns();
 		this.setupEditingContainer();
 		
-    	ctx = new DataBindingContext();
+		ctx = new DataBindingContext();
 		value = new WritableValue<DataConnection>();
 		presenter.loadModels();
+		
+		/* temporary 
+		this.model.setCurrentItem(new DataConnection());
+		this.value.setValue(this.model.getCurrentItem());
+		*/
+    	
 		this.initDataBindings();
 		this.onInit();
 		this.setLayout(new FillLayout());
@@ -159,7 +160,10 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		txtPassword = viewHelper.getTextEditor(editMaster);
 		lblPort = viewHelper.getEditLabel(editMaster, "Port");
 		spPort = new Spinner(editMaster, SWT.NONE);
-		
+		spPort.setMaximum(65535);
+		spPort.setMinimum(1);
+		spPort.setSelection(1);
+		spPort.setIncrement(1);
 		/* optional based on vendor type */
 		lblSid = viewHelper.getEditLabel(editMaster, "SID");
 		txtSid = viewHelper.getTextEditor(editMaster);
@@ -213,18 +217,18 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         
         
         //IObservableValue portTargetObservable = ViewerProperties.singleSelection().observe(spPort);  // WidgetProperties.text(SWT.Modify).observe(this.spPort.get);
-        IObservableValue portTargetObservable = SWTObservables.observeSelection(spPort);
+        IObservableValue portTargetObservable = WidgetProperties.selection().observe(spPort);
         IObservableValue portModelObservable = BeanProperties.value("port").observeDetail(value);
         
         
         IObservableValue sidTargetObservable = WidgetProperties.text(SWT.Modify).observe(this.txtSid);
         IObservableValue sidModelObservable = BeanProperties.value("sid").observeDetail(value);
         
-        IValidator serverNameValidator = this.getRequiredValidator("Host Name must be entered");
-        IValidator userNameValidator = this.getRequiredValidator("User name must be entered");
-        IValidator passwordValidator = this.getRequiredValidator("Password must be entered");
-        IValidator vendorNameValidator = this.getRequiredValidator("Vendor must be entered");
-        IValidator portValidator = this.getRequiredValidator("Port must be entered");
+        IValidator serverNameValidator = this.viewHelper.getRequiredStringValidator("Host Name must be entered");
+        IValidator userNameValidator = this.viewHelper.getRequiredStringValidator("User name must be entered");
+        IValidator passwordValidator = this.viewHelper.getRequiredStringValidator("Password must be entered");
+        IValidator vendorNameValidator = this.viewHelper.getRequiredStringValidator("Vendor must be entered");
+        IValidator portValidator = this.viewHelper.getRequiredStringValidator("Port must be entered");
         
         Binding serverNameBinding = ctx.bindValue(serverNameTargetObservable, serverNameModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(serverNameValidator), null);
@@ -238,17 +242,23 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         Binding passwordBinding = ctx.bindValue(passwordTargetObservable, passwordModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(passwordValidator), null);
         
-        Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
-        		new UpdateValueStrategy().setAfterConvertValidator(portValidator), null);
+        IConverter portConverter = IConverter.create(Integer.class, Integer.class, x -> x == null ? 0 : x);
+        new UpdateValueStrategy().setAfterConvertValidator(portValidator);
+		Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
+        		UpdateValueStrategy.create(portConverter).setAfterConvertValidator(portValidator),
+        		UpdateValueStrategy.create(portConverter));
+       	
        
         Binding sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
         
         Binding isExpressBinding = ctx.bindValue(isExpressTargetObservable, isExpressModelObservable);
         
-        ControlDecorationSupport.create(serverNameBinding, SWT.TOP | SWT.LEFT);
-        ControlDecorationSupport.create(vendorNameBinding, SWT.TOP | SWT.LEFT);
-        ControlDecorationSupport.create(userNameBinding, SWT.TOP | SWT.LEFT);
-        ControlDecorationSupport.create(passwordBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport serverNameDecorator = ControlDecorationSupport.create(serverNameBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport vendorNameDecorator = ControlDecorationSupport.create(vendorNameBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport userNameDecorator = ControlDecorationSupport.create(userNameBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport passwordDecorator = ControlDecorationSupport.create(passwordBinding, SWT.TOP | SWT.LEFT);
+        ControlDecorationSupport portDecorator = ControlDecorationSupport.create(portBinding, SWT.TOP | SWT.LEFT);
+        
         
         final IObservableValue errorObservable = WidgetProperties.text().observe(lblError);
         Binding allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
@@ -256,21 +266,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	}
 	
 	
-	private IValidator getRequiredValidator(String message)
-	{
-		return new IValidator() {
-			
-			@Override
-			public IStatus validate(Object value) {
-				String nameValue = String.valueOf(value).replaceAll("\\s", "");
-                if (nameValue.length() > 0){
-                  return ValidationStatus.ok();
-                }
-                return ValidationStatus.error(message);
-			}
-		};
-	}
-	
+
 	protected void setupListColumns() {
 
 	}

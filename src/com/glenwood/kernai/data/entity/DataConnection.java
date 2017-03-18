@@ -16,6 +16,10 @@ public  class DataConnection extends BaseEntity {
 	{
 		super();
 		this.type = TYPE_NAME;
+		if(port == null)
+		{
+			port = 1;
+		}
 	}
 	
 	

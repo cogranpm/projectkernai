@@ -3,6 +3,10 @@ package com.glenwood.kernai.ui.view.helpers;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -128,4 +132,10 @@ public class EntityViewHelper {
 		}
 	}
 
+	
+	public IValidator getRequiredStringValidator(String errorText)
+	{
+		return new StringRequiredValidator(errorText);
+	}
+	
 }
