@@ -3,6 +3,7 @@ package com.glenwood.kernai.ui.view;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -13,11 +14,13 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.ImportDefinitionViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ImportDefinitionViewModel;
+import com.glenwood.kernai.ui.workers.ImportWorker;
 
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project> {
 	
@@ -39,6 +42,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	protected void onInit() {
 		super.onInit();
+		/* lets go into new mode immediately */
+		this.onAdd();
 	}
 	
 	@Override
@@ -88,7 +93,12 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				/* connect first, showing a progress, must be asyncronous */
+				/* connect first, showing a progress, must be asynchronous */
+				DataConnection connection = connectionView.getModel().getCurrentItem();
+				ImportWorker importWorker = new ImportWorker(connection);
+				importWorker.openConnection(getShell().getDisplay());
+				MessageDialog.openInformation(getShell(), "Complete", "Connection Complete");
+				
 			}
 			
 			@Override

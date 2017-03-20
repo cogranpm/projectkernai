@@ -25,19 +25,19 @@ public class ImportWorker {
 	public ImportWorker(DataConnection dataConnection)
 	{
 		this();
-		if(dataConnection.getVendorName() == null)
+		if(dataConnection.getVendorNameLookup() == null)
 		{
 			throw new NullPointerException("DataConnection, vendor name was null");
 		}
-		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(dataConnection.getVendorName()))
+		if(ApplicationData.CONNECTION_VENDOR_NAME_MSSQL.equalsIgnoreCase(dataConnection.getVendorNameLookup().getKey()))
 		{
 			this.connection = new SQLServerConnection(dataConnection);
 		}
-		else if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(dataConnection.getVendorName()))
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(dataConnection.getVendorNameLookup().getKey()))
 		{
 			this.connection = new OracleConnection(dataConnection);
 		}
-		else if(ApplicationData.CONNECTION_VENDOR_NAME_MYSQL.equalsIgnoreCase(dataConnection.getVendorName()))
+		else if(ApplicationData.CONNECTION_VENDOR_NAME_MYSQL.equalsIgnoreCase(dataConnection.getVendorNameLookup().getKey()))
 		{
 			//this.connection = new my
 		}
@@ -57,6 +57,11 @@ public class ImportWorker {
 		man.connect();
 		//man.setImportEngine(new ImportEngineSchemaCrawler());
 		man.getImportEngine().init(connection);
+	}
+	
+	public void closeConnection(Display display)
+	{
+		man.disconnect();
 	}
 	
 	public void getDatabases(Display display)
