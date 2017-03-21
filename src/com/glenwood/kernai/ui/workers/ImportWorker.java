@@ -16,6 +16,7 @@ import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 import com.glenwood.kernai.ui.ApplicationData;
+import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
 
 public class ImportWorker {
 	
@@ -50,16 +51,20 @@ public class ImportWorker {
 
 	}
 	
-	public void openConnection(Display display)
+	public void openConnection(IImportWorkerClient client, Display display)
 	{
-		//this.getConnectionWorker(display).start();
+		this.getConnectionWorker(client, display).start();
+		
+		/*
 		man = new JDBCManager(connection);
 		man.connect();
 		//man.setImportEngine(new ImportEngineSchemaCrawler());
 		man.getImportEngine().init(connection);
+		client.onConnect();
+		*/
 	}
 	
-	public void closeConnection(Display display)
+	public void closeConnection()
 	{
 		man.disconnect();
 	}
@@ -69,7 +74,7 @@ public class ImportWorker {
 		this.getDatabasesWorker(display).start();
 	}
 	
-	private Thread getConnectionWorker(Display display)
+	private Thread getConnectionWorker(IImportWorkerClient client, Display display)
 	{
 		return new Thread() {
 			@Override
@@ -82,7 +87,7 @@ public class ImportWorker {
 					
 					@Override
 					public void run() {
-						/* nothign, just make it wait */
+						client.onConnect();
 					}
 				});
 			}

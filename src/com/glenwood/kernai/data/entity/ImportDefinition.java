@@ -51,6 +51,7 @@ public class ImportDefinition extends BaseEntity {
 	
 	public ImportDefinition(Project parent)
 	{
+		this();
 		if(parent == null || parent.getId() == null)
 		{
 			throw new IllegalArgumentException("Supplied Project was null or did not have valid id");

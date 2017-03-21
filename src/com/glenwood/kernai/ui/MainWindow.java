@@ -224,16 +224,15 @@ public class MainWindow extends ApplicationWindow {
 			 @Override
 			 public void run() {
 				 System.out.println("About");
-				// Dialog connectView = new MSSQLDataConnectionView(getShell());
-				 //if(connectView.open() == Window.OK)
-				 //{
+
+				 /*
 				 DataConnection conn = null;
 				 //conn = new DataConnection( "dotconnectservice", "reddingo", 1433, "kron1", true, ApplicationData.CONNECTION_VENDOR_NAME_MSSQL);
 				 conn = new DataConnection("paulm",  "reddingo", 1521, "kron1",  ApplicationData.CONNECTION_VENDOR_NAME_ORACLE, "xe");
 				 ImportWorker importWorker = new ImportWorker(conn);
 				 importWorker.openConnection(getShell().getDisplay());
 				 importWorker.getDatabases(getShell().getDisplay());
-				 //}
+				 */
 
 			 }
 		 };

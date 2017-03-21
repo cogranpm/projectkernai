@@ -109,12 +109,14 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		ApplicationData.instance().loadEntityView(this);
 		this.disableEditControls();
 		
+		/* this is problematic, should put view into new mode automatically instead
         if(this.model.getItems().size() > 0)
         {
         	this.model.setCurrentItem(this.model.getItems().get(0));
         	this.listViewer.setSelection(new StructuredSelection(this.model.getCurrentItem()));
         	this.listViewer.getTable().setFocus();
         }
+        */
         this.onInit();
 	}
 	
@@ -323,7 +325,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	}
 
 	@Override
-	public final void save() {
+	public void save() {
 		this.presenter.saveModel();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());

@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -26,13 +27,12 @@ import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.jface.tablecomboviewer.TableComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -96,9 +96,15 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	private TableComboViewer list;
 	
 	private Binding sidBinding;
+	private Binding serverNameBinding;
+	private Binding vendorNameBinding;
+	private Binding portBinding;
+	private Binding userNameBinding;
+	private Binding passwordBinding;
+	private Binding isExpressBinding;
     private IObservableValue sidTargetObservable;
     private IObservableValue sidModelObservable;
-    ControlDecorationSupport sidNameDecorator;
+    private ControlDecorationSupport sidNameDecorator;
     
 	protected DataConnectionInlineView(Composite parent, int style) {
 		super(parent, style);
@@ -255,6 +261,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		this.viewHelper.layoutEditLabel(lblIsExpress);
 		this.viewHelper.layoutEditEditor(chkIsExpress);
 		
+		/*
 		Button btnCrap = new Button(editMaster, SWT.NONE);
 		btnCrap.setText("Save");
 		btnCrap.addSelectionListener(new SelectionListener() {
@@ -272,6 +279,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 			}
 		});
 		GridDataFactory.fillDefaults().applyTo(btnCrap);
+		*/
 	}
 	
 	protected final void initDataBindings()
@@ -316,21 +324,21 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
         IValidator vendorNameValidator = this.viewHelper.getRequiredStringValidator("Vendor must be entered");
         IValidator portValidator = this.viewHelper.getRequiredStringValidator("Port must be entered");
         
-        Binding serverNameBinding = ctx.bindValue(serverNameTargetObservable, serverNameModelObservable, 
+        serverNameBinding = ctx.bindValue(serverNameTargetObservable, serverNameModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(serverNameValidator), null);
         
-        Binding vendorNameBinding = ctx.bindValue(vendorNameTargetObservable, vendorNameModelObservable, 
+        vendorNameBinding = ctx.bindValue(vendorNameTargetObservable, vendorNameModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(vendorNameValidator), null);
         
-        Binding userNameBinding = ctx.bindValue(userNameTargetObservable, userNameModelObservable, 
+        userNameBinding = ctx.bindValue(userNameTargetObservable, userNameModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(userNameValidator), null);
         
-        Binding passwordBinding = ctx.bindValue(passwordTargetObservable, passwordModelObservable, 
+        passwordBinding = ctx.bindValue(passwordTargetObservable, passwordModelObservable, 
         		new UpdateValueStrategy().setAfterConvertValidator(passwordValidator), null);
         
         IConverter portConverter = IConverter.create(Integer.class, Integer.class, x -> (x == null) ? 0 : x);
        // new UpdateValueStrategy().setAfterConvertValidator(portValidator);
-		Binding portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
+		portBinding = ctx.bindValue(portTargetObservable, portModelObservable, 
         		//UpdateValueStrategy.create(portConverter).setAfterConvertValidator(portValidator),
 				new UpdateValueStrategy().setAfterConvertValidator(portValidator),
         		UpdateValueStrategy.create(portConverter));
@@ -338,7 +346,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
        
         sidBinding = ctx.bindValue(sidTargetObservable, sidModelObservable);
         
-        Binding isExpressBinding = ctx.bindValue(isExpressTargetObservable, isExpressModelObservable);
+        isExpressBinding = ctx.bindValue(isExpressTargetObservable, isExpressModelObservable);
         
         ControlDecorationSupport serverNameDecorator = ControlDecorationSupport.create(serverNameBinding, SWT.TOP | SWT.LEFT);
         ControlDecorationSupport vendorNameDecorator = ControlDecorationSupport.create(vendorNameBinding, SWT.TOP | SWT.LEFT);
@@ -371,6 +379,43 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 				sidNameDecorator.dispose();
 			}
 		}
+	}
+	
+	public Boolean isValid()
+	{
+		Boolean valid = true;
+		if(!isBindingValid(sidBinding))
+		{
+			return false;
+		}
+		if(!isBindingValid(serverNameBinding))
+		{
+			return false;
+		}
+		if(!isBindingValid(vendorNameBinding))
+		{
+			return false;
+		}
+		if(!isBindingValid(userNameBinding))
+		{
+			return false;
+		}
+		if(!isBindingValid(passwordBinding))
+		{
+			return false;
+		}
+		if(!isBindingValid(portBinding))
+		{
+			return false;
+		}
+		return valid;
+	}
+	
+	private Boolean isBindingValid(Binding binding)
+	{
+		if(binding == null){return true;}
+		IStatus status = (IStatus)binding.getValidationStatus().getValue();
+		return status.isOK();
 	}
 	
 
@@ -406,6 +451,12 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 
 	@Override
 	public void afterSelection() {
+		/*
+		if(this.model != null && this.model.getCurrentItem() != null)
+		{
+			this.list.setSelection(new StructuredSelection(this.model.getCurrentItem()));
+		}
+		*/
 	}
 	
 

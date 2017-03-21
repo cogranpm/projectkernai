@@ -147,12 +147,14 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		ApplicationData.instance().loadEntityView(this);
 		this.disableEditControls();
 		
+		/* this doesn't work too well, should go into new mode instead
         if(this.model.getItems().size() > 0)
         {
         	this.model.setCurrentItem(this.model.getItems().get(0));
         	this.listViewer.setSelection(new StructuredSelection(this.model.getCurrentItem()));
         	this.listViewer.getTable().setFocus();
         }
+        */
 		onInit();
 	}
 	
@@ -358,7 +360,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	}
 	
 	@Override
-	public final void save() {
+	public void save() {
 		this.presenter.saveModel();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());

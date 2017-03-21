@@ -75,6 +75,7 @@ public class ImportDefinitionRepository extends BaseRepository<ImportDefinition>
 	
 	private DataConnection getDataConnection(String dataConnectionId)
 	{
+		if(dataConnectionId == null){return null;}
 		return this.dataConnectionRepository.get(dataConnectionId, DataConnection.class);
 	}
 	
@@ -89,7 +90,7 @@ public class ImportDefinitionRepository extends BaseRepository<ImportDefinition>
 	public void save(ImportDefinition entity) {
 		if(entity.getDataConnection() != null)
 		{
-			entity.setDataConnectionId(entity.getDataConnectionId());
+			entity.setDataConnectionId(entity.getDataConnection().getId());
 		}
 		super.save(entity);
 	}
