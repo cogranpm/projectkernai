@@ -176,6 +176,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	private void onNext()
 	{
 		/* if the connection works, save it */
+		this.btnNext.setEnabled(false);
 		if(!this.connectionView.isValid())
 		{
 			return;
@@ -194,6 +195,9 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		importWorker = new ImportWorker(connection);
 		importWorker.openConnection(this, this.getDisplay());
 		
+		
+		/* temp */
+		this.btnNext.setEnabled(true);
 		
 	}
 
