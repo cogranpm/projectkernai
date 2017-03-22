@@ -16,10 +16,15 @@ public class ImportTable extends BaseEntity {
 	private String databaseName;
 	private String importDefinitionId;
 	
-	public ImportTable(ImportDefinition parent)
+	public ImportTable()
 	{
 		super();
 		this.type = TYPE_NAME;
+	}
+	
+	public ImportTable(ImportDefinition parent)
+	{
+		this();
 		this.importDefinitionId = parent.getId();
 	}
 

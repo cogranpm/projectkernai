@@ -13,10 +13,14 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
@@ -31,12 +35,28 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	implements IImportWorkerClient{
 	
 	private DataConnectionInlineView connectionView;
-	private Button btnNext;
+	private ImportTableSelectionInlineView tableSelectionView;
+	private Composite connectionContainer;
+	private Composite tableSelectionContainer;
+	private Composite wizardContainer;
+	private StackLayout wizardLayout;
+	private Button btnGoSelectTable;
+	private Button btnGoConnection;
+	private Button btnGoSelectModel;
 	private ImportWorker importWorker;
 
 	public ImportDefinitionView(Composite parent, int style, Project parentEntity) {
 		super(parent, style, parentEntity);
-		
+		this.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				if (importWorker != null)
+				{
+					importWorker.closeConnection();
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -49,8 +69,9 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	protected void onInit() {
 		super.onInit();
-		/* lets go into new mode immediately */
-		this.add();
+		/* lets go into new mode immediately - is a no no, because when list changes
+		 * a whole heap of null ones get added */
+		//this.add();
 	}
 	
 	@Override
@@ -121,22 +142,50 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	protected void onSetupEditingContainer() {
 		super.onSetupEditingContainer();
-		connectionView = new DataConnectionInlineView(editMaster, SWT.NONE);
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, true).indent(0, 0).applyTo(connectionView);
-		btnNext = new Button(editMaster, SWT.PUSH);
-		btnNext.setText("Next");
-		btnNext.addSelectionListener(new SelectionListener() {
+		wizardContainer = new Composite(editMaster, SWT.NONE);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, true).indent(0, 0).applyTo(wizardContainer);
+		wizardLayout = new StackLayout();
+		wizardContainer.setLayout(wizardLayout);
+		connectionContainer = new Composite(wizardContainer, SWT.NONE);
+		connectionContainer.setLayout(viewHelper.getViewLayout(1));
+		connectionView = new DataConnectionInlineView(connectionContainer, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(connectionView);
+		
+		this.tableSelectionContainer = new Composite(wizardContainer, SWT.NONE);
+		this.tableSelectionContainer.setLayout(viewHelper.getViewLayout(1));
+		
+		wizardLayout.topControl = connectionContainer;
+		
+		btnGoSelectTable = new Button(connectionContainer, SWT.PUSH);
+		btnGoSelectTable.setText("Next");
+		btnGoSelectTable.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				onNext();
+				onGoSelectTable();
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		GridDataFactory.fillDefaults().span(2,1).align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnNext);
+		GridDataFactory.fillDefaults().span(2,1).align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoSelectTable);
+		
+		btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
+		btnGoConnection.setText("Back");
+		GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoConnection);
+		this.btnGoConnection.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				wizardLayout.topControl = connectionContainer;
+				wizardContainer.layout();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		
 	}
 	
@@ -173,12 +222,13 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		}
 	}
 	
-	private void onNext()
+	private void onGoSelectTable()
 	{
 		/* if the connection works, save it */
-		this.btnNext.setEnabled(false);
+		this.btnGoSelectTable.setEnabled(false);
 		if(!this.connectionView.isValid())
 		{
+			this.btnGoSelectTable.setEnabled(true);
 			return;
 		}
 		if((this.model.getDirty() || this.connectionView.getModel().getDirty()))
@@ -195,20 +245,30 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		importWorker = new ImportWorker(connection);
 		importWorker.openConnection(this, this.getDisplay());
 		
-		
-		/* temp */
-		this.btnNext.setEnabled(true);
+
 		
 	}
 
 	@Override
 	public void onConnectError() {
+		this.btnGoSelectTable.setEnabled(true);
 	}
 
 	@Override
 	public void onConnect() {
 		MessageDialog.openInformation(getShell(), "Complete", "Connection Complete");
-		importWorker.closeConnection();
+		//importWorker.closeConnection();
+		
+		if (this.tableSelectionView != null)
+		{
+			this.tableSelectionView = new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem());
+		}
+		this.wizardLayout.topControl = this.tableSelectionContainer;
+		this.wizardContainer.layout();
+		
+		
+		/* temp */
+		this.btnGoSelectTable.setEnabled(true);
 	}
 	
 	
