@@ -69,9 +69,9 @@ public class ImportWorker {
 		man.disconnect();
 	}
 	
-	public void getDatabases(Display display)
+	public void getDatabases(IImportWorkerClient client, Display display)
 	{
-		this.getDatabasesWorker(display).start();
+		this.getDatabasesWorker(client, display).start();
 	}
 	
 	private Thread getConnectionWorker(IImportWorkerClient client, Display display)
@@ -94,6 +94,26 @@ public class ImportWorker {
 		};
 	}
 	
+	private Thread getDatabasesWorker(IImportWorkerClient client, Display display)
+	{
+		return new Thread() {
+			@Override
+			public void run() {
+				List<DatabaseDefinition> databases = man.getImportEngine().getDatabases();
+				display.syncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						client.setDatabases(databases);
+					}
+				});
+			}
+			
+			
+		};
+	}
+	
+	/*
 	private Thread getDatabasesWorker(Display display)
 	{
 		return new Thread() {
@@ -145,12 +165,7 @@ public class ImportWorker {
 						 
 					 }
 					 
-					 /*
-					 for(UserDefinedTypeDefinition udt : database.getUserDefinedTypes())
-					 {
-						 System.out.println(udt.toString());
-					 }
-					 */
+					
 					
 				 }
 				 man.disconnect();
@@ -167,7 +182,7 @@ public class ImportWorker {
 		};
 	}
 
-
+	*/
 	
 
 

@@ -108,7 +108,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		}
 	}
 	
-	private void init()
+	protected void init()
 	{
 		this.viewHelper = new EntityViewHelper();
 		dividerMain = new SashForm(this, SWT.HORIZONTAL);
@@ -175,7 +175,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		ApplicationData.instance().unloadEntityView();
 	}
 	
-	protected final void listSelectionChangedHandler(SelectionChangedEvent event)
+	protected void listSelectionChangedHandler(SelectionChangedEvent event)
 	{
 		if(event.getSelection().isEmpty())
 		{
@@ -210,7 +210,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		
 	}
 	
-	protected final TableViewer getListViewer(Composite container)
+	protected TableViewer getListViewer(Composite container)
 	{
 		TableViewer listViewer = new TableViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		listTable = listViewer.getTable();
@@ -234,7 +234,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		
 	}
 	
-	protected final void setupEditingContainer()
+	protected void setupEditingContainer()
 	{
 		
 		editHeader = new Composite(editContainer, SWT.NONE);
@@ -260,7 +260,7 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		
 	}
 	
-	protected final void initDataBindings()
+	protected void initDataBindings()
 	{
 		ctx.dispose();
         contentProvider = new ObservableListContentProvider();

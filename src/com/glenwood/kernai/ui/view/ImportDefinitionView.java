@@ -20,11 +20,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Layout;
 
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
+import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
 import com.glenwood.kernai.ui.presenter.ImportDefinitionViewPresenter;
@@ -171,21 +171,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		});
 		GridDataFactory.fillDefaults().span(2,1).align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoSelectTable);
 		
-		btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
-		btnGoConnection.setText("Back");
-		GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoConnection);
-		this.btnGoConnection.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				wizardLayout.topControl = connectionContainer;
-				wizardContainer.layout();
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		
 		
 	}
 	
@@ -245,8 +231,6 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		importWorker = new ImportWorker(connection);
 		importWorker.openConnection(this, this.getDisplay());
 		
-
-		
 	}
 
 	@Override
@@ -256,19 +240,44 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 
 	@Override
 	public void onConnect() {
-		MessageDialog.openInformation(getShell(), "Complete", "Connection Complete");
+		//MessageDialog.openInformation(getShell(), "Complete", "Connection Complete");
 		//importWorker.closeConnection();
 		
-		if (this.tableSelectionView != null)
+		if (this.tableSelectionView == null)
 		{
 			this.tableSelectionView = new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem());
+			GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.tableSelectionView);
+			btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
+			btnGoConnection.setText("Back");
+			GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoConnection);
+			this.btnGoConnection.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					wizardLayout.topControl = connectionContainer;
+					wizardContainer.layout();
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+		}
+		else
+		{
+			//if view is already loaded, change the model
 		}
 		this.wizardLayout.topControl = this.tableSelectionContainer;
+		this.tableSelectionContainer.layout();
 		this.wizardContainer.layout();
-		
+		this.tableSelectionView.setupImportBindings(this.importWorker);
 		
 		/* temp */
 		this.btnGoSelectTable.setEnabled(true);
+	}
+
+	@Override
+	public void setDatabases(List<DatabaseDefinition> list) {
 	}
 	
 	
