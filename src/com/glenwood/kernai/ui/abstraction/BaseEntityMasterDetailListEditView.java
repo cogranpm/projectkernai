@@ -111,14 +111,8 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 	protected void init()
 	{
 		this.viewHelper = new EntityViewHelper();
-		dividerMain = new SashForm(this, SWT.HORIZONTAL);
-		listContainer = new Composite(dividerMain, SWT.NONE);
-		editContainer = new Composite(dividerMain, SWT.NONE);
-		editContainer.setLayout(viewHelper.getViewLayout(1, 0));
-		this.setDividerWeights();
-		this.listViewer = this.getListViewer(listContainer);
-		listViewer.addSelectionChangedListener(this.getListViewerSelectionChangedListener());
-		setupListColumns();
+		this.setupContainers();
+		this.setupListViewer();
 		setupEditingContainer();
 		this.setLayout(new FillLayout());
 		
@@ -135,16 +129,10 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 
 
 		});		
-		
-		/********************/
-		/* unique to master detail */
-		presenter.loadModels(this.model.getParent());
-		/********************/
-		initDataBindings();
-		setupDeleteBinding();
-		setupSaveBinding();
-		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
-		ApplicationData.instance().loadEntityView(this);
+		this.loadModels();
+		this.setupBindings();
+		this.setupToolbars();
+		this.setupApplicationData();
 		this.disableEditControls();
 		
 		/* this doesn't work too well, should go into new mode instead
@@ -167,6 +155,43 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		
 	}
 	
+	protected void setupContainers()
+	{
+		dividerMain = new SashForm(this, SWT.HORIZONTAL);
+		listContainer = new Composite(dividerMain, SWT.NONE);
+		editContainer = new Composite(dividerMain, SWT.NONE);
+		editContainer.setLayout(viewHelper.getViewLayout(1, 0));
+		this.setDividerWeights();
+	}
+	
+	protected void setupListViewer()
+	{
+		this.listViewer = this.getListViewer(listContainer);
+		listViewer.addSelectionChangedListener(this.getListViewerSelectionChangedListener());
+		setupListColumns();
+	}
+	
+	protected void loadModels()
+	{
+		presenter.loadModels(this.model.getParent());		
+	}
+	
+	protected void setupBindings()
+	{
+		initDataBindings();
+		setupDeleteBinding();
+		setupSaveBinding();
+	}
+	
+	protected void setupToolbars()
+	{
+		ApplicationData.instance().getAction(ApplicationData.NEW_ACTION_KEY).setEnabled(true);
+	}
+	
+	protected void setupApplicationData()
+	{
+		ApplicationData.instance().loadEntityView(this);
+	}
 	/**
 	 * 
 	 */
