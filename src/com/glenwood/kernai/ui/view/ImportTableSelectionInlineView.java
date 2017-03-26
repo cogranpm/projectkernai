@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Label;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
@@ -130,6 +131,9 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 				return item.getName();
 			}
 		});
+		
+		btnAddAll = new Button(editDetail, SWT.NONE);
+		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
 
 		
 		viewHelper.layoutEditLabel(lblDatabase);

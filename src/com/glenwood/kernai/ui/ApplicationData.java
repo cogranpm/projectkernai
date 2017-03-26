@@ -204,6 +204,17 @@ public class ApplicationData {
 	public static final String IMAGE_EDIT_DISABLED_SMALL = "editDisabledSmall";
 	public static final String IMAGE_SAVE_SMALL = "saveSmall";
 	public static final String IMAGE_SAVE_DISABLED_SMALL = "saveDisabledSmall";
+	public static final String IMAGE_ARROW_LEFT_DOUBLE_SMALL = "arrowLeftDoubleSmall";
+	public static final String IMAGE_ARROW_LEFT_SMALL = "arrowLeftSmall";
+	public static final String IMAGE_ARROW_RIGHT_DOUBLE_SMALL = "arrowRightDoubleSmall";
+	public static final String IMAGE_ARROW_RIGHT_SMALL = "arrowRightSmall";
+	public static final String IMAGE_GO_DOWN_SMALL = "goDownSmall";
+	public static final String IMAGE_GO_FIRST_VIEW_SMALL = "goFirstViewSmall";
+	public static final String IMAGE_GO_LAST_VIEW_SMALL = "goLastViewSmall";
+	public static final String IMAGE_GO_NEXT_SMALL = "goNextSmall";
+	public static final String IMAGE_GO_PREVIOUS_SMALL = "goPreviousSmall";
+	public static final String IMAGE_GO_UP_SMALL = "goUpSmall";
+	
 	
 	//toolbar managers
 	public static final String TOOLBAR_MANAGER_PROJECT = "project";
@@ -272,6 +283,19 @@ public class ApplicationData {
 		this.imageRegistry.put(IMAGE_EDIT_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Edit_grey_16x.png")));
 		this.imageRegistry.put(IMAGE_SAVE_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
 		this.imageRegistry.put(IMAGE_SAVE_DISABLED_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "Save_16x.png")));
+		
+		/* arrows */
+		this.imageRegistry.put(IMAGE_ARROW_LEFT_DOUBLE_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "arrow-left-double.png")));
+		this.imageRegistry.put(IMAGE_ARROW_LEFT_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "arrow-left.png")));
+		this.imageRegistry.put(IMAGE_ARROW_RIGHT_DOUBLE_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "arrow-right-double.png")));
+		this.imageRegistry.put(IMAGE_ARROW_RIGHT_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "arrow-right.png")));
+		
+		this.imageRegistry.put(IMAGE_GO_DOWN_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-down.png")));
+		this.imageRegistry.put(IMAGE_GO_FIRST_VIEW_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-first-view.png")));
+		this.imageRegistry.put(IMAGE_GO_LAST_VIEW_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-last-view.png")));
+		this.imageRegistry.put(IMAGE_GO_NEXT_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-next.png")));
+		this.imageRegistry.put(IMAGE_GO_PREVIOUS_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-previous.png")));
+		this.imageRegistry.put(IMAGE_GO_UP_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-up.png")));
 
 	}
 	

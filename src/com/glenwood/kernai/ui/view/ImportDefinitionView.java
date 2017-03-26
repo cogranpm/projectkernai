@@ -1,5 +1,7 @@
 package com.glenwood.kernai.ui.view;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -58,6 +60,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			}
 		});
 	}
+	
+	
 	
 	@Override
 	protected void setupModelAndPresenter(Project parentEntity) {
@@ -192,6 +196,13 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		if(connectionView != null)
 		{
 			this.connectionView.presenter.addModel();
+			this.connectionView.getModel().getCurrentItem().addPropertyChangeListener(new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					presenter.modelChanged();
+				}
+			});
 		}
 	}
 	
@@ -206,6 +217,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 				this.connectionView.getPresenter().loadModel(dc);
 			}
 		}
+	}
+	
+	public DataConnectionInlineView getConnectionView()
+	{
+		return this.connectionView;
 	}
 	
 	private void onGoSelectTable()
@@ -232,6 +248,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		importWorker.openConnection(this, this.getDisplay());
 		
 	}
+	
+	
 
 	@Override
 	public void onConnectError() {

@@ -92,6 +92,10 @@ public class ImportDefinitionRepository extends BaseRepository<ImportDefinition>
 		{
 			entity.setDataConnectionId(entity.getDataConnection().getId());
 		}
+		else
+		{
+			throw new IllegalArgumentException("ImportDefinition could not be saved, DataConnection was null");
+		}
 		super.save(entity);
 	}
 }

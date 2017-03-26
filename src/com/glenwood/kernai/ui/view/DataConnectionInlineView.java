@@ -261,25 +261,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		this.viewHelper.layoutEditLabel(lblIsExpress);
 		this.viewHelper.layoutEditEditor(chkIsExpress);
 		
-		/*
-		Button btnCrap = new Button(editMaster, SWT.NONE);
-		btnCrap.setText("Save");
-		btnCrap.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				presenter.saveModel();
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		GridDataFactory.fillDefaults().applyTo(btnCrap);
-		*/
+
 	}
 	
 	protected final void initDataBindings()
@@ -433,6 +415,7 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 
 	@Override
 	public void save() {
+		this.presenter.saveModel();
 	}
 
 	@Override
