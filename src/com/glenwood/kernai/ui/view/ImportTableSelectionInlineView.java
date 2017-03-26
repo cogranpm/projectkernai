@@ -3,9 +3,6 @@ package com.glenwood.kernai.ui.view;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -13,22 +10,16 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.ToolBar;
 
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
-import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListModalPresenter;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
-import com.glenwood.kernai.ui.abstraction.IMasterDetailViewModel;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 import com.glenwood.kernai.ui.viewmodel.ImportTableViewModel;
@@ -45,6 +36,16 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	
 	private Label lblDatabase;
 	private ComboViewer cboDatabase;
+	private CLabel lblTableSource;
+	private CLabel lblTableSelection;
+	private TableViewer listTableSource;
+	private TableViewer listTableSelection;
+	private Button btnAddAll;
+	private Button btnAddSelected;
+	private Button btnRemoveAll;
+	private Button btnRemoveSelected;
+
+	
 	private ImportWorker importWorker;
 	
 	private ImportDefinition parentEntity;
@@ -97,27 +98,29 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		editContainer.setLayout(viewHelper.getViewLayout(1, 0));
 		
 		editHeader = new Composite(editContainer, SWT.NONE);
-		editHeader.setLayout(viewHelper.getViewLayout(1, 0));
+		editHeader.setLayout(viewHelper.getViewLayout(2, 0));
 		lblEditHeader = new CLabel(editHeader, SWT.NONE);
 		lblEditHeader.setText("");
-		GridDataFactory.fillDefaults().applyTo(lblEditHeader);
-		GridDataFactory.fillDefaults().applyTo(editHeader);
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(lblEditHeader);
+		//GridDataFactory.fillDefaults().applyTo(editHeader);
+		viewHelper.setViewLayoutData(editHeader, true, true);
 		
 		
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
 		GridDataFactory.fillDefaults().applyTo(editMaster);
+//		viewHelper.setViewLayoutData(editMaster, true, true);
 		
-		viewHelper.setViewLayoutData(editMaster, true, true);
 		editDetail = new Composite(editContainer, SWT.NONE);
-		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
-		editDetail.setLayout(new FillLayout());
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(editDetail);
+		editDetail.setLayout(viewHelper.getViewLayout(3));
+		
 		errorLabel = new CLabel(editMaster, SWT.NONE);
 		viewHelper.setViewLayoutData(errorLabel, 2);
 		
 		
-		this.lblDatabase = viewHelper.getEditLabel(editMaster, "Database");
-		this.cboDatabase = new ComboViewer(editMaster, SWT.NONE);
+		this.lblDatabase = viewHelper.getEditLabel(editHeader, "Database");
+		this.cboDatabase = new ComboViewer(editHeader, SWT.NONE);
 		this.cboDatabase.setContentProvider(ArrayContentProvider.getInstance());
 		this.cboDatabase.setLabelProvider(new LabelProvider() {
 			@Override
@@ -161,6 +164,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 
 	@Override
 	public void save() {
+		this.presenter.saveModel();
 	}
 
 
