@@ -8,7 +8,6 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -28,13 +27,15 @@ import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
+import com.glenwood.kernai.ui.abstraction.IConnectionContainer;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
+import com.glenwood.kernai.ui.presenter.DataConnectionViewPresenter;
 import com.glenwood.kernai.ui.presenter.ImportDefinitionViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ImportDefinitionViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project>
-	implements IImportWorkerClient{
+	implements IImportWorkerClient, IConnectionContainer{
 	
 	private DataConnectionInlineView connectionView;
 	private ImportTableSelectionInlineView tableSelectionView;
@@ -152,7 +153,14 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		wizardContainer.setLayout(wizardLayout);
 		connectionContainer = new Composite(wizardContainer, SWT.NONE);
 		connectionContainer.setLayout(viewHelper.getViewLayout(1));
+		
 		connectionView = new DataConnectionInlineView(connectionContainer, SWT.NONE);
+		DataConnectionViewPresenter connectionViewPresenter = (DataConnectionViewPresenter)connectionView.getPresenter();
+		if (connectionViewPresenter != null)
+		{
+			connectionViewPresenter.addConnectionContainer(this);
+		}
+		
 		GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(connectionView);
 		
 		this.tableSelectionContainer = new Composite(wizardContainer, SWT.NONE);
@@ -296,6 +304,14 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 
 	@Override
 	public void setDatabases(List<DatabaseDefinition> list) {
+	}
+
+
+
+	@Override
+	public void OnModelChanged(DataConnection dataConnection) {
+		this.model.setDirty(true);
+		
 	}
 	
 	

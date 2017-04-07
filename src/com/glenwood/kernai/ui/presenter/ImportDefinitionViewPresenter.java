@@ -33,6 +33,8 @@ public class ImportDefinitionViewPresenter extends BaseEntityMasterDetailListEdi
 	@Override
 	public void loadModel(ImportDefinition entity) {
 		super.loadModel(entity);
+		
+		/*
 		ImportDefinitionView aView = (ImportDefinitionView)this.view;
 		if(aView.getConnectionView() != null && aView.getConnectionView().getModel() != null && aView.getConnectionView().getModel().getCurrentItem() != null)
 		{
@@ -45,6 +47,7 @@ public class ImportDefinitionViewPresenter extends BaseEntityMasterDetailListEdi
 				}
 			});
 		}
+		*/
 	}
 
 }
