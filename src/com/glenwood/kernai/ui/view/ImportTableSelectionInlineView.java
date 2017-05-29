@@ -11,8 +11,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import com.glenwood.kernai.data.entity.ImportDefinition;
@@ -114,7 +117,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		
 		editDetail = new Composite(editContainer, SWT.NONE);
 		GridDataFactory.fillDefaults().span(2, 1).applyTo(editDetail);
-		editDetail.setLayout(viewHelper.getViewLayout(3));
+		//editDetail.setLayout(viewHelper.getViewLayout(3));
+		editDetail.setLayout(new FillLayout());
 		
 		errorLabel = new CLabel(editMaster, SWT.NONE);
 		viewHelper.setViewLayoutData(errorLabel, 2);
@@ -132,9 +136,27 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 			}
 		});
 		
-		btnAddAll = new Button(editDetail, SWT.NONE);
-		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
-
+		Group grp = new Group(editDetail, SWT.NONE);
+		grp.setLayout(new GridLayout(3, true));
+		Composite columnSource = new Composite(grp, SWT.NONE);
+		Composite columnButtons = new Composite(grp, SWT.NONE);
+		Composite columnSelection = new Composite(grp, SWT.NONE);
+		columnSource.setLayout(new FillLayout());
+		columnButtons.setLayout(new RowLayout(SWT.VERTICAL));
+		columnSelection.setLayout(new FillLayout());
+		btnAddAll = new Button(columnButtons, SWT.PUSH);
+		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_LAST_VIEW_SMALL));
+		btnAddSelected = new Button(columnButtons, SWT.PUSH);
+		btnAddSelected.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_NEXT_SMALL));
+		btnRemoveSelected = new Button(columnButtons, SWT.PUSH);
+		btnRemoveSelected.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_PREVIOUS_SMALL));
+		btnRemoveAll = new Button(columnButtons, SWT.PUSH);
+		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
+		/*GridDataFactory.fillDefaults().applyTo(btnAddAll);
+		GridDataFactory.fillDefaults().applyTo(btnAddSelected);
+		GridDataFactory.fillDefaults().applyTo(btnRemoveSelected);
+		GridDataFactory.fillDefaults().applyTo(btnRemoveAll);
+		*/
 		
 		viewHelper.layoutEditLabel(lblDatabase);
 		viewHelper.layoutComboViewer(cboDatabase);
