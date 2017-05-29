@@ -144,6 +144,11 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		columnSource.setLayout(new FillLayout());
 		columnButtons.setLayout(new RowLayout(SWT.VERTICAL));
 		columnSelection.setLayout(new FillLayout());
+		
+		listTableSource = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		
+		
+
 		btnAddAll = new Button(columnButtons, SWT.PUSH);
 		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_LAST_VIEW_SMALL));
 		btnAddSelected = new Button(columnButtons, SWT.PUSH);
@@ -152,6 +157,10 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		btnRemoveSelected.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_PREVIOUS_SMALL));
 		btnRemoveAll = new Button(columnButtons, SWT.PUSH);
 		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
+		
+		listTableSelection  = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		
+		
 		/*GridDataFactory.fillDefaults().applyTo(btnAddAll);
 		GridDataFactory.fillDefaults().applyTo(btnAddSelected);
 		GridDataFactory.fillDefaults().applyTo(btnRemoveSelected);
