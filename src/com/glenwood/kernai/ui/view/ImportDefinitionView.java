@@ -149,11 +149,12 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		super.onSetupEditingContainer();
 		wizardContainer = new Composite(editMaster, SWT.NONE);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, true).indent(0, 0).applyTo(wizardContainer);
+		
 		wizardLayout = new StackLayout();
 		wizardContainer.setLayout(wizardLayout);
 		connectionContainer = new Composite(wizardContainer, SWT.NONE);
 		connectionContainer.setLayout(viewHelper.getViewLayout(1));
-		
+
 		connectionView = new DataConnectionInlineView(connectionContainer, SWT.NONE);
 		DataConnectionViewPresenter connectionViewPresenter = (DataConnectionViewPresenter)connectionView.getPresenter();
 		if (connectionViewPresenter != null)
@@ -165,6 +166,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		
 		this.tableSelectionContainer = new Composite(wizardContainer, SWT.NONE);
 		this.tableSelectionContainer.setLayout(viewHelper.getViewLayout(1));
+		this.viewHelper.setViewLayoutData(this.tableSelectionContainer, true, true);
 		
 		wizardLayout.topControl = connectionContainer;
 		
@@ -184,7 +186,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		GridDataFactory.fillDefaults().span(2,1).align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoSelectTable);
 		
 		
-		
+		//editMaster.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_DARK_MAGENTA));
 	}
 	
 	@Override

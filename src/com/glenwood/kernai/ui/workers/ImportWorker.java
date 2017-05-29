@@ -1,3 +1,5 @@
+/* note: this is wrong, don't use threads directly, use executors and tasks instead */
+
 package com.glenwood.kernai.ui.workers;
 
 import java.util.List;

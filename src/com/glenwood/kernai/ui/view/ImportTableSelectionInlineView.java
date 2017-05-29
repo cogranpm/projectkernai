@@ -106,22 +106,19 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		lblEditHeader = new CLabel(editHeader, SWT.NONE);
 		lblEditHeader.setText("");
 		GridDataFactory.fillDefaults().span(2, 1).applyTo(lblEditHeader);
-		//GridDataFactory.fillDefaults().applyTo(editHeader);
-		viewHelper.setViewLayoutData(editHeader, true, true);
-		
-		
+		viewHelper.setViewLayoutData(editHeader, true, false);
+		/*
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
-		GridDataFactory.fillDefaults().applyTo(editMaster);
-//		viewHelper.setViewLayoutData(editMaster, true, true);
+		viewHelper.setViewLayoutData(editMaster, true, true);
+		*/
 		
 		editDetail = new Composite(editContainer, SWT.NONE);
-		GridDataFactory.fillDefaults().span(2, 1).applyTo(editDetail);
-		//editDetail.setLayout(viewHelper.getViewLayout(3));
+		viewHelper.setViewLayoutData(editDetail, true, true);
 		editDetail.setLayout(new FillLayout());
 		
-		errorLabel = new CLabel(editMaster, SWT.NONE);
-		viewHelper.setViewLayoutData(errorLabel, 2);
+		//errorLabel = new CLabel(editMaster, SWT.NONE);
+		//viewHelper.setViewLayoutData(errorLabel, 2);
 		
 		
 		this.lblDatabase = viewHelper.getEditLabel(editHeader, "Database");
@@ -136,6 +133,9 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 			}
 		});
 		
+		viewHelper.layoutEditLabel(lblDatabase);
+		viewHelper.layoutComboViewer(cboDatabase);
+		
 		Group grp = new Group(editDetail, SWT.NONE);
 		grp.setLayout(new GridLayout(3, true));
 		Composite columnSource = new Composite(grp, SWT.NONE);
@@ -144,10 +144,11 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		columnSource.setLayout(new FillLayout());
 		columnButtons.setLayout(new RowLayout(SWT.VERTICAL));
 		columnSelection.setLayout(new FillLayout());
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(columnSource);
+		GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(columnButtons);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(columnSelection);
 		
 		listTableSource = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		
-		
 
 		btnAddAll = new Button(columnButtons, SWT.PUSH);
 		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_LAST_VIEW_SMALL));
@@ -158,18 +159,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		btnRemoveAll = new Button(columnButtons, SWT.PUSH);
 		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
 		
-		listTableSelection  = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		
-		
-		/*GridDataFactory.fillDefaults().applyTo(btnAddAll);
-		GridDataFactory.fillDefaults().applyTo(btnAddSelected);
-		GridDataFactory.fillDefaults().applyTo(btnRemoveSelected);
-		GridDataFactory.fillDefaults().applyTo(btnRemoveAll);
-		*/
-		
-		viewHelper.layoutEditLabel(lblDatabase);
-		viewHelper.layoutComboViewer(cboDatabase);
-		
+		listTableSelection  = new TableViewer(columnSelection, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+
 		
 	}
 
