@@ -3,17 +3,14 @@
 package com.glenwood.kernai.ui.workers;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.entity.DataConnection;
-import com.glenwood.kernai.data.modelimport.ColumnDefinition;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
-import com.glenwood.kernai.data.modelimport.ForeignKeyDefinition;
-import com.glenwood.kernai.data.modelimport.PrimaryKeyDefinition;
-import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
@@ -55,8 +52,10 @@ public class ImportWorker {
 	
 	public void openConnection(IImportWorkerClient client, Display display)
 	{
-		this.getConnectionWorker(client, display).start();
-		
+		//this.getConnectionWorker(client, display).start();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.execute(this.getConnectionWorker(client, display));
+		executor.shutdown();
 		/*
 		man = new JDBCManager(connection);
 		man.connect();
@@ -72,13 +71,16 @@ public class ImportWorker {
 	}
 	
 	public void getDatabases(IImportWorkerClient client, Display display)
-	{
-		this.getDatabasesWorker(client, display).start();
+	{	
+		ExecutorService executor = Executors.newCachedThreadPool();
+		executor.execute(this.getDatabasesWorker(client, display));
+		executor.shutdown();
+		//this.getDatabasesWorker(client, display).start();
 	}
 	
-	private Thread getConnectionWorker(IImportWorkerClient client, Display display)
+	private Runnable getConnectionWorker(IImportWorkerClient client, Display display)
 	{
-		return new Thread() {
+		Runnable connector = new Runnable() {
 			@Override
 			public void run() {
 				man = new JDBCManager(connection);
@@ -94,8 +96,27 @@ public class ImportWorker {
 				});
 			}
 		};
+		return connector;
 	}
 	
+	
+	private Runnable getDatabasesWorker(IImportWorkerClient client, Display display)
+	{
+		return new Runnable() {
+			@Override
+			public void run() {
+				List<DatabaseDefinition> databases = man.getImportEngine().getDatabases();
+				display.syncExec(new Runnable() {
+					@Override
+					public void run() {
+						client.setDatabases(databases);
+					}
+				});
+			}
+		};
+	}
+	
+	/*
 	private Thread getDatabasesWorker(IImportWorkerClient client, Display display)
 	{
 		return new Thread() {
@@ -115,7 +136,7 @@ public class ImportWorker {
 		};
 	}
 	
-	/*
+	
 	private Thread getDatabasesWorker(Display display)
 	{
 		return new Thread() {

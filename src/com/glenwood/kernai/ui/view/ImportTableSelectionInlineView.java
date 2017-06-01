@@ -93,7 +93,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	
 	private void initDataBindings()
 	{
-		
+		/* databindings for the lists, each a list of tableDefinition objects */
 	}
 	
 
