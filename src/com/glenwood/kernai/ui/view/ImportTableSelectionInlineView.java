@@ -1,16 +1,23 @@
 package com.glenwood.kernai.ui.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.FillLayout;
@@ -47,6 +54,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private CLabel lblTableSource;
 	private CLabel lblTableSelection;
 	private TableViewer listTableSource;
+
 	private TableViewer listTableSelection;
 	private Button btnAddAll;
 	private Button btnAddSelected;
@@ -54,19 +62,24 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private Button btnRemoveSelected;
 
 	
+	private WritableList<TableDefinition> tableSourceListWrapper;
+	private DataBindingContext ctx;
+	private List<TableDefinition> tableSourceList;
+	
 	private ImportWorker importWorker;
 	
 	private ImportDefinition parentEntity;
 	private ImportTableViewModel model;
 	private ImportTableViewPresenter presenter;
 	
-	private DataBindingContext ctx;
+
 	private EntityViewHelper viewHelper;
 	
 
 	public ImportTableSelectionInlineView(Composite parent, int style, ImportDefinition parentEntity) {
 		super(parent, style);
 		this.parentEntity = parentEntity;
+		this.ctx = new DataBindingContext();
 		this.init();
 	}
 	
@@ -74,8 +87,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	{
 		this.viewHelper = new EntityViewHelper();
 		this.setupModelAndPresenter(this.parentEntity);
-		this.initDataBindings();
 		this.setupEditingContainer();
+		this.initDataBindings();
 		this.setLayout(new FillLayout());
 	}
 	
@@ -98,6 +111,10 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private void initDataBindings()
 	{
 		/* databindings for the lists, each a list of tableDefinition objects */
+		this.ctx.dispose();
+		this.tableSourceList = new ArrayList<TableDefinition>();
+		this.tableSourceListWrapper = new WritableList<>(this.tableSourceList, TableDefinition.class);
+		ViewerSupport.bind(this.listTableSource, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
 	}
 	
 
@@ -167,6 +184,14 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(columnSelection);
 		
 		listTableSource = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		listTableSource.getTable().setHeaderVisible(true);
+		listTableSource.getTable().setLinesVisible(true);
+		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listTableSource, "Name");
+		TableViewerColumn databaseColumn = this.viewHelper.getListColumn(listTableSource, "Database");
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		columnSource.setLayout(tableLayout);
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(databaseColumn.getColumn(), new ColumnWeightData(100));
 
 		btnAddAll = new Button(columnButtons, SWT.PUSH);
 		btnAddAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_LAST_VIEW_SMALL));
@@ -178,12 +203,21 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
 		
 		listTableSelection  = new TableViewer(columnSelection, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		listTableSource.getTable().setHeaderVisible(true);
+		listTableSource.getTable().setLinesVisible(true);
+		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listTableSource, "Name");
+		TableViewerColumn databaseColumn = this.viewHelper.getListColumn(listTableSource, "Database");
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		columnSource.setLayout(tableLayout);
+		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(databaseColumn.getColumn(), new ColumnWeightData(100));
 
 		
 	}
 	
 	public void onSelectDatabase(DatabaseDefinition database)
 	{
+		this.tableSourceListWrapper.clear();
 		importWorker.getTables(this, this.getDisplay(), database);
 	}
 
@@ -202,10 +236,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	
 	@Override
 	public void setTables(List<TableDefinition> list) {
-		for(TableDefinition table : list)
-		{
-			System.out.println(table.getName());
-		}
+		this.tableSourceListWrapper.addAll(list);
 	}
 
 
