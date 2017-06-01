@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
@@ -53,7 +54,7 @@ public class ImportWorker {
 	public void openConnection(IImportWorkerClient client, Display display)
 	{
 		//this.getConnectionWorker(client, display).start();
-		ExecutorService executor = Executors.newSingleThreadExecutor();
+		ExecutorService executor = Executors.newCachedThreadPool();
 		executor.execute(this.getConnectionWorker(client, display));
 		executor.shutdown();
 		/*
@@ -76,6 +77,13 @@ public class ImportWorker {
 		executor.execute(this.getDatabasesWorker(client, display));
 		executor.shutdown();
 		//this.getDatabasesWorker(client, display).start();
+	}
+	
+	public void getTables(IImportWorkerClient client, Display display, DatabaseDefinition database)
+	{
+		ExecutorService executor = Executors.newCachedThreadPool();
+		executor.execute(this.getTablesWorker(client, display, database));
+		executor.shutdown();
 	}
 	
 	private Runnable getConnectionWorker(IImportWorkerClient client, Display display)
@@ -110,6 +118,25 @@ public class ImportWorker {
 					@Override
 					public void run() {
 						client.setDatabases(databases);
+					}
+				});
+			}
+		};
+	}
+	
+	private Runnable getTablesWorker(IImportWorkerClient client, Display display, DatabaseDefinition database)
+	{
+		return new Runnable() {
+			@Override
+			public void run() {
+				
+				List<TableDefinition> tables = man.getImportEngine().getTables(database, true, false);
+				display.syncExec(new Runnable() {
+					@Override
+					public void run() {
+						
+						client.setTables(tables);
+						
 					}
 				});
 			}

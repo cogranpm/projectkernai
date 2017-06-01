@@ -6,7 +6,10 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -21,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
@@ -132,6 +136,20 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 				return item.getName();
 			}
 		});
+		this.cboDatabase.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				if(selection != null)
+				{
+					DatabaseDefinition database =  (DatabaseDefinition) selection.getFirstElement();
+					onSelectDatabase(database);
+					
+				}
+				
+			}
+		});
 		
 		viewHelper.layoutEditLabel(lblDatabase);
 		viewHelper.layoutComboViewer(cboDatabase);
@@ -163,6 +181,11 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 
 		
 	}
+	
+	public void onSelectDatabase(DatabaseDefinition database)
+	{
+		importWorker.getTables(this, this.getDisplay(), database);
+	}
 
 	@Override
 	public void onConnectError() {
@@ -175,6 +198,14 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	@Override
 	public void setDatabases(List<DatabaseDefinition> list) {
 		this.cboDatabase.setInput(list);
+	}
+	
+	@Override
+	public void setTables(List<TableDefinition> list) {
+		for(TableDefinition table : list)
+		{
+			System.out.println(table.getName());
+		}
 	}
 
 

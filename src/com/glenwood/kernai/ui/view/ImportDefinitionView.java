@@ -26,6 +26,7 @@ import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
+import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IConnectionContainer;
 import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
@@ -307,7 +308,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	public void setDatabases(List<DatabaseDefinition> list) {
 	}
+	
+	@Override
+	public void setTables(List<TableDefinition> list) {
 
+	}
 
 
 	@Override
