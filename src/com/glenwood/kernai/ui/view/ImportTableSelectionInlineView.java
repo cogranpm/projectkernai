@@ -172,7 +172,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		viewHelper.layoutComboViewer(cboDatabase);
 		
 		Group grp = new Group(editDetail, SWT.NONE);
-		grp.setLayout(new GridLayout(3, true));
+		grp.setLayout(new GridLayout(3, false));
 		Composite columnSource = new Composite(grp, SWT.NONE);
 		Composite columnButtons = new Composite(grp, SWT.NONE);
 		Composite columnSelection = new Composite(grp, SWT.NONE);
@@ -203,14 +203,14 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
 		
 		listTableSelection  = new TableViewer(columnSelection, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		listTableSource.getTable().setHeaderVisible(true);
-		listTableSource.getTable().setLinesVisible(true);
-		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listTableSource, "Name");
-		TableViewerColumn databaseColumn = this.viewHelper.getListColumn(listTableSource, "Database");
-		TableColumnLayout tableLayout = new TableColumnLayout();
-		columnSource.setLayout(tableLayout);
-		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
-		tableLayout.setColumnData(databaseColumn.getColumn(), new ColumnWeightData(100));
+		listTableSelection.getTable().setHeaderVisible(true);
+		listTableSelection.getTable().setLinesVisible(true);
+		TableViewerColumn nameSelectionColumn = this.viewHelper.getListColumn(listTableSelection, "Name");
+		TableViewerColumn databaseSelectionColumn = this.viewHelper.getListColumn(listTableSelection, "Database");
+		TableColumnLayout tableSelectionLayout = new TableColumnLayout();
+		columnSelection.setLayout(tableSelectionLayout);
+		tableSelectionLayout.setColumnData(nameSelectionColumn.getColumn(), new ColumnWeightData(100));
+		tableSelectionLayout.setColumnData(databaseSelectionColumn.getColumn(), new ColumnWeightData(100));
 
 		
 	}

@@ -1,5 +1,7 @@
 package com.glenwood.kernai.data.modelimport;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,31 @@ public class TableDefinition {
 	
 	public List<ForeignKeyDefinition> getForeignKeys() {
 		return foreignKeys;
+	}
+	
+	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+	
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+	{
+		changeSupport.addPropertyChangeListener(listener);
+	}
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+	{
+		changeSupport.removePropertyChangeListener(listener);
+	}
+	
+	public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
+	{
+		changeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
 
 	@Override
