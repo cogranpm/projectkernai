@@ -1,12 +1,18 @@
 package com.glenwood.kernai.ui.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -18,8 +24,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -115,6 +125,20 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceList = new ArrayList<TableDefinition>();
 		this.tableSourceListWrapper = new WritableList<>(this.tableSourceList, TableDefinition.class);
 		ViewerSupport.bind(this.listTableSource, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
+		ViewerSupport.bind(this.listTableSelection, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
+		IObservableValue<TableViewer> listSourceObservable = ViewersObservables.observeSingleSelection(listTableSource);
+		IObservableValue<Button> addSelectedButtonObservable = WidgetProperties.enabled().observe(this.btnAddSelected);
+		IObservableValue<TableViewer> listSelectedObservable = ViewersObservables.observeSingleSelection(listTableSelection);
+		IObservableValue<Button> removeSelectedButtonObservable = WidgetProperties.enabled().observe(this.btnRemoveSelected);
+        UpdateValueStrategy singleSelectionToBooleanConverter = new UpdateValueStrategy(){
+        	@Override
+        	protected IStatus doSet(IObservableValue observableValue, Object value) 
+        	{
+        		return super.doSet(observableValue, value == null ? Boolean.FALSE : Boolean.TRUE);
+        	};
+        };
+		ctx.bindValue(addSelectedButtonObservable, listSourceObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
+		ctx.bindValue(removeSelectedButtonObservable, listSelectedObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 	}
 	
 
@@ -213,6 +237,105 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		tableSelectionLayout.setColumnData(databaseSelectionColumn.getColumn(), new ColumnWeightData(100));
 
 		/* note, use list filters on TableDefinition selected field to handle dual list */
+		listTableSource.setFilters(this.sourceFilter);
+		listTableSelection.setFilters(this.selectedFilter);
+		
+		btnAddSelected.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				addSelectedTable();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				addSelectedTable();
+			}
+		});
+		
+		btnRemoveSelected.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				removeSelectedTable();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				removeSelectedTable();
+				
+			}
+		});
+		
+		btnAddAll.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				addAllSelectedTable();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				addAllSelectedTable();
+				
+			}
+		});
+		
+		btnRemoveAll.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				removeAllSelectedTable();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				removeAllSelectedTable();
+			}
+		});
+	}
+	
+	private void addSelectedTable()
+	{
+		this.processSelection(listTableSource, true);
+	}
+	
+	private void addAllSelectedTable()
+	{
+		this.tableSourceListWrapper.forEach(a -> a.setSelected(true));
+		this.listTableSelection.refresh();
+		this.listTableSource.refresh();
+	}
+	
+	private void removeSelectedTable()
+	{
+		this.processSelection(listTableSelection, false);
+	}
+	
+	private void removeAllSelectedTable()
+	{
+		this.tableSourceListWrapper.forEach(a -> a.setSelected(false));
+		this.listTableSelection.refresh();
+		this.listTableSource.refresh();
+	}
+	
+	private void processSelection(TableViewer viewer, boolean isSelected)
+	{
+		IStructuredSelection selection = (IStructuredSelection)viewer.getStructuredSelection();
+		if(selection != null)
+		{
+			Iterator<IStructuredSelection> iterator = selection.iterator();
+			while(iterator.hasNext())
+			{
+				TableDefinition tableDefinition = (TableDefinition)iterator.next();
+				tableDefinition.setSelected(isSelected);
+
+			}
+			this.listTableSelection.refresh();
+			this.listTableSource.refresh();
+		}	
 	}
 	
 	public void onSelectDatabase(DatabaseDefinition database)
@@ -271,4 +394,21 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	}
 
 	
+
+	ViewerFilter sourceFilter = new ViewerFilter() {
+		
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			TableDefinition tableDefinition = (TableDefinition)element;
+			return !tableDefinition.getSelected();
+		}
+	};
+	
+	ViewerFilter selectedFilter = new ViewerFilter(){
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			TableDefinition tableDefinition = (TableDefinition)element;
+			return tableDefinition.getSelected();
+		}
+	};
 }
