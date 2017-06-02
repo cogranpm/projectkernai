@@ -183,7 +183,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(columnButtons);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(columnSelection);
 		
-		listTableSource = new TableViewer(columnSource, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		listTableSource = new TableViewer(columnSource, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		listTableSource.getTable().setHeaderVisible(true);
 		listTableSource.getTable().setLinesVisible(true);
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listTableSource, "Name");
@@ -202,7 +202,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		btnRemoveAll = new Button(columnButtons, SWT.PUSH);
 		btnRemoveAll.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_FIRST_VIEW_SMALL));
 		
-		listTableSelection  = new TableViewer(columnSelection, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		listTableSelection  = new TableViewer(columnSelection, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		listTableSelection.getTable().setHeaderVisible(true);
 		listTableSelection.getTable().setLinesVisible(true);
 		TableViewerColumn nameSelectionColumn = this.viewHelper.getListColumn(listTableSelection, "Name");

@@ -14,14 +14,16 @@ public class TableDefinition {
 	private final DatabaseDefinition database;
 	private final List<PrimaryKeyDefinition> primaryKeys;
 	private final List<ForeignKeyDefinition> foreignKeys;
+	private boolean selected;
 
-	public TableDefinition(String name, DatabaseDefinition database)
+	public TableDefinition(String name, DatabaseDefinition database, boolean selected)
 	{
 		this.name = name;
 		this.columns = new ArrayList<ColumnDefinition>();
 		this.primaryKeys = new ArrayList<PrimaryKeyDefinition>();
 		this.foreignKeys = new ArrayList<ForeignKeyDefinition>();
 		this.database = database;
+		this.selected = selected;
 	}
 
 	public String getName() {
@@ -42,7 +44,17 @@ public class TableDefinition {
 		return primaryKeys;
 	}
 
+	public boolean getSelected()
+	{
+		return this.selected;
+	}
 	
+	public void setSelected(boolean selected)
+	{
+		boolean oldValue = this.selected;
+		this.selected = selected;
+		this.firePropertyChange("selected", oldValue, this.selected);
+	}
 	
 	
 	public List<ForeignKeyDefinition> getForeignKeys() {

@@ -138,7 +138,7 @@ public class ImportEngineBase implements IImportEngine{
 				String name = this.getTrimmedColumn(results, COLUMN_NAME_TABLE_NAME);
 				if(name != null)
 				{
-					TableDefinition table = new TableDefinition(name, database);
+					TableDefinition table = new TableDefinition(name, database, false);
 					database.getTables().add(table);
 					this.getPrimaryKeys(table);
 					this.getForeignKeys(table);
@@ -188,7 +188,7 @@ public class ImportEngineBase implements IImportEngine{
 					String name = this.getTrimmedColumn(results, "object_name");
 					if(name != null)
 					{
-						TableDefinition table = new TableDefinition(name, database);
+						TableDefinition table = new TableDefinition(name, database, false);
 						database.getTables().add(table);
 						this.getPrimaryKeys(table);
 						this.getForeignKeys(table);
