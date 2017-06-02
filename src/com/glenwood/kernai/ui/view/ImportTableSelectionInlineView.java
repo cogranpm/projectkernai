@@ -212,7 +212,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		tableSelectionLayout.setColumnData(nameSelectionColumn.getColumn(), new ColumnWeightData(100));
 		tableSelectionLayout.setColumnData(databaseSelectionColumn.getColumn(), new ColumnWeightData(100));
 
-		
+		/* note, use list filters on TableDefinition selected field to handle dual list */
 	}
 	
 	public void onSelectDatabase(DatabaseDefinition database)
