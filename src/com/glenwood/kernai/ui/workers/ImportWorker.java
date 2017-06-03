@@ -21,7 +21,7 @@ import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
 public class ImportWorker {
 	
 	private IConnection connection;
-	private JDBCManager man;
+	private JDBCManager manager;
 	
 	public ImportWorker(DataConnection dataConnection)
 	{
@@ -43,6 +43,16 @@ public class ImportWorker {
 			//this.connection = new my
 		}
 		
+	}
+	
+	public IConnection getConnection()
+	{
+		return this.connection;
+	}
+	
+	public JDBCManager getManager()
+	{
+		return this.manager;
 	}
 	
 
@@ -68,7 +78,7 @@ public class ImportWorker {
 	
 	public void closeConnection()
 	{
-		man.disconnect();
+		manager.disconnect();
 	}
 	
 	public void getDatabases(IImportWorkerClient client, Display display)
@@ -91,10 +101,14 @@ public class ImportWorker {
 		Runnable connector = new Runnable() {
 			@Override
 			public void run() {
-				man = new JDBCManager(connection);
-				man.connect();
+				if(manager == null)
+				{
+					manager = new JDBCManager(connection);
+				}
+				manager.connect();
 				//man.setImportEngine(new ImportEngineSchemaCrawler());
-				man.getImportEngine().init(connection);
+				manager.getImportEngine().init(connection);
+
 				display.syncExec(new Runnable() {
 					
 					@Override
@@ -113,7 +127,7 @@ public class ImportWorker {
 		return new Runnable() {
 			@Override
 			public void run() {
-				List<DatabaseDefinition> databases = man.getImportEngine().getDatabases();
+				List<DatabaseDefinition> databases = manager.getImportEngine().getDatabases();
 				display.syncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -130,7 +144,7 @@ public class ImportWorker {
 			@Override
 			public void run() {
 				
-				List<TableDefinition> tables = man.getImportEngine().getTables(database, true, false);
+				List<TableDefinition> tables = manager.getImportEngine().getTables(database, true, false);
 				display.syncExec(new Runnable() {
 					@Override
 					public void run() {

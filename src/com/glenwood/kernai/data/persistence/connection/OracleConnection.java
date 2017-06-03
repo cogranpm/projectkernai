@@ -41,6 +41,11 @@ public class OracleConnection implements IConnection {
 		sb.append(this.dataConnection.getSid());
 		return sb.toString();
 	}
+	
+	@Override
+	public DataConnection getDataConnection() {
+		return this.getDataConnection();
+	}
 
 	@Override
 	public void connect() {
@@ -71,6 +76,25 @@ public class OracleConnection implements IConnection {
 	@Override
 	public Connection getConnection() {
 		return this.connection;
+	}
+	
+	@Override
+	public boolean isValid() {
+		if(this.getConnection() == null)
+		{
+			return false;
+		}
+		else
+		{
+			try{
+				return this.getConnection().isValid(ApplicationData.SQL_TIMEOUT_VALID_CHECK);
+			}
+			catch(SQLException exception)
+			{
+				return false;
+			}
+		}
+		
 	}
 
 	@Override

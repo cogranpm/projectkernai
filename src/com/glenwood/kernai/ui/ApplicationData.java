@@ -215,6 +215,7 @@ public class ApplicationData {
 	public static final String IMAGE_GO_PREVIOUS_SMALL = "goPreviousSmall";
 	public static final String IMAGE_GO_UP_SMALL = "goUpSmall";
 	
+	public static final int SQL_TIMEOUT_VALID_CHECK = 15;
 	
 	//toolbar managers
 	public static final String TOOLBAR_MANAGER_PROJECT = "project";

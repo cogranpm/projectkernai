@@ -67,6 +67,29 @@ public class SQLServerConnection implements IConnection {
 		return sb.toString();
 	}
 	
+	@Override
+	public DataConnection getDataConnection() {
+		return this.dataConnection;
+	}
+	
+	@Override
+	public boolean isValid() {
+		if(this.getConnection() == null)
+		{
+			return false;
+		}
+		else
+		{
+			try{
+				return this.getConnection().isValid(ApplicationData.SQL_TIMEOUT_VALID_CHECK);
+			}
+			catch(SQLException exception)
+			{
+				return false;
+			}
+		}
+		
+	}
 
 	@Override
 	public String getVendorName() {

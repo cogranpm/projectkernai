@@ -126,6 +126,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceListWrapper = new WritableList<>(this.tableSourceList, TableDefinition.class);
 		ViewerSupport.bind(this.listTableSource, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
 		ViewerSupport.bind(this.listTableSelection, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
+		
+		/* bind enabled on the list buttons */
 		IObservableValue<TableViewer> listSourceObservable = ViewersObservables.observeSingleSelection(listTableSource);
 		IObservableValue<Button> addSelectedButtonObservable = WidgetProperties.enabled().observe(this.btnAddSelected);
 		IObservableValue<TableViewer> listSelectedObservable = ViewersObservables.observeSingleSelection(listTableSelection);

@@ -48,15 +48,15 @@ public class ImportEngineBase implements IImportEngine{
  			"select object_name from ALL_OBJECTS  where (object_type = 'TABLE' or object_type = 'VIEW' ) and owner = ? order by object_name";
 	
 	@Override
-	public void init(IConnection connection)
+	public synchronized void init(IConnection connection)
 	{
 		this.connection = connection;
 		try {
 			this.metaData = connection.getConnection().getMetaData();
 			int minorVersion = metaData.getDatabaseMinorVersion();
-			System.out.println(String.format("MinorVersion %d", minorVersion));
-			System.out.println(String.format("Product Name %s", metaData.getDatabaseProductName()));
-			System.out.println(String.format("Product Version %s", metaData.getDatabaseProductVersion()));
+//			System.out.println(String.format("MinorVersion %d", minorVersion));
+//			System.out.println(String.format("Product Name %s", metaData.getDatabaseProductName()));
+//			System.out.println(String.format("Product Version %s", metaData.getDatabaseProductVersion()));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	@Override
-	public List<DatabaseDefinition> getDatabases()
+	public synchronized List<DatabaseDefinition> getDatabases()
 	{
 		List<DatabaseDefinition> list = new ArrayList<DatabaseDefinition>();
 		ResultSet catalogs = null;
@@ -101,7 +101,7 @@ public class ImportEngineBase implements IImportEngine{
 	
 	
 	@Override
-	public List<TableDefinition> getTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
+	public synchronized List<TableDefinition> getTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
 		if(ApplicationData.CONNECTION_VENDOR_NAME_ORACLE.equalsIgnoreCase(this.connection.getVendorName()))
 		{
 			return this.getOracleTables(database, getTables, getViews);
@@ -112,7 +112,7 @@ public class ImportEngineBase implements IImportEngine{
 		}
 	}
 	
-	private List<TableDefinition> getTablesFromStandard(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
+	private synchronized List<TableDefinition> getTablesFromStandard(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
 		ResultSet results = null;
 		try {
 			String[] types = null;
@@ -157,7 +157,7 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	
-	private List<TableDefinition> getOracleTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
+	private synchronized List<TableDefinition> getOracleTables(DatabaseDefinition database, Boolean getTables, Boolean getViews) {
 		ResultSet results = null;
 		PreparedStatement stmt = null;
 		try {
@@ -211,7 +211,7 @@ public class ImportEngineBase implements IImportEngine{
 	
 	
 	@Override
-	public List<ColumnDefinition> getColumns(DatabaseDefinition database, TableDefinition table) {
+	public synchronized List<ColumnDefinition> getColumns(DatabaseDefinition database, TableDefinition table) {
 		ResultSet results = null;
 		try {
 
@@ -266,7 +266,7 @@ public class ImportEngineBase implements IImportEngine{
 		return table.getColumns();
 	}
 
-	private void getPrimaryKeys(TableDefinition table)
+	private synchronized void getPrimaryKeys(TableDefinition table)
 	{
 		ResultSet primaryKeyResults = null;
 		try
@@ -292,7 +292,7 @@ public class ImportEngineBase implements IImportEngine{
 	}
 	
 	
-	private void getForeignKeys(TableDefinition table)
+	private synchronized void getForeignKeys(TableDefinition table)
 	{
 		ResultSet keyResults = null;
 		try
@@ -317,7 +317,7 @@ public class ImportEngineBase implements IImportEngine{
 		}
 	}
 
-	private void getUserDefinedTypes(DatabaseDefinition database)
+	private synchronized void getUserDefinedTypes(DatabaseDefinition database)
 	{
 		ResultSet results = null;
 		try
@@ -344,7 +344,7 @@ public class ImportEngineBase implements IImportEngine{
 		}
 	}
 	
-	private String getTrimmedColumn(ResultSet result, String columnName)
+	private synchronized String getTrimmedColumn(ResultSet result, String columnName)
 	{
 		String value = null;
 		try {
@@ -360,7 +360,7 @@ public class ImportEngineBase implements IImportEngine{
 		return value;
 	}
 	
-	private void closeResultSet(ResultSet item)
+	private synchronized void closeResultSet(ResultSet item)
 	{
 		if(item != null)
 		{
@@ -372,7 +372,7 @@ public class ImportEngineBase implements IImportEngine{
 		}
 	}
 	
-	private void closeStatement(Statement item)
+	private synchronized void closeStatement(Statement item)
 	{
 		if(item != null)
 		{

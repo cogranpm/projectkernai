@@ -255,8 +255,51 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		{
 			return;
 		}
-		importWorker = new ImportWorker(connection);
-		importWorker.openConnection(this, this.getDisplay());
+		
+		/* if the data connection has changed or is no longer open then a new connection must be opened */
+		boolean reconnectRequired = false;
+		boolean closeRequired = false;
+		if(this.importWorker == null || this.importWorker.getConnection() == null)
+		{
+			reconnectRequired = true;
+		}
+		else
+		{
+			if (!this.importWorker.getConnection().isValid())
+			{
+				reconnectRequired = true;
+				closeRequired = false;
+			}
+			else
+			{
+				DataConnection existingDataConnection = this.importWorker.getConnection().getDataConnection();
+				if(connection.compare(existingDataConnection))
+				{
+					reconnectRequired = false;
+					closeRequired = false;
+				}
+				else
+				{
+					reconnectRequired = true;
+					closeRequired = true;
+				}
+			}
+		}
+		
+		if(closeRequired)
+		{
+			this.importWorker.closeConnection();
+		}
+		if(reconnectRequired)
+		{
+			this.importWorker = new ImportWorker(connection);
+			this.importWorker.openConnection(this, this.getDisplay());
+		}
+		else
+		{
+			this.onConnect();
+		}
+
 		
 	}
 	
@@ -269,8 +312,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 
 	@Override
 	public void onConnect() {
-		//MessageDialog.openInformation(getShell(), "Complete", "Connection Complete");
-		//importWorker.closeConnection();
+		/* callback from thread that opens connection */
 		
 		if (this.tableSelectionView == null)
 		{

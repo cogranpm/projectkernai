@@ -172,4 +172,128 @@ public  class DataConnection extends BaseEntity {
 		return true;
 	}
 	
+	public boolean compare(DataConnection dataConnection)
+	{
+		boolean returnValue = false;
+		if (this.getIsExpress() == null)
+		{
+			if(dataConnection.getIsExpress() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getIsExpress().equals(dataConnection.getIsExpress());
+		}
+		if(!returnValue){return false;}
+		
+		if (this.getPort() == null)
+		{
+			if(dataConnection.getPort() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getPort().equals(dataConnection.getPort());
+		}
+		if(!returnValue){return false;}
+		
+		if (this.getServerName() == null)
+		{
+			if(dataConnection.getServerName() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getServerName().equals(dataConnection.getServerName());
+		}
+		if(!returnValue){return false;}
+		
+		if (this.getSid() == null)
+		{
+			if(dataConnection.getSid() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getSid().equals(dataConnection.getSid());
+		}
+		if(!returnValue){return false;}
+		
+		
+		if (this.getUserName() == null)
+		{
+			if(dataConnection.getUserName() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getUserName().equals(dataConnection.getUserName());
+		}
+		if(!returnValue){return false;}
+		
+		if (this.getPassword() == null)
+		{
+			if(dataConnection.getPassword() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getPassword().equals(dataConnection.getPassword());
+		}
+		if(!returnValue){return false;}
+	
+		if (this.getVendorName() == null)
+		{
+			if(dataConnection.getVendorName() == null)
+			{
+				returnValue = true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			returnValue = this.getVendorName().equals(dataConnection.getVendorName());
+		}
+
+		return returnValue;
+	}
 }

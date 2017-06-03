@@ -9,11 +9,11 @@ public class JDBCManager {
 	private IConnection connection;
 	private IImportEngine importEngine;
 
-	public IImportEngine getImportEngine() {
+	public synchronized IImportEngine getImportEngine() {
 		return importEngine;
 	}
 
-	public void setImportEngine(IImportEngine importEngine) {
+	public synchronized void setImportEngine(IImportEngine importEngine) {
 		this.importEngine = importEngine;
 	}
 
@@ -23,12 +23,12 @@ public class JDBCManager {
 		this.importEngine = new ImportEngineBase();
 	}
 	
-	public void connect()
+	public synchronized void connect()
 	{
 		this.connection.connect();
 	}
 	
-	public void disconnect()
+	public synchronized void disconnect()
 	{
 		this.connection.disconnect();
 	}
