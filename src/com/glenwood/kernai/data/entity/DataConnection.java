@@ -172,6 +172,14 @@ public  class DataConnection extends BaseEntity {
 		return true;
 	}
 	
+	public DataConnection copy()
+	{
+		DataConnection newConnection = new DataConnection(this.userName, this.password, this.port, this.serverName, this.isExpress, this.vendorName);
+		newConnection.sid = this.sid;
+		newConnection.vendorNameLookup = this.vendorNameLookup;
+		return newConnection;
+	}
+	
 	public boolean compare(DataConnection dataConnection)
 	{
 		boolean returnValue = false;

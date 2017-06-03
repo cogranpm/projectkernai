@@ -261,6 +261,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		boolean closeRequired = false;
 		if(this.importWorker == null || this.importWorker.getConnection() == null)
 		{
+
 			reconnectRequired = true;
 		}
 		else

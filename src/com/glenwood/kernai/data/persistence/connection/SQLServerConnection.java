@@ -20,7 +20,7 @@ public class SQLServerConnection implements IConnection {
 	
 	public SQLServerConnection(DataConnection dataConnection)
 	{
-		this.dataConnection = dataConnection;
+		this.dataConnection = dataConnection.copy();
 	}
 	
 	

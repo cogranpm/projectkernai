@@ -20,7 +20,7 @@ public class OracleConnection implements IConnection {
 	
 	public OracleConnection(DataConnection dataConnection)
 	{
-		this.dataConnection = dataConnection;
+		this.dataConnection = dataConnection.copy();
 	}
 	
 	
