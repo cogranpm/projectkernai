@@ -101,21 +101,34 @@ public class ImportWorker {
 		Runnable connector = new Runnable() {
 			@Override
 			public void run() {
-				if(manager == null)
+				try
 				{
-					manager = new JDBCManager(connection);
-				}
-				manager.connect();
-				//man.setImportEngine(new ImportEngineSchemaCrawler());
-				manager.getImportEngine().init(connection);
-
-				display.syncExec(new Runnable() {
-					
-					@Override
-					public void run() {
-						client.onConnect();
+					if(manager == null)
+					{
+						manager = new JDBCManager(connection);
 					}
-				});
+					manager.connect();
+					//man.setImportEngine(new ImportEngineSchemaCrawler());
+					manager.getImportEngine().init(connection);
+
+					display.syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							client.onConnect();
+						}
+					});
+				}
+				catch(Exception e)
+				{
+					display.syncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+							client.onConnectError(e.getMessage());
+						}
+					});
+				}
 			}
 		};
 		return connector;

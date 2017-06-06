@@ -44,7 +44,7 @@ public class OracleConnection implements IConnection {
 	
 	@Override
 	public DataConnection getDataConnection() {
-		return this.getDataConnection();
+		return this.dataConnection;
 	}
 
 	@Override

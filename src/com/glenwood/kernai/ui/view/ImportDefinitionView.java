@@ -8,6 +8,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -300,15 +301,14 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		{
 			this.onConnect();
 		}
-
-		
 	}
 	
 	
 
 	@Override
-	public void onConnectError() {
+	public void onConnectError(String message) {
 		this.btnGoSelectTable.setEnabled(true);
+		MessageDialog.openError(this.getShell(), "Connection Error", message);
 	}
 
 	@Override

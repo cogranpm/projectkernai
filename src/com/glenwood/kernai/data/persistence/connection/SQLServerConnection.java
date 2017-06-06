@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.glenwood.customExceptions.SQLServerConnectionException;
 import com.glenwood.kernai.data.abstractions.IConnection;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.ui.ApplicationData;
@@ -29,7 +30,7 @@ public class SQLServerConnection implements IConnection {
 		try {
 			this.connection = DriverManager.getConnection(this.getURL());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new SQLServerConnectionException(e);
 		}
 	}
 	
@@ -41,7 +42,7 @@ public class SQLServerConnection implements IConnection {
 				connection.close();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new SQLServerConnectionException(e);
 		}
 	}
 	

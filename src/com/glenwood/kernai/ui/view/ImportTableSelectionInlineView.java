@@ -347,7 +347,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	}
 
 	@Override
-	public void onConnectError() {
+	public void onConnectError(String message) {
 	}
 
 	@Override
