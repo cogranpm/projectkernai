@@ -44,13 +44,14 @@ import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
-import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
+import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
+import com.glenwood.kernai.ui.abstraction.IDataTableSelectorClient;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 import com.glenwood.kernai.ui.viewmodel.ImportTableViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
-public class ImportTableSelectionInlineView extends Composite implements IEntityMasterDetailListEditView<ImportTable, ImportDefinition>, IImportWorkerClient{
+public class ImportTableSelectionInlineView extends Composite implements IEntityMasterDetailListEditView<ImportTable, ImportDefinition>, IDataTableSelectorClient{
 
 	private Composite editHeader;
 	private Composite editMaster;
@@ -109,7 +110,12 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	public void setupImportBindings(ImportWorker importWorker)
 	{
 		this.importWorker = importWorker;
-		this.importWorker.getDatabases(this, this.getDisplay());
+	}
+	
+	public void getDatabases()
+	{
+		this.tableSourceListWrapper.clear();
+		this.importWorker.getDatabases(this, this.getDisplay());		
 	}
 	
 
@@ -344,14 +350,6 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	{
 		this.tableSourceListWrapper.clear();
 		importWorker.getTables(this, this.getDisplay(), database);
-	}
-
-	@Override
-	public void onConnectError(String message) {
-	}
-
-	@Override
-	public void onConnect() {
 	}
 
 	@Override

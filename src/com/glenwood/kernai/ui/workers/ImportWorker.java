@@ -16,7 +16,8 @@ import com.glenwood.kernai.data.persistence.JDBCManager;
 import com.glenwood.kernai.data.persistence.connection.OracleConnection;
 import com.glenwood.kernai.data.persistence.connection.SQLServerConnection;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
+import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
+import com.glenwood.kernai.ui.abstraction.IDataTableSelectorClient;
 
 public class ImportWorker {
 	
@@ -61,7 +62,7 @@ public class ImportWorker {
 
 	}
 	
-	public void openConnection(IImportWorkerClient client, Display display)
+	public void openConnection(IDataConnectionClient client, Display display)
 	{
 		//this.getConnectionWorker(client, display).start();
 		ExecutorService executor = Executors.newCachedThreadPool();
@@ -81,7 +82,7 @@ public class ImportWorker {
 		manager.disconnect();
 	}
 	
-	public void getDatabases(IImportWorkerClient client, Display display)
+	public void getDatabases(IDataTableSelectorClient client, Display display)
 	{	
 		ExecutorService executor = Executors.newCachedThreadPool();
 		executor.execute(this.getDatabasesWorker(client, display));
@@ -89,14 +90,14 @@ public class ImportWorker {
 		//this.getDatabasesWorker(client, display).start();
 	}
 	
-	public void getTables(IImportWorkerClient client, Display display, DatabaseDefinition database)
+	public void getTables(IDataTableSelectorClient client, Display display, DatabaseDefinition database)
 	{
 		ExecutorService executor = Executors.newCachedThreadPool();
 		executor.execute(this.getTablesWorker(client, display, database));
 		executor.shutdown();
 	}
 	
-	private Runnable getConnectionWorker(IImportWorkerClient client, Display display)
+	private Runnable getConnectionWorker(IDataConnectionClient client, Display display)
 	{
 		Runnable connector = new Runnable() {
 			@Override
@@ -135,7 +136,7 @@ public class ImportWorker {
 	}
 	
 	
-	private Runnable getDatabasesWorker(IImportWorkerClient client, Display display)
+	private Runnable getDatabasesWorker(IDataTableSelectorClient client, Display display)
 	{
 		return new Runnable() {
 			@Override
@@ -151,7 +152,7 @@ public class ImportWorker {
 		};
 	}
 	
-	private Runnable getTablesWorker(IImportWorkerClient client, Display display, DatabaseDefinition database)
+	private Runnable getTablesWorker(IDataTableSelectorClient client, Display display, DatabaseDefinition database)
 	{
 		return new Runnable() {
 			@Override

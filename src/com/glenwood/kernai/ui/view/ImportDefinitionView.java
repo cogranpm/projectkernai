@@ -22,6 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
@@ -30,14 +31,14 @@ import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IConnectionContainer;
-import com.glenwood.kernai.ui.abstraction.IImportWorkerClient;
+import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
 import com.glenwood.kernai.ui.presenter.DataConnectionViewPresenter;
 import com.glenwood.kernai.ui.presenter.ImportDefinitionViewPresenter;
 import com.glenwood.kernai.ui.viewmodel.ImportDefinitionViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project>
-	implements IImportWorkerClient, IConnectionContainer{
+	implements IDataConnectionClient, IConnectionContainer{
 	
 	private DataConnectionInlineView connectionView;
 	private ImportTableSelectionInlineView tableSelectionView;
@@ -154,8 +155,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		
 		wizardLayout = new StackLayout();
 		wizardContainer.setLayout(wizardLayout);
-		connectionContainer = new Composite(wizardContainer, SWT.NONE);
-		connectionContainer.setLayout(viewHelper.getViewLayout(1));
+		this.connectionContainer = new Composite(wizardContainer, SWT.NONE);
+		this.connectionContainer.setLayout(viewHelper.getViewLayout(1));
 
 		connectionView = new DataConnectionInlineView(connectionContainer, SWT.NONE);
 		DataConnectionViewPresenter connectionViewPresenter = (DataConnectionViewPresenter)connectionView.getPresenter();
@@ -171,6 +172,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		this.viewHelper.setViewLayoutData(this.tableSelectionContainer, true, true);
 		
 		wizardLayout.topControl = connectionContainer;
+		wizardLayout.topControl.setData("id", this.connectionView.getClass().getName());
 		
 		btnGoSelectTable = new Button(connectionContainer, SWT.PUSH);
 		btnGoSelectTable.setText("Next");
@@ -220,12 +222,19 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	
 	@Override
 	protected void onListSelectionChangedHandler(ImportDefinition entity) {
+		if(!this.wizardLayout.topControl.getData("id").toString().equalsIgnoreCase(this.connectionView.getClass().getName()))
+		{
+			this.wizardLayout.topControl = this.connectionContainer;
+			this.wizardContainer.layout();
+		}
+
 		super.onListSelectionChangedHandler(entity);
 		if(entity != null)
 		{
 			DataConnection dc = entity.getDataConnection();
 			if(dc != null)
 			{
+				/* depends on which wizard view is active what we do here */
 				this.connectionView.getPresenter().loadModel(dc);
 			}
 		}
@@ -299,22 +308,13 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		}
 		else
 		{
-			this.onConnect();
+			this.loadTableSelectionView(false);
 		}
 	}
 	
 	
-
-	@Override
-	public void onConnectError(String message) {
-		this.btnGoSelectTable.setEnabled(true);
-		MessageDialog.openError(this.getShell(), "Connection Error", message);
-	}
-
-	@Override
-	public void onConnect() {
-		/* callback from thread that opens connection */
-		
+	public void loadTableSelectionView(boolean reconnecting)
+	{
 		if (this.tableSelectionView == null)
 		{
 			this.tableSelectionView = new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem());
@@ -334,29 +334,40 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
+			this.tableSelectionView.setupImportBindings(this.importWorker);
+			this.tableSelectionView.getDatabases();
 		}
 		else
 		{
-			//if view is already loaded, change the model
+			if(reconnecting)
+			{
+				this.tableSelectionView.setupImportBindings(this.importWorker);
+				this.tableSelectionView.getDatabases();
+			}
 		}
 		this.wizardLayout.topControl = this.tableSelectionContainer;
+		this.wizardLayout.topControl.setData("id", tableSelectionView.getClass().getName());
 		this.tableSelectionContainer.layout();
 		this.wizardContainer.layout();
-		this.tableSelectionView.setupImportBindings(this.importWorker);
 		
 		/* temp */
 		this.btnGoSelectTable.setEnabled(true);
 	}
 
 	@Override
-	public void setDatabases(List<DatabaseDefinition> list) {
+	public void onConnectError(String message) {
+		this.btnGoSelectTable.setEnabled(true);
+		MessageDialog.openError(this.getShell(), "Connection Error", message);
 	}
 	
+	
+	
+
 	@Override
-	public void setTables(List<TableDefinition> list) {
-
+	public void onConnect() {
+		/* callback from thread that opens connection */
+		this.loadTableSelectionView(true);
 	}
-
 
 	@Override
 	public void OnModelChanged(DataConnection dataConnection) {
