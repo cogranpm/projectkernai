@@ -18,6 +18,8 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -247,6 +249,23 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		/* note, use list filters on TableDefinition selected field to handle dual list */
 		listTableSource.setFilters(this.sourceFilter);
 		listTableSelection.setFilters(this.selectedFilter);
+		
+		listTableSource.addDoubleClickListener(new IDoubleClickListener() {
+			
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				addSelectedTable();
+				
+			}
+		});
+		
+		listTableSelection.addDoubleClickListener(new IDoubleClickListener() {
+			
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				removeSelectedTable();
+			}
+		});
 		
 		btnAddSelected.addSelectionListener(new SelectionListener() {
 			
