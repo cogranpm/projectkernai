@@ -312,6 +312,13 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		}
 	}
 	
+	private void onGoSelectModel()
+	{
+		if((this.model.getDirty() || this.tableSelectionView.getModel().getDirty()))
+		{
+			this.save();
+		}
+	}
 	
 	public void loadTableSelectionView(boolean reconnecting)
 	{
@@ -321,6 +328,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.tableSelectionView);
 			btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
 			btnGoConnection.setText("Back");
+			btnGoSelectModel = new Button(tableSelectionContainer, SWT.PUSH);
+			btnGoSelectModel.setText("Next");
 			GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoConnection);
 			this.btnGoConnection.addSelectionListener(new SelectionListener() {
 				
@@ -334,6 +343,21 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
+			
+			this.btnGoSelectModel.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					onGoSelectModel();
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
 			this.tableSelectionView.setupImportBindings(this.importWorker);
 			this.tableSelectionView.getDatabases();
 		}

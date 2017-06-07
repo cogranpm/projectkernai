@@ -40,12 +40,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
+import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
 import com.glenwood.kernai.ui.abstraction.IDataTableSelectorClient;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
@@ -73,6 +75,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private Button btnAddSelected;
 	private Button btnRemoveAll;
 	private Button btnRemoveSelected;
+	private Button btnGoNext;
 
 	
 	private WritableList<TableDefinition> tableSourceListWrapper;
@@ -88,7 +91,12 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 
 	private EntityViewHelper viewHelper;
 	
-
+	public ImportTableViewModel getModel()
+	{
+		return this.model;
+	}
+	
+	
 	public ImportTableSelectionInlineView(Composite parent, int style, ImportDefinition parentEntity) {
 		super(parent, style);
 		this.parentEntity = parentEntity;
@@ -102,6 +110,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.setupModelAndPresenter(this.parentEntity);
 		this.setupEditingContainer();
 		this.initDataBindings();
+		/* load the model with data */
+		this.presenter.loadModels(this.parentEntity);
 		this.setLayout(new FillLayout());
 	}
 	
@@ -250,6 +260,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		listTableSource.setFilters(this.sourceFilter);
 		listTableSelection.setFilters(this.selectedFilter);
 		
+		
 		listTableSource.addDoubleClickListener(new IDoubleClickListener() {
 			
 			@Override
@@ -327,6 +338,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private void addSelectedTable()
 	{
 		this.processSelection(listTableSource, true);
+		this.model.setDirty(true);
 	}
 	
 	private void addAllSelectedTable()
@@ -334,11 +346,13 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceListWrapper.forEach(a -> a.setSelected(true));
 		this.listTableSelection.refresh();
 		this.listTableSource.refresh();
+		this.model.setDirty(true);
 	}
 	
 	private void removeSelectedTable()
 	{
 		this.processSelection(listTableSelection, false);
+		this.model.setDirty(true);
 	}
 	
 	private void removeAllSelectedTable()
@@ -346,6 +360,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceListWrapper.forEach(a -> a.setSelected(false));
 		this.listTableSelection.refresh();
 		this.listTableSource.refresh();
+		this.model.setDirty(true);
 	}
 	
 	private void processSelection(TableViewer viewer, boolean isSelected)
