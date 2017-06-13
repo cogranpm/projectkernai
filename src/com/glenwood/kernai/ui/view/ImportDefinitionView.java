@@ -24,13 +24,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditView;
-import com.glenwood.kernai.ui.abstraction.IConnectionContainer;
+import com.glenwood.kernai.ui.abstraction.IModelChangeListener;
 import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
 import com.glenwood.kernai.ui.presenter.DataConnectionViewPresenter;
 import com.glenwood.kernai.ui.presenter.ImportDefinitionViewPresenter;
@@ -38,7 +39,7 @@ import com.glenwood.kernai.ui.viewmodel.ImportDefinitionViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project>
-	implements IDataConnectionClient, IConnectionContainer{
+	implements IDataConnectionClient, IModelChangeListener{
 	
 	private DataConnectionInlineView connectionView;
 	private ImportTableSelectionInlineView tableSelectionView;
@@ -325,6 +326,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		if (this.tableSelectionView == null)
 		{
 			this.tableSelectionView = new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem());
+			this.tableSelectionView.getPresenter().addModelChangeListener(this);
 			GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.tableSelectionView);
 			btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
 			btnGoConnection.setText("Back");
@@ -394,7 +396,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	}
 
 	@Override
-	public void OnModelChanged(DataConnection dataConnection) {
+	public void OnModelChanged(BaseEntity entity) {
 		this.model.setDirty(true);
 		
 	}

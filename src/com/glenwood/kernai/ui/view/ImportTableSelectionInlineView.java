@@ -96,6 +96,11 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		return this.model;
 	}
 	
+	public ImportTableViewPresenter getPresenter()
+	{
+		return this.presenter;
+	}
+	
 	
 	public ImportTableSelectionInlineView(Composite parent, int style, ImportDefinition parentEntity) {
 		super(parent, style);
@@ -338,7 +343,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private void addSelectedTable()
 	{
 		this.processSelection(listTableSource, true);
-		this.model.setDirty(true);
+		this.presenter.modelChanged();
 	}
 	
 	private void addAllSelectedTable()
@@ -346,13 +351,13 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceListWrapper.forEach(a -> a.setSelected(true));
 		this.listTableSelection.refresh();
 		this.listTableSource.refresh();
-		this.model.setDirty(true);
+		this.presenter.modelChanged();
 	}
 	
 	private void removeSelectedTable()
 	{
 		this.processSelection(listTableSelection, false);
-		this.model.setDirty(true);
+		this.presenter.modelChanged();
 	}
 	
 	private void removeAllSelectedTable()
@@ -360,7 +365,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.tableSourceListWrapper.forEach(a -> a.setSelected(false));
 		this.listTableSelection.refresh();
 		this.listTableSource.refresh();
-		this.model.setDirty(true);
+		this.presenter.modelChanged();
 	}
 	
 	private void processSelection(TableViewer viewer, boolean isSelected)

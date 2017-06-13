@@ -41,6 +41,9 @@ public class ImportDefinition extends BaseEntity {
 	private String projectId;
 	
 	private Time lastRun;
+
+	/* the name of the last database that was saved */
+	private String lastSavedDatabaseName;
 	
 
 	public ImportDefinition()
@@ -106,6 +109,7 @@ public class ImportDefinition extends BaseEntity {
 	}
 	
 	
+	
 	@JsonProperty
 	public Time getLastRun()
 	{
@@ -117,6 +121,18 @@ public class ImportDefinition extends BaseEntity {
 		Time oldValue = this.lastRun;
 		this.lastRun = lastRun;
 		firePropertyChange("lastRun", oldValue, this.lastRun);
+	}
+	
+	@JsonProperty
+	public String getLastSavedDatabaseName() {
+		return lastSavedDatabaseName;
+	}
+
+	
+	public void setLastSavedDatabaseName(String lastSavedDatabaseName) {
+		String oldValue = this.lastSavedDatabaseName;
+		this.lastSavedDatabaseName = lastSavedDatabaseName;
+		firePropertyChange("lastSavedDatabaseName", oldValue, this.lastSavedDatabaseName);
 	}
 
 	@Override

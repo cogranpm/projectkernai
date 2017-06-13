@@ -510,16 +510,4 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 		}
 	}
 	
-	private static class DataConnectionLabelProviderA extends LabelProvider {
-		@Override
-		public String getText(Object element) {
-			return "howdy";
-		}
-		
-		@Override
-		public Image getImage(Object element) {
-		
-			return null;
-		}
-	}
 }

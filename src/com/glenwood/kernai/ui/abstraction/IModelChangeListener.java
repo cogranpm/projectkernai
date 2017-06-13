@@ -3,9 +3,9 @@
  */
 package com.glenwood.kernai.ui.abstraction;
 
-import com.glenwood.kernai.data.entity.DataConnection;
+import com.glenwood.kernai.data.abstractions.BaseEntity;
 
-public interface IConnectionContainer {
-	public void OnModelChanged(DataConnection dataConnection);
+public interface IModelChangeListener {
+	public void OnModelChanged(BaseEntity entity);
 
 }

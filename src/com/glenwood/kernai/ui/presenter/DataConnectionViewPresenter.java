@@ -9,7 +9,7 @@ import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityPresenter;
-import com.glenwood.kernai.ui.abstraction.IConnectionContainer;
+import com.glenwood.kernai.ui.abstraction.IModelChangeListener;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.viewmodel.DataConnectionViewModel;
@@ -22,7 +22,7 @@ public class DataConnectionViewPresenter extends BaseEntityPresenter<DataConnect
 	//IViewModel<DataConnection> model;
 	//DataConnectionInlineView view;
 	
-	private List<IConnectionContainer> connectionContainers;
+	private List<IModelChangeListener> connectionContainers;
 	
 	public DataConnectionViewPresenter(IEntityView view, IViewModel<DataConnection> model) {
 		super(view, model, DataConnection.class, DataConnection.TYPE_NAME);
@@ -35,22 +35,22 @@ public class DataConnectionViewPresenter extends BaseEntityPresenter<DataConnect
 		DataConnectionViewModel aModel = (DataConnectionViewModel)this.model;
 		aModel.setVendorNameLookup(this.listHeaderRepository.getListItemsByName(ApplicationData.LIST_DATABASE_VENDOR_NAME));
 		
-		this.connectionContainers = new ArrayList<IConnectionContainer>();
+		this.connectionContainers = new ArrayList<IModelChangeListener>();
 	}
 	
-	public void addConnectionContainer(IConnectionContainer container)
+	public void addConnectionContainer(IModelChangeListener container)
 	{
 		this.connectionContainers.add(container);
 	}
 	
-	public void removeConnectionContainer(IConnectionContainer container)
+	public void removeConnectionContainer(IModelChangeListener container)
 	{
 		this.connectionContainers.remove(container);
 	}
 	
-	public void broadcastModelChange()
+	private void broadcastModelChange()
 	{
-		for(IConnectionContainer container : this.connectionContainers)
+		for(IModelChangeListener container : this.connectionContainers)
 		{
 			container.OnModelChanged(this.model.getCurrentItem());
 		}
