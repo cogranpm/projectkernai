@@ -196,6 +196,8 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	
 	@Override
 	public void save() {
+		/* which child view is active */
+		
 		if(this.connectionView.isValid())
 		{
 			this.connectionView.save();
