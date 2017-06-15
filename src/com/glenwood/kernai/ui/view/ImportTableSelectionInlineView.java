@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -99,6 +100,27 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	public ImportTableViewPresenter getPresenter()
 	{
 		return this.presenter;
+	}
+	
+	public String getSelectedDatabaseName()
+	{
+		IStructuredSelection selection = this.cboDatabase.getStructuredSelection();
+		if(selection != null)
+		{
+			DatabaseDefinition database = (DatabaseDefinition) selection.getFirstElement();
+			if(database != null)
+			{
+				return database.getName();
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	
@@ -391,9 +413,29 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		importWorker.getTables(this, this.getDisplay(), database);
 	}
 
+	
+	public Boolean isValid()
+	{
+		Boolean valid = true;
+		return valid;
+	}
+	
+	
 	@Override
 	public void setDatabases(List<DatabaseDefinition> list) {
 		this.cboDatabase.setInput(list);
+		if(this.parentEntity.getLastSavedDatabaseName() != null && !this.parentEntity.getLastSavedDatabaseName().isEmpty())
+		{
+			/* make the default selection */
+			for(DatabaseDefinition database : list)
+			{
+				if(database.getName().equalsIgnoreCase(this.parentEntity.getLastSavedDatabaseName()))
+				{
+					this.cboDatabase.setSelection(new StructuredSelection(database));
+					break;
+				}
+			}
+		}
 	}
 	
 	@Override

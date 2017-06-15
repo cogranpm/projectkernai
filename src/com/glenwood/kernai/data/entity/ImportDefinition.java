@@ -33,10 +33,12 @@ public class ImportDefinition extends BaseEntity {
 	 * as the import is running, and has the foreign & primary keys, columns etc
 	 * none of which should be saved for future runs, its just hydrated into the 
 	 * target model
-	 */
 	
+	THIS IS NOT NEEDED, THERE IS AN ENTITY FOR THIS THAT STANDS ALONE
 	List<ImportTable> selectedImportTables;
-
+	*/
+	
+	
 	/* imports are defined per project */
 	private String projectId;
 	
@@ -84,6 +86,7 @@ public class ImportDefinition extends BaseEntity {
 		this.firePropertyChange("dataConnectionId", oldValue, this.dataConnectionId);
 	}
 
+	/* this is not needed 
 	@JsonIgnore
 	public List<ImportTable> getSelectedImportTables() {
 		return selectedImportTables;
@@ -94,7 +97,7 @@ public class ImportDefinition extends BaseEntity {
 		this.selectedImportTables = selectedImportTables;
 		this.firePropertyChange("selectedImportTables", oldValue, this.selectedImportTables);
 	}
-	
+	*/
 	
 	
 	@JsonProperty

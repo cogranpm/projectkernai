@@ -2,6 +2,7 @@ package com.glenwood.kernai.data.entity;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -16,6 +17,8 @@ public class ImportTable extends BaseEntity {
 	private String databaseName;
 	private String importDefinitionId;
 	
+	private ImportDefinition importDefinition;
+	
 	public ImportTable()
 	{
 		super();
@@ -26,6 +29,7 @@ public class ImportTable extends BaseEntity {
 	{
 		this();
 		this.importDefinitionId = parent.getId();
+		this.importDefinition = parent;
 	}
 
 	@JsonProperty
@@ -62,9 +66,24 @@ public class ImportTable extends BaseEntity {
 	}
 	
 	
+	@JsonIgnore
+	public ImportDefinition getImportDefinition() {
+		return this.importDefinition;
+	}
+
+
+
+	public void setImportDefinition(ImportDefinition importDefinition) {
+		ImportDefinition oldValue = this.importDefinition;
+		this.importDefinition = importDefinition;
+		this.firePropertyChange("importDefinition", oldValue, this.importDefinition);
+	}
+	
+	
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.name, this.databaseName);
+		return Objects.hash(this.name, this.databaseName, this.importDefinitionId);
 	}
 
 	@Override

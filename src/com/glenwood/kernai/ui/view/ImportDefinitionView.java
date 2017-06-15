@@ -197,13 +197,25 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	public void save() {
 		/* which child view is active */
-		
-		if(this.connectionView.isValid())
+		if (this.wizardLayout.topControl != null)
 		{
-			this.connectionView.save();
-			this.model.getCurrentItem().setDataConnection(this.connectionView.model.getCurrentItem());
-			super.save();
+			String topControlData = this.wizardLayout.topControl.getData("id").toString();
+			if(this.connectionView.getClass().getName().equalsIgnoreCase(topControlData))
+			{
+				if(this.connectionView.isValid())
+				{
+					this.connectionView.save();
+					this.model.getCurrentItem().setDataConnection(this.connectionView.model.getCurrentItem());
+					super.save();
+				}
+			}
+			else if(this.tableSelectionView.getClass().getName().equals(topControlData))
+			{
+				this.model.getCurrentItem().setLastSavedDatabaseName(this.tableSelectionView.getSelectedDatabaseName());
+				super.save();
+			}
 		}
+
 		
 	}
 	
@@ -317,7 +329,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	
 	private void onGoSelectModel()
 	{
-		if((this.model.getDirty() || this.tableSelectionView.getModel().getDirty()))
+		if(this.model.getDirty())
 		{
 			this.save();
 		}
@@ -335,6 +347,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			btnGoSelectModel = new Button(tableSelectionContainer, SWT.PUSH);
 			btnGoSelectModel.setText("Next");
 			GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoConnection);
+			GridDataFactory.fillDefaults().align(SWT.RIGHT, SWT.CENTER).grab(false, false).applyTo(btnGoSelectModel);
 			this.btnGoConnection.addSelectionListener(new SelectionListener() {
 				
 				@Override
