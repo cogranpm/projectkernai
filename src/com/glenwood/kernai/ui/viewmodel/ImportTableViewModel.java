@@ -2,24 +2,25 @@ package com.glenwood.kernai.ui.viewmodel;
 
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
+import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.ui.abstraction.BaseMasterDetailViewModel;
 
 public class ImportTableViewModel extends BaseMasterDetailViewModel<ImportTable, ImportDefinition> {
 	
-	private String selectedDatabaseName;
+	private DatabaseDefinition selectedDatabase;
 	
 	
 
-	public String getSelectedDatabaseName() {
-		return selectedDatabaseName;
-	}
+	public DatabaseDefinition getSelectedDatabase(){
+		return selectedDatabase;
+	} 
 
 
 
-	public void setSelectedDatabaseName(String selectedDatabaseName) {
-		String oldValue = this.selectedDatabaseName;
-		this.selectedDatabaseName = selectedDatabaseName;
-		this.firePropertyChange("selectedDatabaseName", oldValue, this.selectedDatabaseName);
+	public void setSelectedDatabase(DatabaseDefinition selectedDatabase) {
+		DatabaseDefinition oldValue = this.selectedDatabase;
+		this.selectedDatabase= selectedDatabase;
+		this.firePropertyChange("selectedDatabase", oldValue, this.selectedDatabase);
 	}
 
 

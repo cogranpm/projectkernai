@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
+import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 
 
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -46,7 +47,6 @@ public class ImportDefinition extends BaseEntity {
 
 	/* the name of the last database that was saved */
 	private String lastSavedDatabaseName;
-	
 
 	public ImportDefinition()
 	{

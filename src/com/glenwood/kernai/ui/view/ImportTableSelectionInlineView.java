@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -24,7 +27,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -41,16 +43,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
 import com.glenwood.kernai.data.modelimport.DatabaseDefinition;
 import com.glenwood.kernai.data.modelimport.TableDefinition;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
-import com.glenwood.kernai.ui.abstraction.IViewModel;
-import com.glenwood.kernai.ui.abstraction.IDataConnectionClient;
 import com.glenwood.kernai.ui.abstraction.IDataTableSelectorClient;
+import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 import com.glenwood.kernai.ui.viewmodel.ImportTableViewModel;
@@ -80,6 +79,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 
 	
 	private WritableList<TableDefinition> tableSourceListWrapper;
+	private WritableValue<ImportTableViewModel> value;
 	private DataBindingContext ctx;
 	private List<TableDefinition> tableSourceList;
 	
@@ -104,6 +104,8 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	
 	public String getSelectedDatabaseName()
 	{
+		return this.model.getSelectedDatabase().getName();
+		/*
 		IStructuredSelection selection = this.cboDatabase.getStructuredSelection();
 		if(selection != null)
 		{
@@ -121,6 +123,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		{
 			return null;
 		}
+		*/
 	}
 	
 	
@@ -160,6 +163,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 
 	private void setupModelAndPresenter(ImportDefinition parentEntity) {
 		this.model = new ImportTableViewModel(parentEntity);
+		//this.model.setSelectedDatabaseName(parentEntity.getLastSavedDatabaseName());
 		this.presenter = new ImportTableViewPresenter(this, this.model);
 	}
 	
@@ -167,10 +171,15 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	{
 		/* databindings for the lists, each a list of tableDefinition objects */
 		this.ctx.dispose();
+		value = new WritableValue<>();
+		value.setValue(this.model);
 		this.tableSourceList = new ArrayList<TableDefinition>();
 		this.tableSourceListWrapper = new WritableList<>(this.tableSourceList, TableDefinition.class);
 		ViewerSupport.bind(this.listTableSource, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
 		ViewerSupport.bind(this.listTableSelection, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
+		
+        IObservableValue databaseWidget = ViewerProperties.singleSelection().observe(cboDatabase);
+        IObservableValue databaseModel = BeanProperties.value("selectedDatabase").observeDetail(value);
 		
 		/* bind enabled on the list buttons */
 		IObservableValue<TableViewer> listSourceObservable = ViewersObservables.observeSingleSelection(listTableSource);
@@ -186,6 +195,9 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
         };
 		ctx.bindValue(addSelectedButtonObservable, listSourceObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 		ctx.bindValue(removeSelectedButtonObservable, listSelectedObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
+		
+		Binding selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel);
+		
 	}
 	
 
@@ -234,6 +246,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 					DatabaseDefinition database =  (DatabaseDefinition) selection.getFirstElement();
 					onSelectDatabase(database);
 				}
+				presenter.modelChanged();
 			}
 		});
 		
@@ -408,7 +421,10 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	public void onSelectDatabase(DatabaseDefinition database)
 	{
 		this.tableSourceListWrapper.clear();
-		importWorker.getTables(this, this.getDisplay(), database);
+		if(database != null)
+		{
+			importWorker.getTables(this, this.getDisplay(), database);
+		}
 	}
 
 	
@@ -424,16 +440,18 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.cboDatabase.setInput(list);
 		if(this.parentEntity.getLastSavedDatabaseName() != null && !this.parentEntity.getLastSavedDatabaseName().isEmpty())
 		{
-			/* make the default selection */
+			///* make the default selection 
 			for(DatabaseDefinition database : list)
 			{
 				if(database.getName().equalsIgnoreCase(this.parentEntity.getLastSavedDatabaseName()))
 				{
-					this.cboDatabase.setSelection(new StructuredSelection(database));
+					//this.cboDatabase.setSelection(new StructuredSelection(database));
+					this.model.setSelectedDatabase(database);
 					break;
 				}
 			}
 		}
+		
 	}
 	
 	@Override
