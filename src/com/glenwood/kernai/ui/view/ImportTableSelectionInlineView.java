@@ -233,9 +233,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 				{
 					DatabaseDefinition database =  (DatabaseDefinition) selection.getFirstElement();
 					onSelectDatabase(database);
-					
 				}
-				
 			}
 		});
 		
