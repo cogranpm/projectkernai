@@ -215,8 +215,6 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 				super.save();
 			}
 		}
-
-		
 	}
 	
 	@Override

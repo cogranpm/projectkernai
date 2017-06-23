@@ -391,7 +391,10 @@ extends Composite implements IEntityMasterDetailListEditView <T, P>, IEntityView
 		this.presenter.saveModel();
 		//selected the newly added item in the list
 		StructuredSelection selection = new StructuredSelection(this.model.getCurrentItem());
-		this.listViewer.setSelection(selection);
+		if(this.listViewer.getSelection() == null || this.listViewer.getStructuredSelection().getFirstElement() != this.model.getCurrentItem())
+		{
+			this.listViewer.setSelection(selection);
+		}
 		onSave();
 	}
 	
