@@ -1,5 +1,6 @@
 package com.glenwood.kernai.ui.view.helpers;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
@@ -137,5 +138,13 @@ public class EntityViewHelper {
 	{
 		return new StringRequiredValidator(errorText);
 	}
+	
+	public Boolean isBindingValid(Binding binding)
+	{
+		if(binding == null){return true;}
+		IStatus status = (IStatus)binding.getValidationStatus().getValue();
+		return status.isOK();
+	}
+	
 	
 }

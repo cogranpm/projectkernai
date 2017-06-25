@@ -36,15 +36,15 @@ public class RequiredEntityValidator implements IValidator {
     
 	@Override
     public IStatus validate(Object value) {
-        if (value instanceof BaseEntity) {
-            if (null == value) {
-            	if(this.controlDecoration != null)
-            	{
-            		controlDecoration.show();
-            	}
-                return ValidationStatus.error(errorText);
-            }
+
+        if (null == value) {
+        	if(this.controlDecoration != null)
+        	{
+        		controlDecoration.show();
+        	}
+            return ValidationStatus.error(errorText);
         }
+
         if(this.controlDecoration != null)
         {
         	controlDecoration.hide();

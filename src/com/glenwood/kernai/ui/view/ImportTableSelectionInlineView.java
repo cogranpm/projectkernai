@@ -86,7 +86,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private WritableValue<ImportTableViewModel> value;
 	private DataBindingContext ctx;
 	private List<TableDefinition> tableSourceList;
-	
+	private Binding selectedDatabaseBinding;
 	private ImportWorker importWorker;
 	
 	private ImportDefinition parentEntity;
@@ -205,7 +205,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		UpdateValueStrategy selectedDatabaseBindingStrategy = new UpdateValueStrategy();
 		RequiredEntityValidator selectedDatabaseValidator = new RequiredEntityValidator("Database is required");
 		selectedDatabaseBindingStrategy.setAfterConvertValidator(selectedDatabaseValidator);
-		Binding selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel, selectedDatabaseBindingStrategy, null);
+		selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel, selectedDatabaseBindingStrategy, null);
 		ControlDecorationSupport selectedDatabaseDecoration = ControlDecorationSupport.create(selectedDatabaseBinding, SWT.TOP | SWT.LEFT);
 		//selectedDatabaseValidator.setControlDecoration(selectedDatabaseDecoration);
 	}
@@ -440,6 +440,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	public Boolean isValid()
 	{
 		Boolean valid = true;
+		valid = this.viewHelper.isBindingValid(selectedDatabaseBinding);
 		return valid;
 	}
 	

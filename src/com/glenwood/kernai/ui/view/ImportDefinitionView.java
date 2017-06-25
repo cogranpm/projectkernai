@@ -211,8 +211,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			}
 			else if(this.tableSelectionView.getClass().getName().equals(topControlData))
 			{
-				this.model.getCurrentItem().setLastSavedDatabaseName(this.tableSelectionView.getSelectedDatabaseName());
-				super.save();
+				if(this.tableSelectionView.isValid())
+				{
+					this.model.getCurrentItem().setLastSavedDatabaseName(this.tableSelectionView.getSelectedDatabaseName());
+					super.save();
+				}
 			}
 		}
 	}

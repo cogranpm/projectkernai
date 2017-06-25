@@ -366,40 +366,34 @@ public class DataConnectionInlineView extends Composite implements IEntityView  
 	public Boolean isValid()
 	{
 		Boolean valid = true;
-		if(!isBindingValid(sidBinding))
+		if(!this.viewHelper.isBindingValid(sidBinding))
 		{
 			return false;
 		}
-		if(!isBindingValid(serverNameBinding))
+		if(!this.viewHelper.isBindingValid(serverNameBinding))
 		{
 			return false;
 		}
-		if(!isBindingValid(vendorNameBinding))
+		if(!this.viewHelper.isBindingValid(vendorNameBinding))
 		{
 			return false;
 		}
-		if(!isBindingValid(userNameBinding))
+		if(!this.viewHelper.isBindingValid(userNameBinding))
 		{
 			return false;
 		}
-		if(!isBindingValid(passwordBinding))
+		if(!this.viewHelper.isBindingValid(passwordBinding))
 		{
 			return false;
 		}
-		if(!isBindingValid(portBinding))
+		if(!this.viewHelper.isBindingValid(portBinding))
 		{
 			return false;
 		}
 		return valid;
 	}
 	
-	private Boolean isBindingValid(Binding binding)
-	{
-		if(binding == null){return true;}
-		IStatus status = (IStatus)binding.getValidationStatus().getValue();
-		return status.isOK();
-	}
-	
+
 
 	protected void setupListColumns() {
 

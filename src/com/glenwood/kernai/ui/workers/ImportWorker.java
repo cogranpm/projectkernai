@@ -65,7 +65,7 @@ public class ImportWorker {
 	public void openConnection(IDataConnectionClient client, Display display)
 	{
 		//this.getConnectionWorker(client, display).start();
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(this.getConnectionWorker(client, display));
 		executor.shutdown();
 		/*
@@ -84,7 +84,7 @@ public class ImportWorker {
 	
 	public void getDatabases(IDataTableSelectorClient client, Display display)
 	{	
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(this.getDatabasesWorker(client, display));
 		executor.shutdown();
 		//this.getDatabasesWorker(client, display).start();
@@ -92,7 +92,7 @@ public class ImportWorker {
 	
 	public void getTables(IDataTableSelectorClient client, Display display, DatabaseDefinition database)
 	{
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(this.getTablesWorker(client, display, database));
 		executor.shutdown();
 	}
