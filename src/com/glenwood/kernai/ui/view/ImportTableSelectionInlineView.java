@@ -11,7 +11,9 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
@@ -52,6 +54,8 @@ import com.glenwood.kernai.ui.abstraction.IDataTableSelectorClient;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
+import com.glenwood.kernai.ui.view.helpers.RequiredEntityValidator;
+import com.glenwood.kernai.ui.view.helpers.StringRequiredValidator;
 import com.glenwood.kernai.ui.viewmodel.ImportTableViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
@@ -196,8 +200,14 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		ctx.bindValue(addSelectedButtonObservable, listSourceObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 		ctx.bindValue(removeSelectedButtonObservable, listSelectedObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 		
-		Binding selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel);
+
 		
+		UpdateValueStrategy selectedDatabaseBindingStrategy = new UpdateValueStrategy();
+		RequiredEntityValidator selectedDatabaseValidator = new RequiredEntityValidator("Database is required");
+		selectedDatabaseBindingStrategy.setAfterConvertValidator(selectedDatabaseValidator);
+		Binding selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel, selectedDatabaseBindingStrategy, null);
+		ControlDecorationSupport selectedDatabaseDecoration = ControlDecorationSupport.create(selectedDatabaseBinding, SWT.TOP | SWT.LEFT);
+		//selectedDatabaseValidator.setControlDecoration(selectedDatabaseDecoration);
 	}
 	
 
