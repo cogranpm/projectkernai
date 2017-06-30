@@ -12,14 +12,67 @@ import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListEditPresenter;
 import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.abstraction.IMasterDetailViewModel;
+import com.glenwood.kernai.ui.view.DataConnectionInlineView;
 import com.glenwood.kernai.ui.view.ImportDefinitionView;
+import com.glenwood.kernai.ui.view.ImportTableSelectionInlineView;
 
 public class ImportDefinitionViewPresenter extends BaseEntityMasterDetailListEditPresenter<ImportDefinition, Project> {
+
+	
+	private DataConnectionInlineView dataConnectionView;
+	private ImportTableSelectionInlineView importTableSelectionView;
+	
+	public DataConnectionInlineView getDataConnectionView() {
+		return dataConnectionView;
+	}
+
+	public void setDataConnectionView(DataConnectionInlineView dataConnectionView) {
+		this.dataConnectionView = dataConnectionView;
+		DataConnectionViewPresenter connectionViewPresenter = (DataConnectionViewPresenter)this.dataConnectionView.getPresenter();
+		if (connectionViewPresenter != null)
+		{
+			connectionViewPresenter.addConnectionContainer((ImportDefinitionView)this.view);
+		}		
+	}
+	
+	public String getDataConnectionViewID()
+	{
+		if(this.dataConnectionView != null)
+		{
+			return this.dataConnectionView.getClass().getName();
+		}
+		else
+		{
+			return "";
+		}
+	}
+	
+	public String getImportTableSelectionViewID()
+	{
+		if (this.importTableSelectionView != null)
+		{
+			return this.importTableSelectionView.getClass().getName();
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public ImportTableSelectionInlineView getImportTableSelectionView() {
+		return importTableSelectionView;
+	}
+
+	public void setImportTableSelectionView(ImportTableSelectionInlineView importTableSelectionView) {
+		this.importTableSelectionView = importTableSelectionView;
+	}
 
 	public ImportDefinitionViewPresenter(IEntityMasterDetailListEditView<ImportDefinition, Project> view,
 			IMasterDetailViewModel<ImportDefinition, Project> model) {
 		super(view, model, ImportDefinition.class, ImportDefinition.TYPE_NAME);
 		this.repository = new ImportDefinitionRepository(PersistenceManagerFactory.getPersistenceManager(ApplicationData.instance().getPersistenceType()));
+		this.dataConnectionView = null;
+		this.importTableSelectionView = null;
 	}
 	
 	@Override

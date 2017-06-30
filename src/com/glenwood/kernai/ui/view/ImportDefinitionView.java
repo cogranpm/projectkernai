@@ -41,8 +41,8 @@ import com.glenwood.kernai.ui.workers.ImportWorker;
 public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<ImportDefinition, Project>
 	implements IDataConnectionClient, IModelChangeListener{
 	
-	private DataConnectionInlineView connectionView;
-	private ImportTableSelectionInlineView tableSelectionView;
+	//private DataConnectionInlineView connectionView;
+	//private ImportTableSelectionInlineView tableSelectionView;
 	private Composite connectionContainer;
 	private Composite tableSelectionContainer;
 	private Composite wizardContainer;
@@ -66,6 +66,15 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		});
 	}
 	
+	private DataConnectionInlineView getDataConnectionView()
+	{
+		return this.getPresenter().getDataConnectionView();
+	}
+	
+	private ImportTableSelectionInlineView getImportTableSelectionView()
+	{
+		return this.getPresenter().getImportTableSelectionView();
+	}
 	
 	
 	@Override
@@ -73,6 +82,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		super.setupModelAndPresenter(parentEntity);
 		this.model = new ImportDefinitionViewModel(parentEntity);
 		this.presenter = new ImportDefinitionViewPresenter(this, this.model);
+	}
+	
+	private ImportDefinitionViewPresenter getPresenter()
+	{
+		return (ImportDefinitionViewPresenter)this.presenter;
 	}
 	
 	@Override
@@ -159,21 +173,15 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		this.connectionContainer = new Composite(wizardContainer, SWT.NONE);
 		this.connectionContainer.setLayout(viewHelper.getViewLayout(1));
 
-		connectionView = new DataConnectionInlineView(connectionContainer, SWT.NONE);
-		DataConnectionViewPresenter connectionViewPresenter = (DataConnectionViewPresenter)connectionView.getPresenter();
-		if (connectionViewPresenter != null)
-		{
-			connectionViewPresenter.addConnectionContainer(this);
-		}
-		
-		GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(connectionView);
+		this.getPresenter().setDataConnectionView(new DataConnectionInlineView(connectionContainer, SWT.NONE));
+		GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.getDataConnectionView());
 		
 		this.tableSelectionContainer = new Composite(wizardContainer, SWT.NONE);
 		this.tableSelectionContainer.setLayout(viewHelper.getViewLayout(1));
 		this.viewHelper.setViewLayoutData(this.tableSelectionContainer, true, true);
 		
 		wizardLayout.topControl = connectionContainer;
-		wizardLayout.topControl.setData("id", this.connectionView.getClass().getName());
+		wizardLayout.topControl.setData("id", this.getPresenter().getDataConnectionViewID());
 		
 		btnGoSelectTable = new Button(connectionContainer, SWT.PUSH);
 		btnGoSelectTable.setText("Next");
@@ -200,20 +208,20 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 		if (this.wizardLayout.topControl != null)
 		{
 			String topControlData = this.wizardLayout.topControl.getData("id").toString();
-			if(this.connectionView.getClass().getName().equalsIgnoreCase(topControlData))
+			if(this.getPresenter().getDataConnectionViewID().equalsIgnoreCase(topControlData))
 			{
-				if(this.connectionView.isValid())
+				if(this.getDataConnectionView().isValid())
 				{
-					this.connectionView.save();
-					this.model.getCurrentItem().setDataConnection(this.connectionView.model.getCurrentItem());
+					this.getDataConnectionView().save();
+					this.model.getCurrentItem().setDataConnection(this.getDataConnectionView().getModel().getCurrentItem());
 					super.save();
 				}
 			}
-			else if(this.tableSelectionView.getClass().getName().equals(topControlData))
+			else if(this.getPresenter().getImportTableSelectionViewID().equals(topControlData))
 			{
-				if(this.tableSelectionView.isValid())
+				if(this.getImportTableSelectionView().isValid())
 				{
-					this.model.getCurrentItem().setLastSavedDatabaseName(this.tableSelectionView.getSelectedDatabaseName());
+					this.model.getCurrentItem().setLastSavedDatabaseName(this.getImportTableSelectionView().getModel().getSelectedDatabase().getName());
 					super.save();
 				}
 			}
@@ -223,10 +231,10 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	@Override
 	protected void onAdd() {
 		super.onAdd();
-		if(connectionView != null)
+		if(this.getDataConnectionView() != null)
 		{
-			this.connectionView.presenter.addModel();
-			this.connectionView.getModel().getCurrentItem().addPropertyChangeListener(new PropertyChangeListener() {
+			this.getDataConnectionView().presenter.addModel();
+			this.getDataConnectionView().getModel().getCurrentItem().addPropertyChangeListener(new PropertyChangeListener() {
 				
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -238,7 +246,7 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	
 	@Override
 	protected void onListSelectionChangedHandler(ImportDefinition entity) {
-		if(!this.wizardLayout.topControl.getData("id").toString().equalsIgnoreCase(this.connectionView.getClass().getName()))
+		if(!this.wizardLayout.topControl.getData("id").toString().equalsIgnoreCase(this.getDataConnectionView().getClass().getName()))
 		{
 			this.wizardLayout.topControl = this.connectionContainer;
 			this.wizardContainer.layout();
@@ -251,32 +259,29 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 			if(dc != null)
 			{
 				/* depends on which wizard view is active what we do here */
-				this.connectionView.getPresenter().loadModel(dc);
+				this.getDataConnectionView().getPresenter().loadModel(dc);
 			}
 		}
 	}
 	
-	public DataConnectionInlineView getConnectionView()
-	{
-		return this.connectionView;
-	}
+
 	
 	private void onGoSelectTable()
 	{
 		/* if the connection works, save it */
 		this.btnGoSelectTable.setEnabled(false);
-		if(!this.connectionView.isValid())
+		if(!this.getDataConnectionView().isValid())
 		{
 			this.btnGoSelectTable.setEnabled(true);
 			return;
 		}
-		if((this.model.getDirty() || this.connectionView.getModel().getDirty()))
+		if((this.model.getDirty() || this.getDataConnectionView().getModel().getDirty()))
 		{
 			this.save();
 		}
 		
 		/* connect first, showing a progress, must be asynchronous */
-		DataConnection connection = connectionView.getModel().getCurrentItem();
+		DataConnection connection = getPresenter().getDataConnectionView().getModel().getCurrentItem();
 		if(connection == null)
 		{
 			return;
@@ -338,11 +343,11 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 	
 	public void loadTableSelectionView(boolean reconnecting)
 	{
-		if (this.tableSelectionView == null)
+		if (this.getImportTableSelectionView() == null)
 		{
-			this.tableSelectionView = new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem());
-			this.tableSelectionView.getPresenter().addModelChangeListener(this);
-			GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.tableSelectionView);
+			this.getPresenter().setImportTableSelectionView(new ImportTableSelectionInlineView(tableSelectionContainer, SWT.NONE, this.model.getCurrentItem()));
+			this.getImportTableSelectionView().getPresenter().addModelChangeListener(this);
+			GridDataFactory.fillDefaults().grab(true, true).indent(0, 0).applyTo(this.getImportTableSelectionView());
 			btnGoConnection= new Button(tableSelectionContainer, SWT.PUSH);
 			btnGoConnection.setText("Back");
 			btnGoSelectModel = new Button(tableSelectionContainer, SWT.PUSH);
@@ -376,19 +381,19 @@ public class ImportDefinitionView extends BaseEntityMasterDetailListEditView<Imp
 				}
 			});
 			
-			this.tableSelectionView.setupImportBindings(this.importWorker);
-			this.tableSelectionView.getDatabases();
+			this.getImportTableSelectionView().setupImportBindings(this.importWorker);
+			this.getImportTableSelectionView().getDatabases();
 		}
 		else
 		{
 			if(reconnecting)
 			{
-				this.tableSelectionView.setupImportBindings(this.importWorker);
-				this.tableSelectionView.getDatabases();
+				this.getImportTableSelectionView().setupImportBindings(this.importWorker);
+				this.getImportTableSelectionView().getDatabases();
 			}
 		}
 		this.wizardLayout.topControl = this.tableSelectionContainer;
-		this.wizardLayout.topControl.setData("id", tableSelectionView.getClass().getName());
+		this.wizardLayout.topControl.setData("id", getPresenter().getImportTableSelectionViewID());
 		this.tableSelectionContainer.layout();
 		this.wizardContainer.layout();
 		

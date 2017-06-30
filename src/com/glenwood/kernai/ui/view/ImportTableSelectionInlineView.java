@@ -1,5 +1,7 @@
 package com.glenwood.kernai.ui.view;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +87,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	private WritableList<TableDefinition> tableSourceListWrapper;
 	private WritableValue<ImportTableViewModel> value;
 	private DataBindingContext ctx;
-	private List<TableDefinition> tableSourceList;
+	
 	private Binding selectedDatabaseBinding;
 	private ImportWorker importWorker;
 	
@@ -105,31 +107,6 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 	{
 		return this.presenter;
 	}
-	
-	public String getSelectedDatabaseName()
-	{
-		return this.model.getSelectedDatabase().getName();
-		/*
-		IStructuredSelection selection = this.cboDatabase.getStructuredSelection();
-		if(selection != null)
-		{
-			DatabaseDefinition database = (DatabaseDefinition) selection.getFirstElement();
-			if(database != null)
-			{
-				return database.getName();
-			}
-			else
-			{
-				return null;
-			}
-		}
-		else
-		{
-			return null;
-		}
-		*/
-	}
-	
 	
 	public ImportTableSelectionInlineView(Composite parent, int style, ImportDefinition parentEntity) {
 		super(parent, style);
@@ -177,8 +154,7 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		this.ctx.dispose();
 		value = new WritableValue<>();
 		value.setValue(this.model);
-		this.tableSourceList = new ArrayList<TableDefinition>();
-		this.tableSourceListWrapper = new WritableList<>(this.tableSourceList, TableDefinition.class);
+		this.tableSourceListWrapper = new WritableList<>(this.model.getTableSourceList(), TableDefinition.class);
 		ViewerSupport.bind(this.listTableSource, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
 		ViewerSupport.bind(this.listTableSelection, tableSourceListWrapper, BeanProperties.value("name"), BeanProperties.value("database.name"));
 		
@@ -200,14 +176,19 @@ public class ImportTableSelectionInlineView extends Composite implements IEntity
 		ctx.bindValue(addSelectedButtonObservable, listSourceObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 		ctx.bindValue(removeSelectedButtonObservable, listSelectedObservable, new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE), singleSelectionToBooleanConverter);
 		
-
-		
 		UpdateValueStrategy selectedDatabaseBindingStrategy = new UpdateValueStrategy();
 		RequiredEntityValidator selectedDatabaseValidator = new RequiredEntityValidator("Database is required");
 		selectedDatabaseBindingStrategy.setAfterConvertValidator(selectedDatabaseValidator);
 		selectedDatabaseBinding = ctx.bindValue(databaseWidget, databaseModel, selectedDatabaseBindingStrategy, null);
 		ControlDecorationSupport selectedDatabaseDecoration = ControlDecorationSupport.create(selectedDatabaseBinding, SWT.TOP | SWT.LEFT);
 		//selectedDatabaseValidator.setControlDecoration(selectedDatabaseDecoration);
+		this.model.addPropertyChangeListener("selectedDatabase", new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				presenter.modelChanged();
+			}
+		});
 	}
 	
 
