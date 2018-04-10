@@ -2,7 +2,6 @@ package com.glenwood.kernai.ui.view;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -57,7 +55,6 @@ import com.glenwood.kernai.ui.abstraction.IEntityMasterDetailListEditView;
 import com.glenwood.kernai.ui.presenter.ImportTableViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 import com.glenwood.kernai.ui.view.helpers.RequiredEntityValidator;
-import com.glenwood.kernai.ui.view.helpers.StringRequiredValidator;
 import com.glenwood.kernai.ui.viewmodel.ImportTableViewModel;
 import com.glenwood.kernai.ui.workers.ImportWorker;
 
