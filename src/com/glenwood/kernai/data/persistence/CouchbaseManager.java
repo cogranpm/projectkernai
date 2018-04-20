@@ -68,7 +68,7 @@ public class CouchbaseManager implements IPersistenceManager {
 		{
 			ex.printStackTrace();
 		}
-		this.manager.setStorageType("ForestDB");
+		//this.manager.setStorageType("ForestDB");
 		this.database  = null;
 		try
 		{
