@@ -214,6 +214,7 @@ public class ApplicationData {
 	public static final String IMAGE_GO_NEXT_SMALL = "goNextSmall";
 	public static final String IMAGE_GO_PREVIOUS_SMALL = "goPreviousSmall";
 	public static final String IMAGE_GO_UP_SMALL = "goUpSmall";
+	public static final String IMAGE_GO_HOME= "goHome";
 	
 	public static final int SQL_TIMEOUT_VALID_CHECK = 15;
 	
@@ -297,6 +298,7 @@ public class ApplicationData {
 		this.imageRegistry.put(IMAGE_GO_NEXT_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-next.png")));
 		this.imageRegistry.put(IMAGE_GO_PREVIOUS_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-previous.png")));
 		this.imageRegistry.put(IMAGE_GO_UP_SMALL, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-up.png")));
+		this.imageRegistry.put(IMAGE_GO_HOME, ImageDescriptor.createFromFile(ApplicationData.class, String.format("%s%s", ApplicationData.IMAGES_PATH, "go-home.png")));
 
 	}
 	
