@@ -39,6 +39,7 @@ import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
 import com.glenwood.kernai.ui.view.ModelView;
+import com.glenwood.kernai.ui.view.ProjectContainerView;
 import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
@@ -81,7 +82,7 @@ public class MainWindow extends ApplicationWindow {
 		container.setLayout(new FillLayout());
 
 		/* top level tabs */
-		CTabFolder folder = new CTabFolder(container, SWT.TOP);
+		CTabFolder folder = new CTabFolder(container, SWT.TOP | SWT.BORDER);
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText("&Getting Started");
 		CTabItem masterPropertyTabItem = new CTabItem(folder, SWT.NONE);
@@ -125,13 +126,21 @@ public class MainWindow extends ApplicationWindow {
 		CTabItem projectItem  = new CTabItem(folder, SWT.NONE);
 		projectItem.setText("&Projects");
 		Composite projectContainerPane = new Composite(folder, SWT.NONE);
+		
+		GridLayout layout = new GridLayout(1, true);
+		projectContainerPane.setLayout(layout);
+		projectItem.setControl(projectContainerPane);
+
+		/*
 		ToolBar projectToolBar = this.addNavigationToolbar(projectContainerPane, projectItem);
 		projectBarManager = new ToolBarManager(projectToolBar);
 		ApplicationData.instance().putToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT, projectBarManager);
 
+
 		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_PROJECT));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
+
 		
 		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_PROJECT_MODEL));
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
@@ -153,10 +162,12 @@ public class MainWindow extends ApplicationWindow {
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 
+		*/
+		
 		projectPane = new Composite(projectContainerPane, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(projectPane);
 		projectPane.setLayout(new FillLayout());
-		projectBarManager.update(true);
+	//	projectBarManager.update(true);
 		
 		folder.addSelectionListener(new SelectionListener() {
 			
@@ -167,8 +178,8 @@ public class MainWindow extends ApplicationWindow {
 				{
 					if(projectPane.getChildren().length == 0)
 					{
-						ProjectView projectView = new ProjectView(projectPane, SWT.NONE);
-						ApplicationData.instance().setCurrentEntityView(projectView);
+						ProjectContainerView projectView = new ProjectContainerView(projectPane, SWT.NONE);
+						//ApplicationData.instance().setCurrentEntityView(projectView);
 						projectPane.layout();
 					}
 				}
@@ -371,12 +382,14 @@ public class MainWindow extends ApplicationWindow {
 				 ApplicationData.GOTO_PROJECT_ENTITY, ApplicationData.GOTO_PROJECT_ATTRIBUTE, ApplicationData.GOTO_PROJECT_ASSOCIATION,
 				 ApplicationData.GOTO_PROJECT_IMPORT};
 
+
 		 IAction goToProjectProject = new Action("Project", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_PROJECT);
 				/* unload the project pane and load the project view */
-				ApplicationData.instance().setCurrentEntityView(new ProjectView(clearComposite(projectPane), SWT.NONE));
+				//ApplicationData.instance().setCurrentEntityView(new ProjectView(clearComposite(projectPane), SWT.NONE));
+				//ApplicationData.instance().setCurrentEntityView(new ProjectContainerView(clearComposite(projectPane), SWT.NONE));
 				projectPane.layout();
 			}
 		 };
@@ -384,7 +397,7 @@ public class MainWindow extends ApplicationWindow {
 		 goToProjectProject.setAccelerator(SWT.MOD1 | 'J');
 		 goToProjectProject.setActionDefinitionId(ApplicationData.GOTO_PROJECT_PROJECT);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_PROJECT, goToProjectProject);
-		 
+
 		 IAction goToProjectModel = new Action("Model", IAction.AS_CHECK_BOX) {
 			@Override 
 			public void run() {

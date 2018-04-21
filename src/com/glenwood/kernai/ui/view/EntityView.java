@@ -102,7 +102,7 @@ public class EntityView extends BaseEntityMasterDetailListEditView<Entity, Model
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
         this.setupCurrentEntityBinding();
-        this.setupToolbarBinding();
+        //this.setupToolbarBinding();
 	}
 	
 	private void setupCurrentEntityBinding()

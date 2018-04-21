@@ -29,12 +29,14 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolBar;
@@ -42,6 +44,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.ui.ApplicationData;
+
 import com.glenwood.kernai.ui.view.helpers.EntityViewHelper;
 
 
@@ -78,46 +81,11 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	{
 		this.viewHelper = new EntityViewHelper();
 		this.setupModelAndPresenter();
-		
-		
 		GridLayout layout = new GridLayout(1, false);
-		final Composite toolbarContainer = new Composite(this, SWT.NONE);
-		toolbarContainer.setLayout(layout);
-		/* rounded-> radio style images not working, nor is hide selection setting */
-		/* add the toolbar */
-		final RoundedToolbar toolbar = new RoundedToolbar(toolbarContainer, SWT.HIDE_SELECTION | SWT.PUSH);
-		toolbar.setCornerRadius(8);
-
-		GridData gd = new GridData();
-		gd.grabExcessHorizontalSpace=false;
-		gd.grabExcessVerticalSpace = false;
-
-		toolbar.setLayoutData(gd);
-		
-		
-		//toolbar.setBackground(grey1);
-		final RoundedToolItem home = new RoundedToolItem(toolbar, SWT.RADIO);
-		home.setWidth(85);
-		//home.setText("Home");
-		home.setSelection(true);
-		home.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_HOME));
-		home.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_GO_HOME));
-		
-		home.addListener(SWT.Selection, e -> {
-			System.out.println("push/Button 1");
-		});
-		
-		final RoundedToolItem modelItem = new RoundedToolItem(toolbar, SWT.RADIO);
-		//mailItem.setSelectionImage(emailw);
-		//mailItem.setImage(emailb);
-		modelItem.setWidth(100);
-		modelItem.setText("Model");
-		modelItem.setTextColorSelected(this.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-		//modelItem.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL));
-		//modelItem.setImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ADD_SMALL));
-		toolbarContainer.pack();
-		
-		dividerMain = new SashForm(this, SWT.HORIZONTAL);
+		Composite bottomContainer = new Composite(this, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bottomContainer);
+		bottomContainer.setLayout(new FillLayout());
+		dividerMain = new SashForm(bottomContainer, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer.setLayout(viewHelper.getViewLayout(1));
@@ -132,7 +100,13 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		});
 		setupListColumns();
 		setupEditingContainer();
-		this.setLayout(new FillLayout(SWT.VERTICAL));
+		
+
+		//GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.TOP).applyTo(dividerMain);
+		
+		//this.setLayout(new FillLayout(SWT.VERTICAL));
+		
+		this.setLayout(new GridLayout(1, true));
 		
     	ctx = new DataBindingContext();
 		value = new WritableValue<T>();
@@ -246,7 +220,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	
 	protected void setDividerWeights()
 	{
-		dividerMain.setWeights(new int[]{1, 2});
+		dividerMain.setWeights(new int[]{1, 3});
 	}
 	
 	protected void setupListColumns()
