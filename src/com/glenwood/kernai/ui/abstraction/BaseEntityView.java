@@ -14,11 +14,14 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolItem;
+import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolbar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -28,6 +31,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -72,6 +76,32 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		this.viewHelper = new EntityViewHelper();
 		this.setupModelAndPresenter();
 		
+		final Composite toolbarContainer = new Composite(this, SWT.NONE);
+		toolbarContainer.setLayout(new RowLayout());
+		/* add the toolbar */
+		final RoundedToolbar toolbar = new RoundedToolbar(toolbarContainer, SWT.HIDE_SELECTION);
+		toolbar.setCornerRadius(8);
+		//toolbar.setBackground(grey1);
+		final RoundedToolItem home = new RoundedToolItem(toolbar, SWT.RADIO);
+		home.setWidth(100);
+		//home.setText("Home");
+		home.setSelection(true);
+		home.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		home.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ADD_SMALL));
+		home.addListener(SWT.Selection, e -> {
+			System.out.println("push/Button 1");
+		});
+		
+		final RoundedToolItem modelItem = new RoundedToolItem(toolbar, SWT.RADIO);
+		//mailItem.setSelectionImage(emailw);
+		//mailItem.setImage(emailb);
+		modelItem.setWidth(100);
+		modelItem.setText("Model");
+		modelItem.setTextColorSelected(this.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+		modelItem.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		modelItem.setSelectionImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ADD_SMALL));
+
+		
 		dividerMain = new SashForm(this, SWT.HORIZONTAL);
 		listContainer = new Composite(dividerMain, SWT.NONE);
 		editContainer = new Composite(dividerMain, SWT.NONE);
@@ -87,7 +117,7 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 		});
 		setupListColumns();
 		setupEditingContainer();
-		this.setLayout(new FillLayout());
+		this.setLayout(new FillLayout(SWT.VERTICAL));
 		
     	ctx = new DataBindingContext();
 		value = new WritableValue<T>();

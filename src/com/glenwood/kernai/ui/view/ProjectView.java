@@ -21,6 +21,7 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -35,6 +36,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolbar;
+import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolItem;
 
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.ApplicationData;
@@ -79,6 +82,9 @@ public class ProjectView extends BaseEntityView<Project>{
 		txtName = viewHelper.getTextEditor(editMaster);
 		viewHelper.layoutEditLabel(lblName);
 		viewHelper.layoutEditEditor(txtName);
+		
+		
+		
 	}
 
 	@Override
@@ -156,6 +162,8 @@ public class ProjectView extends BaseEntityView<Project>{
 	
 	private void setupToolbarBinding()
 	{
+
+		
         /* set the enabled of the toolbar items */
         ToolItem modelToolItem = ApplicationData.instance().getToolItem(ApplicationData.instance().getToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT),
         		ApplicationData.GOTO_PROJECT_MODEL);
