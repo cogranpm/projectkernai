@@ -8,12 +8,11 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
 import com.glenwood.kernai.ui.ApplicationData;
 
-public class ModelContainerView extends Composite {
+public class EntityContainerView extends Composite{
 
-	public ModelContainerView(Composite parent, int style) {
+	public EntityContainerView(Composite parent, int style) {
 		super(parent, style);
 		this.init();
 	}
@@ -41,22 +40,18 @@ public class ModelContainerView extends Composite {
 		//mailItem.setSelectionImage(emailw);
 		//mailItem.setImage(emailb);
 		entityItem.setWidth(100);
-		entityItem.setText("Entities");
+		entityItem.setText("Attributes");
 		entityItem.setTextColorSelected(this.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		//modelItem.setDisabledImage(ApplicationData.instance().getImageRegistry().get(ApplicationData.IMAGE_ADD_SMALL));
 		//modelItem.setEnabled(false);
 		//modelItem.setTextColor(this.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
 		
-		final RoundedToolItem associationItem = new RoundedToolItem(toolbar, SWT.RADIO);
-		associationItem.setWidth(100);
-		associationItem.setText("Associations");
-		associationItem.setTextColorSelected(this.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-
+		
 		Composite bottomContainer = new Composite(this, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bottomContainer);
 		
-		ModelView modelView = new ModelView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentProject());
+		EntityView modelView = new EntityView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentModel());
 		ApplicationData.instance().setCurrentEntityView(modelView);
 
 		bottomContainer.setLayout(new FillLayout());
@@ -72,19 +67,16 @@ public class ModelContainerView extends Composite {
 
 			if(home.getSelection())
 			{
-				ApplicationData.instance().setCurrentEntityView(new ModelView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentProject()));
+				ApplicationData.instance().setCurrentEntityView(new EntityView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentModel()));
 			}
 			else if(entityItem.getSelection())
 			{
-				EntityContainerView entityView = new EntityContainerView(bottomContainer, SWT.NONE);
+				AttributeView entityView = new AttributeView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentEntity());
+				ApplicationData.instance().setCurrentEntityView(entityView);
 			}
-			else if(associationItem.getSelection())
-			{
-				AssociationView view = new AssociationView(bottomContainer, SWT.NONE, ApplicationData.instance().getCurrentModel());
-				ApplicationData.instance().setCurrentEntityView(view);
-			}
+
 			bottomContainer.layout();
 		});
 	}
-	
+
 }
