@@ -21,7 +21,7 @@ public class TemplateViewModel extends BaseViewModel<Template> {
 		return engineLookup;
 	}
 
-	public void setDataTypeLookup(List<ListDetail> engineLookup) {
+	public void setEngineLookup(List<ListDetail> engineLookup) {
 		this.engineLookup = engineLookup;
 	}
 	

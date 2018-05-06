@@ -185,7 +185,7 @@ public class AttributeView extends BaseEntityMasterDetailListEditView<Attribute,
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
 
-		lblDataType = new Label(editMaster, SWT.NONE);
+ 		lblDataType = new Label(editMaster, SWT.NONE);
 		lblDataType.setText("Data Type");
 		cboDataType = new ComboViewer(editMaster);
 		cboDataType.setContentProvider(ArrayContentProvider.getInstance());

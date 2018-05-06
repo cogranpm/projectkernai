@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -40,7 +41,6 @@ import com.glenwood.kernai.data.entity.Template;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.TemplateViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
-import com.glenwood.kernai.ui.viewmodel.AttributeViewModel;
 import com.glenwood.kernai.ui.viewmodel.TemplateViewModel;
 
 
@@ -171,6 +171,22 @@ public class TemplateView extends BaseEntityView<Template> {
 		viewHelper.layoutEditLabel(lblName);
 		viewHelper.layoutEditEditor(txtName);
 
+		lblEngine= new Label(editMaster, SWT.NONE);
+		lblEngine.setText("Engine");
+		cboEngine = new ComboViewer(editMaster);
+		cboEngine.setContentProvider(ArrayContentProvider.getInstance());
+		cboEngine.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element)
+			{
+				ListDetail item = (ListDetail)element;
+				return item.getLabel();
+			}
+		});
+		TemplateViewModel aModel = (TemplateViewModel)this.model;
+		cboEngine.setInput(aModel.getEngineLookup());
+		viewHelper.layoutEditLabel(lblEngine);
+		viewHelper.layoutComboViewer(cboEngine);
 	}
 
 
@@ -186,24 +202,46 @@ public class TemplateView extends BaseEntityView<Template> {
 
         IObservableSet<Template> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Template.class, "name").observeDetail(knownElements);
-        IObservableMap[] labelMaps = {names};
+        final IObservableMap engines = BeanProperties.value(Template.class, "engine").observeDetail(knownElements);
+        
+        
+        IObservableMap[] labelMaps = {names, engines};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
                 	Template mc = (Template)element;
-                	return mc.getName();
+                	switch(columnIndex)
+                	{
+                	case 0:
+                    	return mc.getName();
+                	case 1:
+                		if(mc.getEngineLookup() != null)
+                		{
+                			return mc.getEngineLookup().getLabel();
+                		}
+                		else
+                		{
+                			return null;
+                		}
+                    default:
+                    	return "";
+                	}
                 }
         };
+        
         listViewer.setLabelProvider(labelProvider);
         List<Template> el = model.getItems();
         input = new WritableList(el, Template.class);
         listViewer.setInput(input);
+        
+        IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
+        IObservableValue nameModelObservable = BeanProperties.value("name").observeDetail(value);
+		
+        IObservableValue engineTargetObservable = ViewerProperties.singleSelection().observe(cboEngine);
+        IObservableValue engineModelObservable = BeanProperties.value("engineLookup").observeDetail(value);
 
-        IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
-        IObservableValue dbmodel = BeanProperties.value("name").observeDetail(value);
-       
         /* just the validators and decorators in the name field */
-        IValidator validator = new IValidator() {
+        IValidator nameValidator = new IValidator() {
             @Override
             public IStatus validate(Object value) {
                 String nameValue = String.valueOf(value).replaceAll("\\s", "");
@@ -215,17 +253,15 @@ public class TemplateView extends BaseEntityView<Template> {
             }
             
           };
-        UpdateValueStrategy strategy = new UpdateValueStrategy();
-        strategy.setAfterConvertValidator(validator);
-        Binding nameBinding = ctx.bindValue(target, dbmodel, strategy, null);
+        UpdateValueStrategy nameUpdateStrategy = new UpdateValueStrategy();
+        nameUpdateStrategy.setAfterConvertValidator(nameValidator);
+        Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
+        Binding dataTypeBinding = ctx.bindValue(engineTargetObservable, engineModelObservable);
+        
         ControlDecorationSupport.create(nameBinding, SWT.TOP | SWT.LEFT);
         final IObservableValue errorObservable = WidgetProperties.text().observe(errorLabel);
-        
-
-        // this one listenes to all changes
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
-
 	}
 	
 	private class ViewerComparator extends ListSorterHelper
