@@ -127,11 +127,12 @@ public class MainWindow extends ApplicationWindow {
 		projectItem.setText("&Projects");
 		Composite projectContainerPane = new Composite(folder, SWT.NONE);
 		
+		/*
 		GridLayout layout = new GridLayout(1, true);
 		projectContainerPane.setLayout(layout);
 		projectItem.setControl(projectContainerPane);
-
-		/*
+		*/
+		
 		ToolBar projectToolBar = this.addNavigationToolbar(projectContainerPane, projectItem);
 		projectBarManager = new ToolBarManager(projectToolBar);
 		ApplicationData.instance().putToolBarManager(ApplicationData.TOOLBAR_MANAGER_PROJECT, projectBarManager);
@@ -162,12 +163,11 @@ public class MainWindow extends ApplicationWindow {
 		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		projectBarManager.add(tabItemAction);
 
-		*/
-		
+				
 		projectPane = new Composite(projectContainerPane, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(projectPane);
 		projectPane.setLayout(new FillLayout());
-	//	projectBarManager.update(true);
+		projectBarManager.update(true);
 		
 		folder.addSelectionListener(new SelectionListener() {
 			
@@ -178,7 +178,9 @@ public class MainWindow extends ApplicationWindow {
 				{
 					if(projectPane.getChildren().length == 0)
 					{
-						ProjectContainerView projectView = new ProjectContainerView(projectPane, SWT.NONE);
+						ProjectView projectView = new ProjectView(projectPane, SWT.NONE);
+						ApplicationData.instance().setCurrentEntityView(projectView);
+						//ProjectContainerView projectView = new ProjectContainerView(projectPane, SWT.NONE);
 						//ApplicationData.instance().setCurrentEntityView(projectView);
 						projectPane.layout();
 					}
@@ -388,7 +390,7 @@ public class MainWindow extends ApplicationWindow {
 			public void run() {
 				ApplicationData.instance().uncheckActions(projectActionKeys, ApplicationData.GOTO_PROJECT_PROJECT);
 				/* unload the project pane and load the project view */
-				//ApplicationData.instance().setCurrentEntityView(new ProjectView(clearComposite(projectPane), SWT.NONE));
+				ApplicationData.instance().setCurrentEntityView(new ProjectView(clearComposite(projectPane), SWT.NONE));
 				//ApplicationData.instance().setCurrentEntityView(new ProjectContainerView(clearComposite(projectPane), SWT.NONE));
 				projectPane.layout();
 			}

@@ -115,7 +115,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
         allValidationBinding = ctx.bindValue(errorObservable, new AggregateValidationStatus(ctx.getBindings(), AggregateValidationStatus.MAX_SEVERITY), null, null);
         IObservableList bindings = ctx.getValidationStatusProviders();
         this.setupCurrentEntityBinding();
-      //  this.setupToolbarBinding();
+        this.setupToolbarBinding();
 	}
 	
 	private void setupCurrentEntityBinding()
@@ -181,7 +181,7 @@ public class ModelView extends BaseEntityMasterDetailListEditView<Model, Project
 	
 	@Override
 	protected void onSetupEditingContainer() {
-		this.lblEditHeader.setText(String.format("Project:%s", ApplicationData.instance().getCurrentProject().getName()));
+		this.lblEditHeader.setText(String.format("Project: %s", ApplicationData.instance().getCurrentProject().getName()));
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
