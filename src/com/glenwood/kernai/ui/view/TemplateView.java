@@ -18,10 +18,15 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
@@ -30,11 +35,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.glenwood.kernai.data.entity.MasterCategory;
+import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.Template;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.TemplateViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
+import com.glenwood.kernai.ui.viewmodel.AttributeViewModel;
 import com.glenwood.kernai.ui.viewmodel.TemplateViewModel;
 
 
@@ -42,6 +48,9 @@ public class TemplateView extends BaseEntityView<Template> {
 
 	private Label lblName;
 	private Text txtName;
+	
+	private Label lblEngine;
+	private ComboViewer cboEngine;
 	
 	public TemplateView(Composite parent, int style) {
 		super(parent, style);
@@ -64,18 +73,20 @@ public class TemplateView extends BaseEntityView<Template> {
 		nameColumn.getColumn().setText("Name");
 		nameColumn.getColumn().setResizable(false);
 		nameColumn.getColumn().setMoveable(false);
+		
+		TableViewerColumn engineColumn = this.viewHelper.getListColumn(listViewer, "Engine");
 
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
 			
 			@Override
 			protected void setValue(Object element, Object value) {
-				((MasterCategory)element).setName(String.valueOf(value));
+				((Template)element).setName(String.valueOf(value));
 				listViewer.update(element, null);
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				return ((MasterCategory)element).getName();
+				return ((Template)element).getName();
 			}
 			
 			@Override
@@ -88,10 +99,66 @@ public class TemplateView extends BaseEntityView<Template> {
 				return true;
 			}
 		});
+		
+		
+		engineColumn.setEditingSupport(new EditingSupport(this.listViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+
+				if (element == null)
+				{
+					return;
+				}
+				if (value == null)
+				{
+					return;
+				}
+				Template template = (Template)element;
+				ListDetail listDetail = (ListDetail)value;
+				template.setEngineLookup(listDetail);
+				listViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				Template template = (Template)element;
+				return template.getEngineLookup();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				//return new TextCellEditor(listViewer.getTable());
+				ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(listViewer.getTable(), SWT.READ_ONLY);
+				IStructuredContentProvider contentProvider = new ArrayContentProvider();
+				editor.setContentProvider( contentProvider );
+				editor.setLabelProvider(new LabelProvider(){
+					@Override
+					public String getText(Object element)
+					{
+						ListDetail item = (ListDetail)element;
+						return item.getLabel();
+
+					}
+				});
+				TemplateViewModel aModel = (TemplateViewModel)model;
+				editor.setInput(aModel.getEngineLookup());
+				return editor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+
+	
+		
 		nameColumn.getColumn().addSelectionListener(this.getSelectionAdapter(nameColumn.getColumn(), 0));
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
+		tableLayout.setColumnData(engineColumn.getColumn(), new ColumnWeightData(100));
 		
 	}
 	
@@ -117,19 +184,19 @@ public class TemplateView extends BaseEntityView<Template> {
 
 	protected void onInitDataBindings() {
 
-        IObservableSet<MasterCategory> knownElements = contentProvider.getKnownElements();
-        final IObservableMap names = BeanProperties.value(MasterCategory.class, "name").observeDetail(knownElements);
+        IObservableSet<Template> knownElements = contentProvider.getKnownElements();
+        final IObservableMap names = BeanProperties.value(Template.class, "name").observeDetail(knownElements);
         IObservableMap[] labelMaps = {names};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
-                	MasterCategory mc = (MasterCategory)element;
+                	Template mc = (Template)element;
                 	return mc.getName();
                 }
         };
         listViewer.setLabelProvider(labelProvider);
         List<Template> el = model.getItems();
-        input = new WritableList(el, MasterCategory.class);
+        input = new WritableList(el, Template.class);
         listViewer.setInput(input);
 
         IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
@@ -170,8 +237,8 @@ public class TemplateView extends BaseEntityView<Template> {
 			{
 				return 0;
 			}
-			MasterCategory p1 = (MasterCategory)e1;
-			MasterCategory p2 = (MasterCategory)e2;
+			Template p1 = (Template)e1;
+			Template p2 = (Template)e2;
 			int rc = 0;
 			switch(this.propertyIndex)
 			{
@@ -189,7 +256,7 @@ public class TemplateView extends BaseEntityView<Template> {
 			return rc;
 		}
 		
-		private int compareName(MasterCategory p1, MasterCategory p2)
+		private int compareName(Template p1, Template p2)
 		{
 			if (p1 == null || p2 == null)
 			{

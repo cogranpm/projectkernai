@@ -128,6 +128,14 @@ public final class MasterPropertyDefault {
 		createLookupRecord(ApplicationData.LIST_DATABASE_VENDOR_NAME, details);
 
 		
+		//template engines 
+		details.clear();
+		item = new ListDetail();
+		item.setKey("Fizzed");
+		item.setLabel("Fizzed Rocker");
+		details.add(item);
+		createLookupRecord(ApplicationData.LIST_TEMPLATE_ENGINE_NAME, details);
+		
 	}
 	
 	public void createListMappings()

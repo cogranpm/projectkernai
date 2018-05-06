@@ -254,6 +254,7 @@ public class ApplicationData {
 	public static final String LIST_SQL_DATATYPE_NAME = "Database Data Types";
 	public static final String LIST_ASSOCIATION_TYPE_NAME = "Association Type";
 	public static final String LIST_DATABASE_VENDOR_NAME = "Database Vendor";
+	public static final String LIST_TEMPLATE_ENGINE_NAME = "Template Engine";
 	
 	public static final String CONNECTION_VENDOR_NAME_MSSQL = "MSSQL";
 	public static final String CONNECTION_VENDOR_NAME_ORACLE = "ORACLE";

@@ -3,6 +3,7 @@ package com.glenwood.kernai.data.entity;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
@@ -13,7 +14,7 @@ public class Template extends BaseEntity {
 
 	public static final String TYPE_NAME = "TEMPLATE";
 	
-	private int engine;
+	private String engine;
 	private String name;
 	private String body;
 	
@@ -30,12 +31,12 @@ public class Template extends BaseEntity {
 	}
 
 	@JsonProperty
-	public int getEngine() {
+	public String getEngine() {
 		return engine;
 	}
 
-	public void setEngine(int engine) {
-		int oldEngine = this.engine;
+	public void setEngine(String engine) {
+		String oldEngine = this.engine;
 		this.engine = engine;
 		this.firePropertyChange("engine", oldEngine, this.engine);
 	}
@@ -53,6 +54,21 @@ public class Template extends BaseEntity {
 	}
 	
 	
+	private ListDetail engineLookup;
+	
+	@JsonIgnore
+	public ListDetail getEngineLookup() {
+		return engineLookup;
+	}
+
+	public void setEngineLookup(ListDetail engineLookup) {
+		ListDetail oldValue = this.engineLookup;
+		this.engineLookup = engineLookup;
+		firePropertyChange("engineLookup", oldValue, this.engineLookup);
+	}
+
+	
+	
 	public Template()
 	{
 		this.type = TYPE_NAME;
@@ -61,12 +77,12 @@ public class Template extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return String.format("Template[id=%s,Name=%s]", this.id, this.name);
+		return String.format("Template[id=%s,Name=%s,Engine=%]", this.id, this.name, this.engine);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.name);
+		return Objects.hash(this.name, this.engine);
 	}
 
 	@Override
