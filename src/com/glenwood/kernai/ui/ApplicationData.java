@@ -220,6 +220,7 @@ public class ApplicationData {
 	
 	//toolbar managers
 	public static final String TOOLBAR_MANAGER_PROJECT = "project";
+	public static final String TOOLBAR_MANAGER_SCRIPTING = "scripting";
 
 	//global actions
 	public static final String EXIT_ACTION_KEY = "exit";
@@ -243,6 +244,10 @@ public class ApplicationData {
 	public static final String GOTO_PROJECT_ATTRIBUTE = "GoToProjectAttribute";
 	public static final String GOTO_PROJECT_ASSOCIATION = "GoToProjectAssociation";
 	public static final String GOTO_PROJECT_IMPORT = "GoToProjectImport";
+	
+	public static final String GOTO_SCRIPTING_TEMPLATES = "GoToScriptingTemplates";
+	public static final String GOTO_SCRIPTING_SCRIPTS = "GoToScriptingScripts";
+	public static final String GOTO_SCRIPTING_BUILDS = "GoToScriptingBuilds";
 	
 	
 	public static final String LIST_DATATYPE_NAME = "Data Type";

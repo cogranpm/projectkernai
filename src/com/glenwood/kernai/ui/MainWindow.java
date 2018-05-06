@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
-import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.AssociationView;
 import com.glenwood.kernai.ui.view.AttributeView;
@@ -39,11 +38,10 @@ import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.view.MasterCategoryView;
 import com.glenwood.kernai.ui.view.MasterPropertyView;
 import com.glenwood.kernai.ui.view.ModelView;
-import com.glenwood.kernai.ui.view.ProjectContainerView;
 import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
-import com.glenwood.kernai.ui.workers.ImportWorker;
+import com.glenwood.kernai.ui.view.TemplateView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
 public class MainWindow extends ApplicationWindow {
@@ -52,8 +50,9 @@ public class MainWindow extends ApplicationWindow {
 	private Composite container;
 	private Composite masterPropertyPane;
 	private Composite projectPane;
+	private Composite scriptingPane;
 	private ToolBarManager projectBarManager;
-
+	private ToolBarManager scriptingBarManager;
 	
 	/**
 	 * Create the application window.
@@ -167,7 +166,38 @@ public class MainWindow extends ApplicationWindow {
 		projectPane = new Composite(projectContainerPane, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(projectPane);
 		projectPane.setLayout(new FillLayout());
+		
 		projectBarManager.update(true);
+		
+		//scripting tabitem
+		Composite scriptingContainerPane = new Composite(folder, SWT.NONE);
+		
+		
+		CTabItem scriptingItem = new CTabItem(folder, SWT.NONE);
+		scriptingItem.setText("&Scripting");
+		
+		final ToolBar scriptingToolBar = this.addNavigationToolbar(scriptingContainerPane, scriptingItem);
+		scriptingBarManager = new ToolBarManager(scriptingToolBar);
+		ApplicationData.instance().putToolBarManager(ApplicationData.TOOLBAR_MANAGER_SCRIPTING, scriptingBarManager);
+		
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_SCRIPTING_TEMPLATES));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		scriptingBarManager.add(tabItemAction);
+
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_SCRIPTING_SCRIPTS));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		scriptingBarManager.add(tabItemAction);
+
+		tabItemAction = new ActionContributionItem(ApplicationData.instance().getAction(ApplicationData.GOTO_SCRIPTING_BUILDS));
+		tabItemAction.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		scriptingBarManager.add(tabItemAction);
+
+		
+		scriptingBarManager.update(true);
+
+		scriptingPane = new Composite(scriptingContainerPane, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(scriptingPane);
+		scriptingPane.setLayout(new FillLayout());
 		
 		folder.addSelectionListener(new SelectionListener() {
 			
@@ -185,6 +215,13 @@ public class MainWindow extends ApplicationWindow {
 						projectPane.layout();
 					}
 				}
+				else if(item == scriptingItem)
+				{
+					if(scriptingPane.getChildren().length == 0)
+					{
+						
+					}
+				}
 			}
 			
 			@Override
@@ -192,9 +229,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		});
 		
-		item = new CTabItem(folder, SWT.NONE);
-		item.setText("&Scripting");
-		
+
 
 		this.getShell().getDisplay().addFilter(SWT.KeyUp, new Listener() {
 			
@@ -471,6 +506,54 @@ public class MainWindow extends ApplicationWindow {
 		 goToProjectImport.setAccelerator(SWT.MOD1 | 'I');
 		 goToProjectImport.setActionDefinitionId(ApplicationData.GOTO_PROJECT_IMPORT);
 		 ApplicationData.instance().addAction(ApplicationData.GOTO_PROJECT_IMPORT, goToProjectImport);
+		 
+		 
+		 /* scripting */
+		 String[] scriptingActionKeys = new String[]{ApplicationData.GOTO_SCRIPTING_BUILDS, ApplicationData.GOTO_SCRIPTING_SCRIPTS,
+				 ApplicationData.GOTO_SCRIPTING_TEMPLATES};
+		 
+
+		 IAction goToScriptingTemplates = new Action("Templates", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				ApplicationData.instance().uncheckActions(scriptingActionKeys, ApplicationData.GOTO_SCRIPTING_TEMPLATES);
+				ApplicationData.instance().setCurrentEntityView(new TemplateView(clearComposite(scriptingPane), SWT.NONE));
+				scriptingPane.layout();
+			}
+		 };
+		 //goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		 goToScriptingTemplates.setEnabled(true);
+		 goToScriptingTemplates.setAccelerator(SWT.MOD1 | 'M');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_SCRIPTING_TEMPLATES, goToScriptingTemplates);
+
+		 IAction goToScriptingScripts = new Action("Scripts", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				ApplicationData.instance().uncheckActions(scriptingActionKeys, ApplicationData.GOTO_SCRIPTING_SCRIPTS);
+				ApplicationData.instance().setCurrentEntityView(new ListHeaderView(clearComposite(scriptingPane), SWT.NONE));
+				scriptingPane.layout();
+			}
+		 };
+		 //goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		 goToScriptingScripts.setEnabled(true);
+		 goToScriptingScripts.setAccelerator(SWT.MOD1 | 'S');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_SCRIPTING_SCRIPTS, goToScriptingScripts);
+
+		 
+		 IAction goToScriptingBuilds = new Action("Builds", IAction.AS_CHECK_BOX) {
+			@Override 
+			public void run() {
+				ApplicationData.instance().uncheckActions(scriptingActionKeys, ApplicationData.GOTO_SCRIPTING_BUILDS);
+				ApplicationData.instance().setCurrentEntityView(new ListHeaderView(clearComposite(scriptingPane), SWT.NONE));
+				scriptingPane.layout();
+			}
+		 };
+		 //goToMasterPropertyList.setImageDescriptor(ApplicationData.instance().getImageRegistry().getDescriptor(ApplicationData.IMAGE_ACTIVITY_SMALL));
+		 goToScriptingBuilds.setEnabled(true);
+		 goToScriptingBuilds.setAccelerator(SWT.MOD1 | 'B');
+		 ApplicationData.instance().addAction(ApplicationData.GOTO_SCRIPTING_BUILDS, goToScriptingBuilds);
+
+		 
 	}
 
 	/**
