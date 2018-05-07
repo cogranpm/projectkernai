@@ -44,7 +44,7 @@ public class EntityViewHelper {
 	
 	public void setViewLayoutData(Control control, boolean grabHorizontal, boolean grabVertical)
 	{
-		GridDataFactory.fillDefaults().grab(grabHorizontal, grabVertical).applyTo(control);
+		GridDataFactory.fillDefaults().grab(grabHorizontal, grabVertical).align(SWT.FILL, SWT.FILL).applyTo(control);
 	}
 	
 	public void setViewLayoutData(Control control, int horizontalSpan)
