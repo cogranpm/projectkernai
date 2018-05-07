@@ -18,7 +18,17 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
+import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -32,6 +42,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -51,6 +63,10 @@ public class TemplateView extends BaseEntityView<Template> {
 	
 	private Label lblEngine;
 	private ComboViewer cboEngine;
+	
+	private SourceViewer txtBody;
+	private Label lblBody;
+
 	
 	public TemplateView(Composite parent, int style) {
 		super(parent, style);
@@ -165,6 +181,8 @@ public class TemplateView extends BaseEntityView<Template> {
 	@Override
 	protected void onSetupEditingContainer()
 	{
+		
+		TemplateViewModel aModel = (TemplateViewModel)this.model;
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);
@@ -183,10 +201,32 @@ public class TemplateView extends BaseEntityView<Template> {
 				return item.getLabel();
 			}
 		});
-		TemplateViewModel aModel = (TemplateViewModel)this.model;
+		
 		cboEngine.setInput(aModel.getEngineLookup());
 		viewHelper.layoutEditLabel(lblEngine);
 		viewHelper.layoutComboViewer(cboEngine);
+		
+		lblBody = new Label(editMaster, SWT.NONE);
+		lblBody.setText("Template Body");
+		
+		Composite bodyComposite = new Composite(editMaster, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bodyComposite);
+		bodyComposite.setLayout(new FillLayout());
+		
+		
+		int VERTICAL_RULER_WIDTH = 12;
+		IOverviewRuler overviewRuler = new OverviewRuler(null, VERTICAL_RULER_WIDTH, null);
+		CompositeRuler ruler = new CompositeRuler(VERTICAL_RULER_WIDTH);
+
+		txtBody = new SourceViewer(bodyComposite, ruler, overviewRuler, false, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		viewHelper.layoutEditLabel(lblBody);
+		
+		AnnotationModel annotationModel = new AnnotationModel();
+		annotationModel.connect(aModel.getDocument());
+		txtBody.configure(new SourceViewerConfiguration());
+		txtBody.setDocument(aModel.getDocument(), annotationModel);
+		ruler.addDecorator(0, new LineNumberRulerColumn());
+		
 	}
 
 

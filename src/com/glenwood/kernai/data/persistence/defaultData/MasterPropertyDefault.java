@@ -134,6 +134,11 @@ public final class MasterPropertyDefault {
 		item.setKey("Fizzed");
 		item.setLabel("Fizzed Rocker");
 		details.add(item);
+		
+		item = new ListDetail();
+		item.setKey("st");
+		item.setLabel("String Template");
+		details.add(item);
 		createLookupRecord(ApplicationData.LIST_TEMPLATE_ENGINE_NAME, details);
 		
 	}
