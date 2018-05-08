@@ -211,8 +211,8 @@ public class TemplateView extends BaseEntityView<Template> {
 		lblBody = new Label(editMaster, SWT.NONE);
 		lblBody.setText("Template Body");
 		
-		Composite bodyComposite = new Composite(editMaster, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bodyComposite);
+		Composite bodyComposite = new Composite(editDetail, SWT.NONE);
+		//GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bodyComposite);
 		bodyComposite.setLayout(new FillLayout());
 		
 		

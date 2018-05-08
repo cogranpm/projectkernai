@@ -237,8 +237,8 @@ public class BaseEntityView<T extends BaseEntity> extends Composite implements I
 	{
 		editMaster = new Composite(editContainer, SWT.NONE);
 		editMaster.setLayout(viewHelper.getViewLayout(2));
-		//viewHelper.setViewLayoutData(editMaster, true, fillEditingSpace);
-		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(editMaster);
+		viewHelper.setViewLayoutData(editMaster, true, fillEditingSpace);
+		//GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(editMaster);
 		editDetail = new Composite(editContainer, SWT.NONE);
 		editDetail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1 ));
 		editDetail.setLayout(new FillLayout());
