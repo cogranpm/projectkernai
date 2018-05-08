@@ -20,15 +20,13 @@ import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -43,7 +41,6 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -53,6 +50,7 @@ import com.glenwood.kernai.data.entity.Template;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.TemplateViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
+import com.glenwood.kernai.ui.view.helpers.TemplateSourceConfiguration;
 import com.glenwood.kernai.ui.viewmodel.TemplateViewModel;
 
 
@@ -181,6 +179,10 @@ public class TemplateView extends BaseEntityView<Template> {
 	@Override
 	protected void onSetupEditingContainer()
 	{
+		/* note- need to create sub classes of 
+		 * SourceViewerConfiguration
+		 * 
+		 */
 		
 		TemplateViewModel aModel = (TemplateViewModel)this.model;
 		lblName = new Label(editMaster, SWT.NONE);
@@ -223,9 +225,10 @@ public class TemplateView extends BaseEntityView<Template> {
 		
 		AnnotationModel annotationModel = new AnnotationModel();
 		annotationModel.connect(aModel.getDocument());
-		txtBody.configure(new SourceViewerConfiguration());
+		txtBody.configure(new TemplateSourceConfiguration());
 		txtBody.setDocument(aModel.getDocument(), annotationModel);
 		ruler.addDecorator(0, new LineNumberRulerColumn());
+		
 		
 	}
 
