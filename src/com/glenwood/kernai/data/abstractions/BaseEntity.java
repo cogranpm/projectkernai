@@ -3,10 +3,21 @@ package com.glenwood.kernai.data.abstractions;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BaseEntity implements IBaseEntity {
 	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long pkey;
+	
+	
+	@Transient
 	@JsonProperty(value = "_id")
 	protected String id;
 

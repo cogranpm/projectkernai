@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
+import javax.persistence.Entity;
+
+
+@Entity
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Script extends BaseEntity {
 
