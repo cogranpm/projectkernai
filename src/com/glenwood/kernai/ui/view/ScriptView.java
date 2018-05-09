@@ -20,7 +20,6 @@ import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.AnnotationModel;
@@ -42,21 +41,27 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.ListDetail;
-import com.glenwood.kernai.data.entity.Template;
+import com.glenwood.kernai.data.entity.Script;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
-import com.glenwood.kernai.ui.presenter.TemplateViewPresenter;
+import com.glenwood.kernai.ui.presenter.ScriptViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;
 import com.glenwood.kernai.ui.view.helpers.TemplateSourceConfiguration;
-import com.glenwood.kernai.ui.viewmodel.TemplateViewModel;
+import com.glenwood.kernai.ui.viewmodel.ScriptViewModel;
+
+import groovy.lang.GroovyShell;
 
 
-public class TemplateView extends BaseEntityView<Template> {
+
+public class ScriptView  extends BaseEntityView<Script> {
 
 	private Label lblName;
 	private Text txtName;
@@ -67,9 +72,11 @@ public class TemplateView extends BaseEntityView<Template> {
 	private SourceViewer txtBody;
 	private Label lblBody;
 
-	TemplateViewModel aModel;
+	ScriptViewModel aModel;
 	
-	public TemplateView(Composite parent, int style) {
+	Button btnExecute;
+	
+	public ScriptView(Composite parent, int style) {
 		super(parent, style);
 
 	}
@@ -77,9 +84,9 @@ public class TemplateView extends BaseEntityView<Template> {
 	
 	@Override
 	protected void setupModelAndPresenter() {
-		this.model = new TemplateViewModel();
-		this.presenter = new TemplateViewPresenter(this, (TemplateViewModel)this.model);
-		aModel = (TemplateViewModel)this.model;
+		this.model = new ScriptViewModel();
+		this.presenter = new ScriptViewPresenter(this, (ScriptViewModel)this.model);
+		aModel = (ScriptViewModel)this.model;
 	}
 	
 	
@@ -87,10 +94,6 @@ public class TemplateView extends BaseEntityView<Template> {
 	protected void setupListColumns()
 	{
 		this.listViewer.setComparator(new ViewerComparator());
-//		TableViewerColumn nameColumn = new TableViewerColumn(listViewer, SWT.LEFT);
-//		nameColumn.getColumn().setText("Name");
-//		nameColumn.getColumn().setResizable(false);
-//		nameColumn.getColumn().setMoveable(false);
 		
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
 		TableViewerColumn engineColumn = this.viewHelper.getListColumn(listViewer, "Engine");
@@ -100,13 +103,13 @@ public class TemplateView extends BaseEntityView<Template> {
 			
 			@Override
 			protected void setValue(Object element, Object value) {
-				((Template)element).setName(String.valueOf(value));
+				((Script)element).setName(String.valueOf(value));
 				listViewer.update(element, null);
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				return ((Template)element).getName();
+				return ((Script)element).getName();
 			}
 			
 			@Override
@@ -134,16 +137,16 @@ public class TemplateView extends BaseEntityView<Template> {
 				{
 					return;
 				}
-				Template template = (Template)element;
+				Script script = (Script)element;
 				ListDetail listDetail = (ListDetail)value;
-				template.setEngineLookup(listDetail);
+				script.setEngineLookup(listDetail);
 				listViewer.update(element, null);
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				Template template = (Template)element;
-				return template.getEngineLookup();
+				Script script = (Script)element;
+				return script.getEngineLookup();
 			}
 			
 			@Override
@@ -161,7 +164,7 @@ public class TemplateView extends BaseEntityView<Template> {
 
 					}
 				});
-				TemplateViewModel aModel = (TemplateViewModel)model;
+				ScriptViewModel aModel = (ScriptViewModel)model;
 				editor.setInput(aModel.getEngineLookup());
 				return editor;
 			}
@@ -186,6 +189,23 @@ public class TemplateView extends BaseEntityView<Template> {
 	@Override
 	protected void onSetupEditingContainer()
 	{
+		btnExecute = new Button(editMaster, SWT.PUSH);
+		btnExecute.setText("Execute");
+		GridDataFactory.fillDefaults().grab(false, false).align(SWT.FILL, SWT.TOP).applyTo(btnExecute);
+		btnExecute.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				GroovyShell shell = new GroovyShell();
+			    Object result = shell.evaluate(aModel.getDocument().get());
+			    
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+		});
 
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
@@ -211,7 +231,7 @@ public class TemplateView extends BaseEntityView<Template> {
 		viewHelper.layoutComboViewer(cboEngine);
 		
 		lblBody = new Label(editMaster, SWT.NONE);
-		lblBody.setText("Template Body");
+		lblBody.setText("Script Body");
 		
 		Composite bodyComposite = new Composite(editDetail, SWT.NONE);
 		//GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(bodyComposite);
@@ -241,7 +261,7 @@ public class TemplateView extends BaseEntityView<Template> {
 	}
 	
 	@Override
-	protected void onListSelectionChangedHandler(Template entity) {
+	protected void onListSelectionChangedHandler(Script entity) {
 		//aModel.getDocument().set(model.getCurrentItem().getBody());
 	}
 
@@ -254,16 +274,16 @@ public class TemplateView extends BaseEntityView<Template> {
 
 	protected void onInitDataBindings() {
 
-        IObservableSet<Template> knownElements = contentProvider.getKnownElements();
-        final IObservableMap names = BeanProperties.value(Template.class, "name").observeDetail(knownElements);
-        final IObservableMap engines = BeanProperties.value(Template.class, "engine").observeDetail(knownElements);
-        final IObservableMap bodys = BeanProperties.value(Template.class, "body").observeDetail(knownElements);
+        IObservableSet<Script> knownElements = contentProvider.getKnownElements();
+        final IObservableMap names = BeanProperties.value(Script.class, "name").observeDetail(knownElements);
+        final IObservableMap engines = BeanProperties.value(Script.class, "engine").observeDetail(knownElements);
+        final IObservableMap bodys = BeanProperties.value(Script.class, "body").observeDetail(knownElements);
         
         IObservableMap[] labelMaps = {names, engines, bodys};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
-                	Template mc = (Template)element;
+                	Script mc = (Script)element;
                 	switch(columnIndex)
                 	{
                 	case 0:
@@ -286,8 +306,8 @@ public class TemplateView extends BaseEntityView<Template> {
         };
         
         listViewer.setLabelProvider(labelProvider);
-        List<Template> el = model.getItems();
-        input = new WritableList(el, Template.class);
+        List<Script> el = model.getItems();
+        input = new WritableList(el, Script.class);
         listViewer.setInput(input);
         
         IObservableValue nameTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtName);
@@ -348,8 +368,8 @@ public class TemplateView extends BaseEntityView<Template> {
 			{
 				return 0;
 			}
-			Template p1 = (Template)e1;
-			Template p2 = (Template)e2;
+			Script p1 = (Script)e1;
+			Script p2 = (Script)e2;
 			int rc = 0;
 			switch(this.propertyIndex)
 			{
@@ -367,7 +387,7 @@ public class TemplateView extends BaseEntityView<Template> {
 			return rc;
 		}
 		
-		private int compareName(Template p1, Template p2)
+		private int compareName(Script p1, Script p2)
 		{
 			if (p1 == null || p2 == null)
 			{
@@ -381,4 +401,5 @@ public class TemplateView extends BaseEntityView<Template> {
 		}
 	}
 	
+
 }

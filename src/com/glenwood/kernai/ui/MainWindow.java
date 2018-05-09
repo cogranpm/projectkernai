@@ -41,6 +41,7 @@ import com.glenwood.kernai.ui.view.ModelView;
 import com.glenwood.kernai.ui.view.ProjectView;
 import com.glenwood.kernai.ui.view.PropertyGroupView;
 import com.glenwood.kernai.ui.view.PropertyTypeView;
+import com.glenwood.kernai.ui.view.ScriptView;
 import com.glenwood.kernai.ui.view.TemplateView;
 
 //todo - refactor this to be empty shell that is composed of regions, custom class extending composite.
@@ -530,7 +531,7 @@ public class MainWindow extends ApplicationWindow {
 			@Override 
 			public void run() {
 				ApplicationData.instance().uncheckActions(scriptingActionKeys, ApplicationData.GOTO_SCRIPTING_SCRIPTS);
-				ApplicationData.instance().setCurrentEntityView(new ListHeaderView(clearComposite(scriptingPane), SWT.NONE));
+				ApplicationData.instance().setCurrentEntityView(new ScriptView(clearComposite(scriptingPane), SWT.NONE));
 				scriptingPane.layout();
 			}
 		 };

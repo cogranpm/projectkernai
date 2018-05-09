@@ -141,6 +141,19 @@ public final class MasterPropertyDefault {
 		details.add(item);
 		createLookupRecord(ApplicationData.LIST_TEMPLATE_ENGINE_NAME, details);
 		
+		//script engines 
+		details.clear();
+		item = new ListDetail();
+		item.setKey("groov");
+		item.setLabel("Groovy");
+		details.add(item);
+		
+		item = new ListDetail();
+		item.setKey("js");
+		item.setLabel("Javascript");
+		details.add(item);
+		createLookupRecord(ApplicationData.LIST_SCRIPT_ENGINE_NAME, details);
+		
 	}
 	
 	public void createListMappings()

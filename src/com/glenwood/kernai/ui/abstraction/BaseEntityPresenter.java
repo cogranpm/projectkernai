@@ -78,6 +78,7 @@ public class BaseEntityPresenter<T extends BaseEntity> implements IEntityPresent
 
 	@Override
 	public void saveModel() {
+		if(!model.getDirty()) { return; }
 		this.repository.save(model.getCurrentItem());
 		this.model.setDirty(false);
 	}

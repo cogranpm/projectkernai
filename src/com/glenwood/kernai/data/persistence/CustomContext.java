@@ -14,7 +14,7 @@ public class CustomContext extends JavaContext  {
 	@Override
 	public File getFilesDir() {
 		String homedir =System.getProperty("user.home") + System.getProperty("file.separator") + ApplicationData.COMPANY_NAME; 
-		//System.out.println(homedir);
+		System.out.println(homedir);
 		return new File(homedir);
 	}
 

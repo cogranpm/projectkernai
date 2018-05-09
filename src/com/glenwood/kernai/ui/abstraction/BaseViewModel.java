@@ -12,6 +12,10 @@ public class BaseViewModel<T extends BaseEntity> implements IViewModel<T> {
 	protected T currentItem;
 	protected Boolean dirty;
 	
+	public BaseViewModel()
+	{
+		dirty = false;
+	}
 	
 	@Override
 	public List<T> getItems() {

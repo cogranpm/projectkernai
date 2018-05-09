@@ -17,6 +17,7 @@ public abstract class BaseMasterDetailViewModel <T extends BaseEntity, P extends
 	public BaseMasterDetailViewModel(P parent)
 	{
 		this.parent = parent;
+		dirty = false;
 	}
 	
 	private P parent;
