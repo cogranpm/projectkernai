@@ -97,7 +97,6 @@ public class ScriptView  extends BaseEntityView<Script> {
 		
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
 		TableViewerColumn engineColumn = this.viewHelper.getListColumn(listViewer, "Engine");
-		TableViewerColumn bodyColumn = this.viewHelper.getListColumn(listViewer, "Body");
 
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
 			
@@ -182,7 +181,6 @@ public class ScriptView  extends BaseEntityView<Script> {
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(engineColumn.getColumn(), new ColumnWeightData(100));
-		tableLayout.setColumnData(bodyColumn.getColumn(), new ColumnWeightData(100));
 		
 	}
 	
@@ -277,9 +275,8 @@ public class ScriptView  extends BaseEntityView<Script> {
         IObservableSet<Script> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Script.class, "name").observeDetail(knownElements);
         final IObservableMap engines = BeanProperties.value(Script.class, "engine").observeDetail(knownElements);
-        final IObservableMap bodys = BeanProperties.value(Script.class, "body").observeDetail(knownElements);
         
-        IObservableMap[] labelMaps = {names, engines, bodys};
+        IObservableMap[] labelMaps = {names, engines};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
@@ -297,8 +294,6 @@ public class ScriptView  extends BaseEntityView<Script> {
                 		{
                 			return null;
                 		}
-                	case 2:
-                		return mc.getBody();
                     default:
                     	return "";
                 	}
@@ -316,9 +311,6 @@ public class ScriptView  extends BaseEntityView<Script> {
         IObservableValue engineTargetObservable = ViewerProperties.singleSelection().observe(cboEngine);
         IObservableValue engineModelObservable = BeanProperties.value("engineLookup").observeDetail(value);
         
-        IObservableValue bodyTargetObservable = WidgetProperties.text(SWT.Modify).observe(txtBody.getTextWidget());
-        IObservableValue bodyModelObservable = BeanProperties.value("body").observeDetail(value);
-
         /* just the validators and decorators in the name field */
         IValidator nameValidator = new IValidator() {
             @Override
@@ -336,7 +328,6 @@ public class ScriptView  extends BaseEntityView<Script> {
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         Binding dataTypeBinding = ctx.bindValue(engineTargetObservable, engineModelObservable);
-        Binding bodyBinding = ctx.bindValue(bodyTargetObservable, bodyModelObservable);
         
         aModel.getDocument().addDocumentListener(new IDocumentListener() {
 			

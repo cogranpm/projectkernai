@@ -29,7 +29,7 @@ public class TemplateViewPresenter extends BaseEntityPresenter<Template>{
 	public void loadModel(Template item) {
 		super.loadModel(item);
 		TemplateViewModel aModel = (TemplateViewModel)this.model;
-		aModel.getDocument().set(item.getBody());
+//		aModel.getDocument().set(item.getBody());
 
 	}
 	
@@ -37,7 +37,7 @@ public class TemplateViewPresenter extends BaseEntityPresenter<Template>{
 	public void saveModel() {
 
 		TemplateViewModel aModel = (TemplateViewModel)this.model;
-		this.model.getCurrentItem().setBody(aModel.getDocument().get());
+//		this.model.getCurrentItem().setBody(aModel.getDocument().get());
 		super.saveModel();
 	}
 	

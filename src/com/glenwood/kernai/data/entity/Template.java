@@ -16,8 +16,17 @@ public class Template extends BaseEntity {
 	
 	private String engine;
 	private String name;
+	private String bodyId;
 	private String body;
 	
+	public String getBody() {
+		return body;
+	}
+	
+	public void setBody(String body)
+	{
+		this.body = body;
+	}
 	
 	@JsonProperty
 	public String getName() {
@@ -43,14 +52,14 @@ public class Template extends BaseEntity {
 
 
 	@JsonProperty
-	public String getBody() {
-		return body;
+	public String getBodyId() {
+		return bodyId;
 	}
 
-	public void setBody(String body) {
-		String oldBody = this.body;
-		this.body = body;
-		this.firePropertyChange("body", oldBody, this.body);
+	public void setBodyId(String bodyId) {
+		String oldBodyId = this.bodyId;
+		this.bodyId = bodyId;
+		this.firePropertyChange("bodyId", oldBodyId, this.bodyId);
 	}
 	
 	

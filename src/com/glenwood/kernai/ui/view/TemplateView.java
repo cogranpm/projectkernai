@@ -94,7 +94,6 @@ public class TemplateView extends BaseEntityView<Template> {
 		
 		TableViewerColumn nameColumn = this.viewHelper.getListColumn(listViewer, "Name");
 		TableViewerColumn engineColumn = this.viewHelper.getListColumn(listViewer, "Engine");
-		TableViewerColumn bodyColumn = this.viewHelper.getListColumn(listViewer, "Body");
 
 		nameColumn.setEditingSupport(new EditingSupport(this.listViewer) {
 			
@@ -179,7 +178,6 @@ public class TemplateView extends BaseEntityView<Template> {
 		listContainer.setLayout(tableLayout);
 		tableLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(100));
 		tableLayout.setColumnData(engineColumn.getColumn(), new ColumnWeightData(100));
-		tableLayout.setColumnData(bodyColumn.getColumn(), new ColumnWeightData(100));
 		
 	}
 	
@@ -257,9 +255,8 @@ public class TemplateView extends BaseEntityView<Template> {
         IObservableSet<Template> knownElements = contentProvider.getKnownElements();
         final IObservableMap names = BeanProperties.value(Template.class, "name").observeDetail(knownElements);
         final IObservableMap engines = BeanProperties.value(Template.class, "engine").observeDetail(knownElements);
-        final IObservableMap bodys = BeanProperties.value(Template.class, "body").observeDetail(knownElements);
         
-        IObservableMap[] labelMaps = {names, engines, bodys};
+        IObservableMap[] labelMaps = {names, engines};
         ILabelProvider labelProvider = new ObservableMapLabelProvider(labelMaps) {
                 @Override
                 public String getColumnText(Object element, int columnIndex) {
@@ -277,8 +274,7 @@ public class TemplateView extends BaseEntityView<Template> {
                 		{
                 			return null;
                 		}
-                	case 2:
-                		return mc.getBody();
+
                     default:
                     	return "";
                 	}
@@ -316,7 +312,6 @@ public class TemplateView extends BaseEntityView<Template> {
         nameUpdateStrategy.setAfterConvertValidator(nameValidator);
         Binding nameBinding = ctx.bindValue(nameTargetObservable, nameModelObservable, nameUpdateStrategy, null);
         Binding dataTypeBinding = ctx.bindValue(engineTargetObservable, engineModelObservable);
-        Binding bodyBinding = ctx.bindValue(bodyTargetObservable, bodyModelObservable);
         
         aModel.getDocument().addDocumentListener(new IDocumentListener() {
 			

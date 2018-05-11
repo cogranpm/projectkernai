@@ -19,7 +19,17 @@ public class Script extends BaseEntity {
 	
 	private String engine;
 	private String name;
+	protected String bodyId;
 	private String body;
+	
+	public String getBody() {
+		return body;
+	}
+	
+	public void setBody(String body)
+	{
+		this.body = body;
+	}
 	
 	
 	@JsonProperty
@@ -43,19 +53,17 @@ public class Script extends BaseEntity {
 		this.engine = engine;
 		this.firePropertyChange("engine", oldEngine, this.engine);
 	}
-
-
-	@JsonProperty
-	public String getBody() {
-		return body;
-	}
-
-	public void setBody(String body) {
-		String oldBody = this.body;
-		this.body = body;
-		this.firePropertyChange("body", oldBody, this.body);
-	}
 	
+	@JsonProperty
+	public String getBodyId() {
+		return bodyId;
+	}
+
+	public void setBodyId(String bodyId) {
+		String oldBodyId = this.bodyId;
+		this.bodyId = bodyId;
+		this.firePropertyChange("bodyId", oldBodyId, this.bodyId);
+	}
 	
 	private ListDetail engineLookup;
 	

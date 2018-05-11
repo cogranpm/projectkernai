@@ -27,7 +27,7 @@ public class ScriptViewPresenter extends BaseEntityPresenter<Script>{
 	public void loadModel(Script item) {
 		super.loadModel(item);
 		ScriptViewModel aModel = (ScriptViewModel)this.model;
-		aModel.getDocument().set(item.getBody());
+//		aModel.getDocument().set(item.getBody());
 
 	}
 	
@@ -35,7 +35,7 @@ public class ScriptViewPresenter extends BaseEntityPresenter<Script>{
 	public void saveModel() {
 
 		ScriptViewModel aModel = (ScriptViewModel)this.model;
-		this.model.getCurrentItem().setBody(aModel.getDocument().get());
+//		this.model.getCurrentItem().setBody(aModel.getDocument().get());
 		super.saveModel();
 	}
 	
