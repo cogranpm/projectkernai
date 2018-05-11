@@ -5,15 +5,18 @@ import java.util.List;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.data.entity.SourceDocument;
 import com.glenwood.kernai.data.entity.Template;
 
 public class TemplateRepository extends BaseRepository<Template>  implements IEntityRepository<Template> {
 
 	private final ListDetailRepository listDetailRepository;
+	private final SourceDocumentRepository sourceDocumentRepository;
 	
 	public TemplateRepository(IPersistenceManager manager) {
 		super(manager);
 		this.listDetailRepository = new ListDetailRepository(manager);
+		this.sourceDocumentRepository = new SourceDocumentRepository(manager);
 	}
 
 	
