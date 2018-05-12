@@ -24,4 +24,10 @@ public class SourceDocument extends BaseEntity  {
 		this.body = body;
 		this.firePropertyChange("body", oldBody, this.body);
 	}
+	
+	public SourceDocument()
+	{
+		super();
+		this.type = TYPE_NAME;
+	}
 }
