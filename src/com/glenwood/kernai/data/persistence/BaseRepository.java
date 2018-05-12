@@ -53,5 +53,11 @@ public class BaseRepository<T extends BaseEntity> implements IEntityRepository<T
 	public T get(String id, Class<T> aClass) {
 		return manager.get(id, aClass);
 	}
+	
+	@Override
+	public void loadExtraFields(T entity)
+	{
+		/* optional, used to load fields on entity that are not shown in list views */
+	}
 
 }

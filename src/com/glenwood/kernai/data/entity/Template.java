@@ -17,15 +17,15 @@ public class Template extends BaseEntity {
 	private String engine;
 	private String name;
 	private String bodyId;
-	private String body;
+	private SourceDocument sourceDocument;
 	
-	public String getBody() {
-		return body;
+	public SourceDocument getSourceDocument() {
+		return sourceDocument;
 	}
 	
-	public void setBody(String body)
+	public void setSourceDocument(SourceDocument sourceDocument)
 	{
-		this.body = body;
+		this.sourceDocument = sourceDocument;
 	}
 	
 	@JsonProperty
@@ -75,12 +75,11 @@ public class Template extends BaseEntity {
 		this.engineLookup = engineLookup;
 		firePropertyChange("engineLookup", oldValue, this.engineLookup);
 	}
-
-	
 	
 	public Template()
 	{
 		this.type = TYPE_NAME;
+		this.setSourceDocument(new SourceDocument());
 	}
 	
 

@@ -240,14 +240,16 @@ public class TemplateView extends BaseEntityView<Template> {
 	
 	@Override
 	protected void onListSelectionChangedHandler(Template entity) {
-		//aModel.getDocument().set(model.getCurrentItem().getBody());
+		
 	}
 
 	@Override
 	protected void onAfterSelection() {
-		// TODO Auto-generated method stub
+		/* load the text for this entity */
+		TemplateViewPresenter aPresenter = (TemplateViewPresenter)this.presenter;
+		aPresenter.selectListItem();
+		
 		super.onAfterSelection();
-		//aModel.getDocument().set(model.getCurrentItem().getBody());
 	}
 
 	protected void onInitDataBindings() {

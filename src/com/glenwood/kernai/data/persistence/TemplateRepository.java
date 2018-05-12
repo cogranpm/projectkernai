@@ -50,6 +50,12 @@ public class TemplateRepository extends BaseRepository<Template>  implements IEn
 	@Override
 	public void save(Template entity) {
 	
+		/* if the body is set on the entity save it using the SourceDocument repository */
+		if(entity.getSourceDocument() != null && entity.getSourceDocument().getBody() != null && !entity.getSourceDocument().getBody().isEmpty())
+		{
+			this.sourceDocumentRepository.save(entity.getSourceDocument());
+			entity.setBodyId(entity.getSourceDocument().getId());
+		}
 		if(entity.getEngineLookup() != null)
 		{
 			entity.setEngine(entity.getEngineLookup().getId());
@@ -59,5 +65,15 @@ public class TemplateRepository extends BaseRepository<Template>  implements IEn
 			entity.setEngine(null);
 		}
 		super.save(entity);
+	}
+	
+	@Override
+	public void loadExtraFields(Template entity) {
+		super.loadExtraFields(entity);
+		if(entity.getBodyId() != null && !entity.getBodyId().isEmpty())
+		{
+			this.sourceDocumentRepository.get(entity.getBodyId(), SourceDocument.class);
+		}
+	
 	}
 }

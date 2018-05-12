@@ -7,4 +7,5 @@ public interface IEntityRepository<T extends BaseEntity> {
 	public void delete(T entity);
 	public List<T> getAll(String type, Class<T> aClass);
 	public T get(String id, Class<T> aClass);
+	public void loadExtraFields(T entity);
 }

@@ -7,6 +7,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import com.glenwood.kernai.data.entity.ListDetail;
+import com.glenwood.kernai.data.entity.SourceDocument;
 import com.glenwood.kernai.data.entity.Template;
 import com.glenwood.kernai.ui.abstraction.BaseViewModel;
 
