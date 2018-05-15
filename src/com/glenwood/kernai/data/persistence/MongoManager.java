@@ -1,10 +1,10 @@
 package com.glenwood.kernai.data.persistence;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.Query;
 
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.mongodb.MongoClient;
@@ -47,24 +47,25 @@ public class MongoManager  {
 	
 	public void save(BaseEntity entity) {
 		
-
+		datastore.save(entity);
 	}
 
 	
 	public void delete(BaseEntity entity) {
-		// TODO Auto-generated method stub
+		datastore.delete(entity);
 
 	}
 
 	
 	public <T> List<T> getAll(String queryName, Class<T> aClass) {
-		// TODO Auto-generated method stub
-		return null;
+		final Query<T> query = datastore.createQuery(aClass);
+		final List<T> list = query.asList();
+		return list;
 	}
 
 	
 	public <T> T get(Long id, Class<T> aClass) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
