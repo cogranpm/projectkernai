@@ -7,16 +7,19 @@ import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.SourceDocument;
 import com.glenwood.kernai.data.entity.Template;
+import com.glenwood.kernai.data.mapping.TemplateCBaseMapper;
 
 public class TemplateRepository extends BaseRepository<Template>  implements IEntityRepository<Template> {
 
 	private final ListDetailRepository listDetailRepository;
 	private final SourceDocumentRepository sourceDocumentRepository;
 	
-
-	
 	public TemplateRepository(IPersistenceManager manager) {
 		super(manager);
+		if(manager.getCustomMapper(Template.TYPE_NAME) == null)
+		{
+			manager.registerCustomMapper(Template.TYPE_NAME, new TemplateCBaseMapper());
+		}
 		this.listDetailRepository = new ListDetailRepository(manager);
 		this.sourceDocumentRepository = new SourceDocumentRepository(manager);
 	}

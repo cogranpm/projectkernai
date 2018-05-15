@@ -12,14 +12,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
-@Entity("templates")
+//@Entity("templates")
 @JsonIgnoreProperties(ignoreUnknown=true)	
 public class Template extends BaseEntity {
 
 	public static final String TYPE_NAME = "TEMPLATE";
 	
-	 @Id
-	 private ObjectId id;
+//	 @Id
+//	 private ObjectId id;
 	
 	private String engine;
 	private String name;

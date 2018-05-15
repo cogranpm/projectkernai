@@ -6,6 +6,8 @@ import com.couchbase.lite.Database;
 import com.glenwood.kernai.data.mapping.EntityMapper;
 
 public interface IPersistenceManager {
+	public void registerCustomMapper(String typename, Object mapper);
+	public Object getCustomMapper(String typename);
 	public Database getDatabase();
 	public EntityMapper getEntityMapper();
 	public void init(String databaseName);

@@ -57,4 +57,16 @@ public class JPAManager implements IPersistenceManager  {
 		return null;
 	}
 
+	@Override
+	public void registerCustomMapper(String typename, Object mapper) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object getCustomMapper(String typename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

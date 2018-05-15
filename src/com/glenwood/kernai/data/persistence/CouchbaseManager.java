@@ -2,6 +2,7 @@ package com.glenwood.kernai.data.persistence;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,17 @@ public class CouchbaseManager implements IPersistenceManager {
 	private Database database;
 	private EntityMapper entityMapper;
 	private static final String ENTITY_BY_TYPE_VIEW = "entityByType";
+	private Map<String, Object> customEntityMappers = new HashMap<>();
+	
+	public void registerCustomMapper(String typename, Object mapper)
+	{
+		customEntityMappers.put(typename, mapper);
+	}
+	
+	public Object getCustomMapper(String typename)
+	{
+		return customEntityMappers.getOrDefault(typename, null);
+	}
 	
 	/* todo, need to look at this, exposing the database type is a no no, but is needed by repository interfaces */
 	public Database getDatabase()
