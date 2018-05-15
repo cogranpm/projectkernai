@@ -6,8 +6,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 
-import com.glenwood.kernai.data.abstractions.BaseEntity;
-
 public class RequiredEntityValidator implements IValidator {
 	
 	private final String errorText;

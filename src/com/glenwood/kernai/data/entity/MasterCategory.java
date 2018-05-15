@@ -1,11 +1,10 @@
 package com.glenwood.kernai.data.entity;
 
-import com.glenwood.kernai.data.abstractions.BaseEntity;
-
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.glenwood.kernai.data.abstractions.BaseEntity;
 
 
 @JsonIgnoreProperties(ignoreUnknown=true)

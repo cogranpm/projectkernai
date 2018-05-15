@@ -1,7 +1,6 @@
 package com.glenwood.kernai.ui.presenter;
 
 
-import com.glenwood.kernai.data.entity.SourceDocument;
 import com.glenwood.kernai.data.entity.Template;
 import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;

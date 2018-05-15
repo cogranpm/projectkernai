@@ -6,7 +6,6 @@ import com.glenwood.kernai.data.persistence.ListDetailRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityMasterDetailListModalPresenter;
-import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.view.ListDetailMasterDetailView;
 import com.glenwood.kernai.ui.viewmodel.ListDetailViewModel;
 

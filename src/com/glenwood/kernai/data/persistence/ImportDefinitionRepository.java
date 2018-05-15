@@ -12,7 +12,6 @@ import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.ImportTable;
-import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.persistence.views.ProjectViewBuilder;
 
 public class ImportDefinitionRepository extends BaseRepository<ImportDefinition> {

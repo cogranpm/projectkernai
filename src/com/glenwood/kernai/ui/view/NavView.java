@@ -11,7 +11,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Tree;
 
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.presenter.NavViewPresenter;

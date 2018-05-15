@@ -1,13 +1,10 @@
 /* represents a large text document such as a template or a script */
 package com.glenwood.kernai.data.entity;
 
-import javax.persistence.Entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.glenwood.kernai.data.abstractions.BaseEntity;
 
-@Entity
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class SourceDocument extends BaseEntity  {
 	public static final String TYPE_NAME = "SOURCEDOCUMENT";

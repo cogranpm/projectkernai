@@ -2,7 +2,6 @@ package com.glenwood.kernai.ui.view.grid;
 
 import java.util.List;
 
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;

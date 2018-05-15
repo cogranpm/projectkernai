@@ -1,7 +1,5 @@
 package com.glenwood.kernai.ui.viewmodel;
 
-import java.util.List;
-
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.ui.abstraction.BaseViewModel;
 

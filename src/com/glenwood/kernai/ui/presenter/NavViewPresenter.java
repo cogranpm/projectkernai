@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glenwood.kernai.data.entity.Attribute;
-import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.persistence.BaseRepository;
 import com.glenwood.kernai.data.persistence.EntityRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
-import com.glenwood.kernai.data.persistence.PersistenceManagerFactoryConstants;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavView;
 import com.glenwood.kernai.ui.abstraction.INavigator;
 import com.glenwood.kernai.ui.navigation.MasterCategoryNavigationAction;

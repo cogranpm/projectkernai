@@ -2,17 +2,12 @@ package com.glenwood.kernai.ui.presenter;
 
 import java.util.ArrayList;
 
-import com.glenwood.kernai.data.abstractions.BaseEntity;
-import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.entity.ListDetail;
 import com.glenwood.kernai.data.entity.ListHeader;
 import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityPresenter;
-import com.glenwood.kernai.ui.abstraction.BaseViewModel;
-import com.glenwood.kernai.ui.abstraction.IEntityPresenter;
-import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.view.ListHeaderView;
 import com.glenwood.kernai.ui.viewmodel.ListHeaderViewModel;
 

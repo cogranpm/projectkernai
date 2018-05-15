@@ -4,7 +4,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.viewmodel.NavigationMenuItem;
 
 public class NavigationMenuLabelProvider extends LabelProvider {

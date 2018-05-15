@@ -4,12 +4,7 @@
 
 package com.glenwood.kernai.ui.navigation;
 
-import org.eclipse.swt.SWT;
-
-import com.glenwood.kernai.ui.MainWindow;
 import com.glenwood.kernai.ui.abstraction.INavigator;
-import com.glenwood.kernai.ui.view.AttributeView;
-import com.glenwood.kernai.ui.view.MasterCategoryView;
 
 public class Navigator implements INavigator {
 	

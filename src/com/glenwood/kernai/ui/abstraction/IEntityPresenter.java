@@ -1,8 +1,5 @@
 package com.glenwood.kernai.ui.abstraction;
 
-import com.glenwood.kernai.data.abstractions.BaseEntity;
-
-
 public interface IEntityPresenter<T> {
 	
 	public void loadModel(T item);

@@ -1,12 +1,6 @@
 package com.glenwood.kernai.ui.navigation;
 
-import org.eclipse.swt.SWT;
-
-import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.MainWindow;
-import com.glenwood.kernai.ui.abstraction.IEntityView;
 import com.glenwood.kernai.ui.abstraction.INavigationMenuAction;
-import com.glenwood.kernai.ui.view.MasterCategoryView;
 
 public class MasterCategoryNavigationAction implements INavigationMenuAction {
 

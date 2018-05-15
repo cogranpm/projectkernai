@@ -8,7 +8,6 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
-import com.glenwood.kernai.data.abstractions.BaseEntity;
 import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.ListDetail;

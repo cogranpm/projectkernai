@@ -1,14 +1,10 @@
 /* main shell of the application, has regions for all the composites to use */
 package com.glenwood.kernai.ui.view;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * @deprecated  moved to a tab based navigation instead of tree

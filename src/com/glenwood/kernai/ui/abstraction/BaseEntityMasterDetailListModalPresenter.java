@@ -1,7 +1,5 @@
 package com.glenwood.kernai.ui.abstraction;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 

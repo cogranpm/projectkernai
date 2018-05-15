@@ -6,7 +6,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 
 import com.glenwood.kernai.data.entity.Attribute;
-import com.glenwood.kernai.data.entity.Project;
 
 public class NameEditor extends EditingSupport {
 	

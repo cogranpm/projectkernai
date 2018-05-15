@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
@@ -40,7 +39,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.ListHeader;
-import com.glenwood.kernai.data.entity.PropertyType;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.ListHeaderViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;

@@ -2,7 +2,6 @@ package com.glenwood.kernai.data.persistence;
 
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.ui.ApplicationData;
-import com.glenwood.kernai.ui.MainWindow;
 
 public class PersistenceManagerFactory {
 	

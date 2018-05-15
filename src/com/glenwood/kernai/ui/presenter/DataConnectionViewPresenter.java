@@ -9,8 +9,8 @@ import com.glenwood.kernai.data.persistence.ListHeaderRepository;
 import com.glenwood.kernai.data.persistence.PersistenceManagerFactory;
 import com.glenwood.kernai.ui.ApplicationData;
 import com.glenwood.kernai.ui.abstraction.BaseEntityPresenter;
-import com.glenwood.kernai.ui.abstraction.IModelChangeListener;
 import com.glenwood.kernai.ui.abstraction.IEntityView;
+import com.glenwood.kernai.ui.abstraction.IModelChangeListener;
 import com.glenwood.kernai.ui.abstraction.IViewModel;
 import com.glenwood.kernai.ui.viewmodel.DataConnectionViewModel;
 

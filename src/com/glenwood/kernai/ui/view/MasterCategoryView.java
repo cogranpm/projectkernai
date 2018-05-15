@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.glenwood.kernai.data.entity.MasterCategory;
-import com.glenwood.kernai.data.entity.PropertyType;
 import com.glenwood.kernai.ui.abstraction.BaseEntityView;
 import com.glenwood.kernai.ui.presenter.MasterCategoryViewPresenter;
 import com.glenwood.kernai.ui.view.helpers.ListSorterHelper;

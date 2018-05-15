@@ -1,7 +1,6 @@
 package com.glenwood.kernai.ui.presenter;
 
 import com.glenwood.kernai.data.entity.Association;
-import com.glenwood.kernai.data.entity.Entity;
 import com.glenwood.kernai.data.entity.Model;
 import com.glenwood.kernai.data.persistence.AssociationRepository;
 import com.glenwood.kernai.data.persistence.EntityRepository;

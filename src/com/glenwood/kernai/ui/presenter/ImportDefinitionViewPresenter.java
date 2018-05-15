@@ -1,9 +1,5 @@
 package com.glenwood.kernai.ui.presenter;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import com.glenwood.kernai.data.entity.DataConnection;
 import com.glenwood.kernai.data.entity.ImportDefinition;
 import com.glenwood.kernai.data.entity.Project;
 import com.glenwood.kernai.data.persistence.ImportDefinitionRepository;

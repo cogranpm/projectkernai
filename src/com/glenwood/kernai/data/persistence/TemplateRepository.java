@@ -13,6 +13,8 @@ public class TemplateRepository extends BaseRepository<Template>  implements IEn
 	private final ListDetailRepository listDetailRepository;
 	private final SourceDocumentRepository sourceDocumentRepository;
 	
+
+	
 	public TemplateRepository(IPersistenceManager manager) {
 		super(manager);
 		this.listDetailRepository = new ListDetailRepository(manager);

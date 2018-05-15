@@ -3,7 +3,6 @@ package com.glenwood.kernai.data.persistence;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.glenwood.kernai.data.abstractions.IEntityRepository;
 import com.glenwood.kernai.data.abstractions.IPersistenceManager;
 import com.glenwood.kernai.data.entity.MasterCategory;
 import com.glenwood.kernai.data.entity.MasterProperty;
