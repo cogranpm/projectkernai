@@ -3,10 +3,6 @@ package com.glenwood.kernai.data.entity;
 
 import java.util.Objects;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
