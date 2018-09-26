@@ -72,9 +72,9 @@ public class ScriptView  extends BaseEntityView<Script> {
 	private SourceViewer txtBody;
 	private Label lblBody;
 
-	ScriptViewModel aModel;
+	private ScriptViewModel aModel;
 	
-	Button btnExecute;
+	private Button btnExecute;
 	
 	public ScriptView(Composite parent, int style) {
 		super(parent, style);
