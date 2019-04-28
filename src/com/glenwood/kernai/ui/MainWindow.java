@@ -200,6 +200,9 @@ public class MainWindow extends ApplicationWindow {
 		GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).applyTo(scriptingPane);
 		scriptingPane.setLayout(new FillLayout());
 		
+		CTabItem referenceItem = new CTabItem(folder, SWT.NONE);
+		scriptingItem.setText("&Reference");
+		
 		folder.addSelectionListener(new SelectionListener() {
 			
 			@Override
