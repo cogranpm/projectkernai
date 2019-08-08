@@ -48,3 +48,5 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+/hs_err_pid6512.log
+/hs_err_pid18495.log

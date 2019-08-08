@@ -58,6 +58,8 @@ import com.glenwood.kernai.ui.view.helpers.TemplateSourceConfiguration;
 import com.glenwood.kernai.ui.viewmodel.ScriptViewModel;
 
 import groovy.lang.GroovyShell;
+import org.graalvm.polyglot.*;
+import org.graalvm.polyglot.proxy.*;
 
 
 
@@ -194,8 +196,18 @@ public class ScriptView  extends BaseEntityView<Script> {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				GroovyShell shell = new GroovyShell();
-			    Object result = shell.evaluate(aModel.getDocument().get());
+				
+				//try out graal
+				String script = aModel.getDocument().get();
+//				Context context = Context.create();
+				Context context = Context.newBuilder("js").allowHostAccess(true).build();
+				Value result = context.eval("js", script);
+				context.close();
+				return;
+				
+				//if groovy then
+				//GroovyShell shell = new GroovyShell();
+			    //Object result = shell.evaluate(aModel.getDocument().get());
 			    
 			}
 			

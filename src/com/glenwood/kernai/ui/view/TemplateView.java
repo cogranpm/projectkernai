@@ -54,6 +54,7 @@ import com.glenwood.kernai.ui.view.helpers.TemplateSourceConfiguration;
 import com.glenwood.kernai.ui.viewmodel.TemplateViewModel;
 
 
+
 public class TemplateView extends BaseEntityView<Template> {
 
 	private Label lblName;
@@ -66,6 +67,8 @@ public class TemplateView extends BaseEntityView<Template> {
 	private Label lblBody;
 
 	TemplateViewModel aModel;
+	
+	
 	
 	public TemplateView(Composite parent, int style) {
 		super(parent, style);
@@ -182,7 +185,7 @@ public class TemplateView extends BaseEntityView<Template> {
 	@Override
 	protected void onSetupEditingContainer()
 	{
-
+		
 		lblName = new Label(editMaster, SWT.NONE);
 		lblName.setText("Name");
 		txtName = viewHelper.getTextEditor(editMaster);

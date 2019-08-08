@@ -17,15 +17,15 @@ public class Script extends BaseEntity {
 	private String engine;
 	private String name;
 	protected String bodyId;
-	private String body;
+	private SourceDocument sourceDocument;
 	
-	public String getBody() {
-		return body;
+	public SourceDocument getSourceDocument() {
+		return sourceDocument;
 	}
 	
-	public void setBody(String body)
+	public void setSourceDocument(SourceDocument sourceDocument)
 	{
-		this.body = body;
+		this.sourceDocument = sourceDocument;
 	}
 	
 	
