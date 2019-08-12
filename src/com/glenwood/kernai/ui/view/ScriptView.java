@@ -200,9 +200,31 @@ public class ScriptView  extends BaseEntityView<Script> {
 				//try out graal
 				String script = aModel.getDocument().get();
 //				Context context = Context.create();
+				try (Context context = Context.create("js")){
+					Value result = context.eval("js", script);
+					
+				}
+				
+				Engine engine = Engine.newBuilder().build();
+				
+				//allowing access to java objects
+				//goal is to build a form from scratch totally in java
+				//getting some of these context defaults from the vertx es4x project
+				try(Context context = Context.newBuilder()
+						.engine(engine)
+						.allowAllAccess(true)
+						.allowCreateThread(false)
+						.build()){
+					context.getBindings("js").putMember("bodyLabel", lblBody);
+					Value result = context.eval("js", "bodyLabel.setText('Buddah')" );
+				}
+				
+				/* older style
 				Context context = Context.newBuilder("js").allowHostAccess(true).build();
 				Value result = context.eval("js", script);
 				context.close();
+				*/
+				
 				return;
 				
 				//if groovy then
